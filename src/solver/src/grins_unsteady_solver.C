@@ -57,9 +57,11 @@ void GRINS::UnsteadySolver::init_time_solver(GRINS::MultiphysicsSystem* system)
 
 void GRINS::UnsteadySolver::solve( GRINS::MultiphysicsSystem* system,
 				   std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+           std::tr1::shared_ptr<GRINS::QoIBase> qoi_base,
 				   std::tr1::shared_ptr<GRINS::Visualization> vis,
 				   bool output_vis,
-				   bool output_residual )
+				   bool output_residual,
+           std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator )
 {
   system->deltat = this->_deltat;
   

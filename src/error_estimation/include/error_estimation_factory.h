@@ -21,48 +21,44 @@
 //
 //-----------------------------------------------------------------------el-
 //
-// $Id$
+// $Id: bc_factory.C 33233 2012-09-21 05:22:22Z pbauman $
 //
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
+#ifndef ERROR_ESTIMATOR_FACTORY_H
+#define ERROR_ESTIMATOR_FACTORY_H
 
-//GRINS
+// GRINS
 #include "qoi_base.h"
-#include "grins_solver.h"
-#include "visualization.h"
 
-//libMesh
-#include "auto_ptr.h"
-#include "equation_systems.h"
+// libMesh
+#include "adjoint_refinement_estimator.h"
+#include "adjoint_residual_error_estimator.h"
+#include "getpot.h"
+#include "patch_recovery_error_estimator.h"
+#include "qoi_set.h"
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  class ErrorEstimatorFactory
   {
-  public:
+    public:
+      ErrorEstimatorFactory();
 
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
+      virtual ~ErrorEstimatorFactory();
 
-    virtual void solve( GRINS::MultiphysicsSystem* system,
-			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
-			std::tr1::shared_ptr<libMesh::EquationSystems>(),
-      std::tr1::shared_ptr<GRINS::QoIBase> qoi_base =
-      std::tr1::shared_ptr<GRINS::QoIBase>(),
-			std::tr1::shared_ptr<GRINS::Visualization> vis = 
-			std::tr1::shared_ptr<GRINS::Visualization>(),
-			bool output_vis = false,
-			bool output_residual = false,
-      std::tr1::shared_ptr<libMesh::ErrorEstimator> =
-      std::tr1::shared_ptr<libMesh::ErrorEstimator>() );
+      virtual std::tr1::shared_ptr<ErrorEstimator> build(
+        const GetPot& input,
+        std::tr1::shared_ptr<GRINS::QoIBase> qoi_base );
 
-  protected:
+      virtual std::tr1::shared_ptr<AdjointRefinementEstimator> build_adjref(
+        const GetPot& input,
+        std::tr1::shared_ptr<GRINS::QoIBase> qoi_base );
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
-
+    private:
+      double _refine_fraction;
+      double _coarsen_fraction;
   };
 } // namespace GRINS
-#endif // GRINS_STEADY_SOLVER_H
+#endif // ERROR_ESTIMATOR_FACTORY_H

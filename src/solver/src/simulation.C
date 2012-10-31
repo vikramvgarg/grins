@@ -37,6 +37,7 @@ GRINS::Simulation::Simulation( const GetPot& input,
      _multiphysics_system( &(_equation_system->add_system<GRINS::MultiphysicsSystem>( _system_name )) ),
      _vis( sim_builder.build_vis(input) ),
      _qoi( sim_builder.build_qoi(input) ),
+     _error_estimator( sim_builder.build_error_estimator( input, _qoi ) ),
      _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
      _print_log_info( input("screen-options/print_log_info", false ) ),
      _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
@@ -87,15 +88,14 @@ void GRINS::Simulation::run()
 {
   this->print_sim_info();
 
-  _solver->solve(  _multiphysics_system, _equation_system, _vis, _output_vis, _output_residual );
+  _solver->solve( _multiphysics_system, _equation_system, _qoi, _vis, _output_vis, _output_residual, _error_estimator );
 
   if( this->_print_qoi )
-    {
-      _multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
-      //const libMesh::DifferentiableQoI* diff_qoi = this->_multiphysics_system->get_qoi();
-      const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
-      my_qoi->output_qoi( std::cout );
-    }
+  {
+    _multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
+    const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
+    qoi->output_qoi( std::cout );
+  }
 
   return;
 }

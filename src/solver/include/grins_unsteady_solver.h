@@ -30,6 +30,7 @@
 #define GRINS_UNSTEADY_SOLVER_H
 
 //GRINS
+#include "qoi_base.h"
 #include "grins_solver.h"
 
 namespace GRINS
@@ -42,12 +43,16 @@ namespace GRINS
     virtual ~UnsteadySolver();
 
     virtual void solve( GRINS::MultiphysicsSystem* system,
-			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system = 
+			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
 			std::tr1::shared_ptr<libMesh::EquationSystems>(),
+      std::tr1::shared_ptr<GRINS::QoIBase> qoi_base =
+      std::tr1::shared_ptr<GRINS::QoIBase>(),
 			std::tr1::shared_ptr<GRINS::Visualization> vis = 
 			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
-			bool output_residual = false );
+			bool output_residual = false,
+      std::tr1::shared_ptr<libMesh::ErrorEstimator> =
+      std::tr1::shared_ptr<libMesh::ErrorEstimator>() );
 
   protected:
 

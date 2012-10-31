@@ -41,17 +41,22 @@ GRINS::SolverFactory::~SolverFactory()
 std::tr1::shared_ptr<GRINS::Solver> GRINS::SolverFactory::build(const GetPot& input)
 {
   bool transient = input("unsteady-solver/transient", false );
+  bool mesh_adaptive = input("unsteady-solver/mesh_adaptive", false );
 
   GRINS::Solver* solver;
 
   if(transient)
-    {
-      solver = new GRINS::UnsteadySolver( input );
-    }
+  {
+    solver = new GRINS::UnsteadySolver( input );
+  }
+  else if( mesh_adaptive )
+  {
+    solver = new GRINS::MeshAdaptiveSolver( input );
+  }
   else
-    {
-      solver = new GRINS::SteadySolver( input );
-    }
+  {
+    solver = new GRINS::SteadySolver( input );
+  }
 
   return std::tr1::shared_ptr<GRINS::Solver>(solver);
 }

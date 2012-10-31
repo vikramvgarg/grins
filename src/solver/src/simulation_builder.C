@@ -36,6 +36,7 @@ namespace GRINS
       _solver_factory( new SolverFactory ),
       _vis_factory( new VisualizationFactory ),
       _bc_factory( new BoundaryConditionsFactory ),
+      _error_estimator_factory( new ErrorEstimatorFactory ),
       _qoi_factory( new QoIFactory )
   {
     return;
@@ -81,6 +82,11 @@ namespace GRINS
     this->_qoi_factory = qoi_factory;
   }
 
+  void SimulationBuilder::attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory )
+  {
+    this->_error_estimator_factory = error_estimator_factory;
+  }
+
   std::tr1::shared_ptr<libMesh::Mesh> SimulationBuilder::build_mesh( const GetPot& input )
   {
     return (this->_mesh_builder)->build(input);
@@ -114,6 +120,16 @@ namespace GRINS
   std::tr1::shared_ptr<QoIBase> SimulationBuilder::build_qoi( const GetPot& input )
   {
     return (this->_qoi_factory)->build(input);
+  }
+
+  std::tr1::shared_ptr<libMesh::AdjointRefinementEstimator> SimulationBuilder::build_adjoint_refinement_estimator( const GetPot& input, std::tr1::shared_ptr<QoIBase> qoi )
+  {
+    return (this->_error_estimator_factory)->build_adjref( input, qoi );
+  }
+
+  std::tr1::shared_ptr<libMesh::ErrorEstimator> SimulationBuilder::build_error_estimator( const GetPot& input, std::tr1::shared_ptr<QoIBase> qoi )
+  {
+    return (this->_error_estimator_factory)->build( input, qoi );
   }
 
 } //namespace GRINS

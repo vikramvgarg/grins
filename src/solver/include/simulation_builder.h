@@ -36,6 +36,7 @@
 #include "visualization_factory.h"
 #include "bc_factory.h"
 #include "qoi_factory.h"
+#include "error_estimation_factory.h"
 
 namespace GRINS
 {
@@ -60,6 +61,10 @@ namespace GRINS
 
     std::tr1::shared_ptr<QoIBase> build_qoi( const GetPot& input );
 
+    std::tr1::shared_ptr<libMesh::AdjointRefinementEstimator> build_adjoint_refinement_estimator( const GetPot& input, std::tr1::shared_ptr<QoIBase> qoi );
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input, std::tr1::shared_ptr<GRINS::QoIBase> qoi );
+
     void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
 
     void attach_solver_factory( std::tr1::shared_ptr<SolverFactory> solver_factory );
@@ -72,8 +77,9 @@ namespace GRINS
 
     void attach_qoi_factory( std::tr1::shared_ptr<QoIFactory> qoi_factory );
 
-  protected:
+  void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
 
+  protected:
     
     std::tr1::shared_ptr<PhysicsFactory> _physics_factory;
     std::tr1::shared_ptr<MeshBuilder> _mesh_builder;
@@ -81,6 +87,7 @@ namespace GRINS
     std::tr1::shared_ptr<VisualizationFactory> _vis_factory;
     std::tr1::shared_ptr<BoundaryConditionsFactory> _bc_factory;
     std::tr1::shared_ptr<QoIFactory> _qoi_factory;
+    std::tr1::shared_ptr<ErrorEstimatorFactory> _error_estimator_factory;
       
   }; //class SimulationBuilder
 } // namespace GRINS

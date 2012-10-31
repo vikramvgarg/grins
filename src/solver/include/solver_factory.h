@@ -36,6 +36,7 @@
 #include "grins_solver.h"
 #include "grins_steady_solver.h"
 #include "grins_unsteady_solver.h"
+#include "grins_mesh_adaptive_solver.h"
 
 namespace GRINS
 {

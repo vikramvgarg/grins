@@ -49,9 +49,11 @@ void GRINS::SteadySolver::init_time_solver(GRINS::MultiphysicsSystem* system)
 
 void GRINS::SteadySolver::solve( GRINS::MultiphysicsSystem* system,
 				 std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+         std::tr1::shared_ptr<GRINS::QoIBase> qoi_base,
 				 std::tr1::shared_ptr<GRINS::Visualization> vis,
 				 bool output_vis, 
-				 bool output_residual )
+				 bool output_residual,
+         std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator )
 {
   // GRVY timers contained in here (if enabled)
   system->solve();

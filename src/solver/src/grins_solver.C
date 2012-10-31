@@ -85,4 +85,8 @@ void GRINS::Solver::set_solver_options( libMesh::DiffSolver& solver  )
   return;
 }
 
-
+// void GRINS::Solver::attach_error_estimator( libMesh::ErrorEstimator& error_estimator )
+// {
+//   this->_error_estimator.reset( &error_estimator );
+//   return;
+// }

@@ -26,26 +26,28 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#ifndef GRINS_STEADY_SOLVER_H
-#define GRINS_STEADY_SOLVER_H
+#ifndef GRINS_MESH_ADAPTIVE_SOLVER_H
+#define GRINS_MESH_ADAPTIVE_SOLVER_H
 
 //GRINS
-#include "qoi_base.h"
 #include "grins_solver.h"
+#include "qoi_base.h"
 #include "visualization.h"
 
 //libMesh
 #include "auto_ptr.h"
 #include "equation_systems.h"
+#include "error_vector.h"
+#include "mesh_refinement.h"
 
 namespace GRINS
 {
-  class SteadySolver : public Solver
+  class MeshAdaptiveSolver : public Solver
   {
   public:
+    MeshAdaptiveSolver( const GetPot& input );
 
-    SteadySolver( const GetPot& input );
-    virtual ~SteadySolver();
+    virtual ~MeshAdaptiveSolver();
 
     virtual void solve( GRINS::MultiphysicsSystem* system,
 			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
@@ -60,9 +62,24 @@ namespace GRINS
       std::tr1::shared_ptr<libMesh::ErrorEstimator>() );
 
   protected:
+    unsigned int _max_r_steps;
+    bool _coarsen_by_parents;
+    Real _absolute_global_tolerance;
+    unsigned int _nelem_target;
+    Real _refine_fraction;
+    Real _coarsen_fraction;
+    Real _coarsen_threshold;
+    bool _output_adjoint_sol;
+    bool _plot_cell_errors;
+    std::string _error_plot_prefix;
 
-    virtual void init_time_solver(GRINS::MultiphysicsSystem* system);
+    libMesh::AutoPtr<MeshRefinement> _mesh_refinement;
 
+    virtual void init_time_solver( GRINS::MultiphysicsSystem* system );
+
+    void read_input_options( const GetPot& input );
+
+    void build_mesh_refinement( MeshBase &mesh );
   };
 } // namespace GRINS
 #endif // GRINS_STEADY_SOLVER_H

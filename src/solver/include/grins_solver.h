@@ -32,12 +32,15 @@
 #include "boost/tr1/memory.hpp"
 
 // GRINS
-#include "config.h"
-#include "multiphysics_sys.h"
-#include "visualization.h"
 #include "bc_factory.h"
+#include "config.h"
+#include "error_estimation_factory.h"
+#include "multiphysics_sys.h"
+#include "qoi_base.h"
+#include "visualization.h"
 
 // libMesh
+#include "adjoint_residual_error_estimator.h"
 #include "getpot.h"
 #include "libmesh.h"
 #include "libmesh_logging.h"
@@ -68,13 +71,19 @@ namespace GRINS
     virtual void solve( GRINS::MultiphysicsSystem* system,
 			std::tr1::shared_ptr<libMesh::EquationSystems> equation_system =
 			std::tr1::shared_ptr<libMesh::EquationSystems>(),
+      std::tr1::shared_ptr<GRINS::QoIBase> qoi_base =
+      std::tr1::shared_ptr<GRINS::QoIBase>(),
 			std::tr1::shared_ptr<GRINS::Visualization> vis = 
 			std::tr1::shared_ptr<GRINS::Visualization>(),
 			bool output_vis = false,
-			bool output_residual = false )=0;
+			bool output_residual = false,
+			std::tr1::shared_ptr<libMesh::ErrorEstimator> =
+      std::tr1::shared_ptr<libMesh::ErrorEstimator>() )=0;
+
+    // void attach_error_estimator(
+    //   GRINS::ErrorEstimatorFactory& error_estimator );
 
   protected:
-
     // Linear/Nonlinear solver options
     unsigned int _max_nonlinear_iterations;
     double _relative_step_tolerance;
@@ -96,7 +105,6 @@ namespace GRINS
     void set_solver_options( libMesh::DiffSolver& solver );
 
     virtual void init_time_solver(GRINS::MultiphysicsSystem* system)=0;
-
   };
 
 } //End namespace block
