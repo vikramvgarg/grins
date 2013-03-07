@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "simulation_builder.h"
+#include "grins/simulation_builder.h"
 
 namespace GRINS
 {
@@ -37,7 +37,8 @@ namespace GRINS
       _vis_factory( new VisualizationFactory ),
       _bc_factory( new BoundaryConditionsFactory ),
       _error_estimator_factory( new ErrorEstimatorFactory ),
-      _qoi_factory( new QoIFactory )
+      _qoi_factory( new QoIFactory ),
+      _postprocessing_factory( new PostprocessingFactory )
   {
     return;
   }
@@ -87,6 +88,11 @@ namespace GRINS
     this->_error_estimator_factory = error_estimator_factory;
   }
 
+  void SimulationBuilder::attach_postprocessing_factory( std::tr1::shared_ptr<PostprocessingFactory> postprocessing_factory )
+  {
+    this->_postprocessing_factory = postprocessing_factory; 
+  }
+
   std::tr1::shared_ptr<libMesh::Mesh> SimulationBuilder::build_mesh( const GetPot& input )
   {
     return (this->_mesh_builder)->build(input);
@@ -130,6 +136,11 @@ namespace GRINS
   std::tr1::shared_ptr<libMesh::ErrorEstimator> SimulationBuilder::build_error_estimator( const GetPot& input, std::tr1::shared_ptr<QoIBase> qoi )
   {
     return (this->_error_estimator_factory)->build( input, qoi );
+  }
+
+  std::tr1::shared_ptr<PostProcessedQuantities<Real> > SimulationBuilder::build_postprocessing( const GetPot& input )
+  {
+    return (this->_postprocessing_factory)->build(input);
   }
 
 } //namespace GRINS
