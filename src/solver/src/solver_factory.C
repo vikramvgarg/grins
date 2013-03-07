@@ -32,14 +32,13 @@
 // GRINS
 #include "grins/grins_steady_solver.h"
 #include "grins/grins_unsteady_solver.h"
+#include "grins/grins_mesh_adaptive_solver.h"
 
 // libMesh
 #include "libmesh/getpot.h"
 
 namespace GRINS
 {
-  bool mesh_adaptive = input("unsteady-solver/mesh_adaptive", false );
-
   SolverFactory::SolverFactory()
   {
     return;
@@ -52,6 +51,8 @@ namespace GRINS
 
   std::tr1::shared_ptr<Solver> SolverFactory::build(const GetPot& input)
   {
+    bool mesh_adaptive = input("unsteady-solver/mesh_adaptive", false );
+
     bool transient = input("unsteady-solver/transient", false );
 
     Solver* solver;

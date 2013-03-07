@@ -160,14 +160,14 @@ sfiles_DATA = $(physics_srcdir)/axisym_heat_transfer.C
 #INCLUDES we want distributed
 #----------------------------
 
-solver_INC   = $(solver_incdir)/grins_solver.h \
-               $(solver_incdir)/mesh_builder.h \
-               $(solver_incdir)/simulation.h \
-               $(solver_incdir)/solver_factory.h \
-               $(solver_incdir)/grins_steady_solver.h \
-               $(solver_incdir)/grins_unsteady_solver.h \
-               $(solver_incdir)/grins_mesh_adaptive_solver.h \
-               $(solver_incdir)/simulation_builder.h \
+solver_INC   = $(solver_incdir)/grins/grins_solver.h \
+               $(solver_incdir)/grins/mesh_builder.h \
+               $(solver_incdir)/grins/simulation.h \
+               $(solver_incdir)/grins/solver_factory.h \
+               $(solver_incdir)/grins/grins_steady_solver.h \
+               $(solver_incdir)/grins/grins_unsteady_solver.h \
+               $(solver_incdir)/grins/grins_mesh_adaptive_solver.h \
+               $(solver_incdir)/grins/simulation_builder.h \
                $(solver_incdir)/grins/solver_context.h
 
 physics_INC  = $(physics_incdir)/grins/multiphysics_sys.h \
@@ -267,7 +267,7 @@ qoi_INC = $(qoi_incdir)/grins/average_nusselt_number.h \
           $(qoi_incdir)/grins/qoi_names.h \
           $(qoi_incdir)/grins/vorticity.h
 
-error_estimation_INC = $(error_estimation_incdir)/error_estimation_factory.h 
+error_estimation_INC = $(error_estimation_incdir)/grins/error_estimation_factory.h 
 
 kinetics_INC = $(kinetics_incdir)/grins/arrhenius_rate.h \
                $(kinetics_incdir)/grins/reaction.h \

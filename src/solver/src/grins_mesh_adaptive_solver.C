@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -26,12 +26,34 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
-#include "grins_mesh_adaptive_solver.h"
+// This class
+#include "grins/grins_mesh_adaptive_solver.h"
+
+// GRINS
+#include "grins/solver_context.h"
+#include "grins/multiphysics_sys.h"
+
+// libMesh
+#include "libmesh/error_vector.h"
+#include "libmesh/steady_solver.h"
 
 GRINS::MeshAdaptiveSolver::MeshAdaptiveSolver( const GetPot& input )
   : Solver( input )
 {
-  this->read_input_options( input );
+  std::string param_path = "Adaptivity/"; // general section for model- and hp-adaptivity
+  this->_max_r_steps = input( param_path + "max_r_steps", 5 );
+  this->_coarsen_by_parents = true;
+  this->_absolute_global_tolerance = input( param_path + "absolute_global_tolerance", 0 );
+  this->_nelem_target = input( param_path + "nelem_target", 0 );
+  this->_refine_fraction = input( param_path + "refine_percentage", 0.2 );
+  this->_coarsen_fraction = input( param_path + "coarsen_percentage", 0.2 );
+  this->_coarsen_threshold = input( param_path + "coarsen_threshold", 0 );
+  this->_output_adjoint_sol = input( param_path + "output_adjoint_sol", false );
+
+  // Output options
+  this->_plot_cell_errors = input( param_path + "plot_cell_errors", false );
+  this->_error_plot_prefix = input( param_path + "error_plot_prefix", "cell_error" );
+
   return;
 }
 
@@ -44,7 +66,7 @@ void GRINS::MeshAdaptiveSolver::init_time_solver( GRINS::MultiphysicsSystem* sys
 {
   libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
 
-  system->time_solver = AutoPtr<TimeSolver>( time_solver );
+  system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>( time_solver );
 
   return;
 }
@@ -52,7 +74,7 @@ void GRINS::MeshAdaptiveSolver::init_time_solver( GRINS::MultiphysicsSystem* sys
 void GRINS::MeshAdaptiveSolver::solve( SolverContext& context )
 {
   // Mesh and mesh refinement
-  MeshBase& mesh = context.equation_system->get_mesh();
+  libMesh::MeshBase& mesh = context.equation_system->get_mesh();
   build_mesh_refinement( mesh );
 
   // This output cannot be toggled in the input file.
@@ -65,22 +87,27 @@ void GRINS::MeshAdaptiveSolver::solve( SolverContext& context )
     {
       // We can't adapt to both a tolerance and a target mesh size
       if( this->_absolute_global_tolerance != 0. )
-	libmesh_assert_equal_to( this->_nelem_target, 0 );
+	{
+	  libmesh_assert_equal_to( this->_nelem_target, 0 );
+	}
+
       // If we aren't adapting to a tolerance we need a target mesh size
       else
-	libmesh_assert_greater( _mesh_refinement->nelem_target(), 0 );
+	{
+	  libmesh_assert_greater( _mesh_refinement->nelem_target(), 0 );
+	}
 
       // Solve the forward problem
       context.system->solve();
-      NumericVector<Number> &primal_solution = *(context.system->solution);
-      if( context.output_vis && ! this->_output_adjoint_sol ) context.vis->output( equation_system );
+      libMesh::NumericVector<Number> &primal_solution = *(context.system->solution);
+      if( context.output_vis && ! this->_output_adjoint_sol ) context.vis->output( context.equation_system );
     
       // Make sure we get the contributions to the adjoint RHS from the sides
       context.system->assemble_qoi_sides = true;
 
       // Solve adjoint system: takes transpose of stiffness matrix and solves resulting system
       context.system->adjoint_solve();
-      NumericVector<Number> &dual_solution = context.system->get_adjoint_solution(0);
+      libMesh::NumericVector<Number> &dual_solution = context.system->get_adjoint_solution(0);
 
       // At the moment output data is overwritten every mesh refinement step
       if( context.output_vis && this->_output_adjoint_sol )
@@ -92,18 +119,22 @@ void GRINS::MeshAdaptiveSolver::solve( SolverContext& context )
 	}
 
       if( context.output_residual )
-	context.vis->output_residual( context.equation_system, context.system );
+	{
+	  context.vis->output_residual( context.equation_system, context.system );
+	}
 
       // Now we construct the data structures for the mesh refinement process	
-      ErrorVector error;
+      libMesh::ErrorVector error;
 	  
       // ``error_estimator'' should have been built in simulation_builder.C
       // and attached to the solver in grins_solver already.
-      error_estimator->estimate_error( *context.system, error );
+      context.error_estimator->estimate_error( *context.system, error );
 
       // Plot error vector
       if( this->_plot_cell_errors )
-        error.plot_error( this->_error_plot_prefix+".exo", mesh );
+	{
+	  error.plot_error( this->_error_plot_prefix+".exo", mesh );
+	}
     
       if( this->_absolute_global_tolerance >= 0. && this->_nelem_target == 0.)
 	{
@@ -134,23 +165,7 @@ void GRINS::MeshAdaptiveSolver::solve( SolverContext& context )
   return;
 }
 
-void GRINS::MeshAdaptiveSolver::read_input_options( const GetPot& input )
-{
-  std::string param_path = "Adaptivity/"; // general section for model- and hp-adaptivity
-  this->_max_r_steps = input( param_path + "max_r_steps", 5 );
-  this->_coarsen_by_parents = true;
-  this->_absolute_global_tolerance = input( param_path + "absolute_global_tolerance", 0 );
-  this->_nelem_target = input( param_path + "nelem_target", 0 );
-  this->_refine_fraction = input( param_path + "refine_percentage", 0.2 );
-  this->_coarsen_fraction = input( param_path + "coarsen_percentage", 0.2 );
-  this->_coarsen_threshold = input( param_path + "coarsen_threshold", 0 );
-  this->_output_adjoint_sol = input( param_path + "output_adjoint_sol", false );
-  // Output options
-  this->_plot_cell_errors = input( param_path + "plot_cell_errors", false );
-  this->_error_plot_prefix = input( param_path + "error_plot_prefix", "cell_error" );
-}
-
-void GRINS::MeshAdaptiveSolver::build_mesh_refinement( MeshBase &mesh )
+void GRINS::MeshAdaptiveSolver::build_mesh_refinement( libMesh::MeshBase &mesh )
 {
   this->_mesh_refinement.reset( new libMesh::MeshRefinement( mesh ) );
   this->_mesh_refinement->coarsen_by_parents() = this->_coarsen_by_parents;

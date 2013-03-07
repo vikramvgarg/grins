@@ -26,7 +26,12 @@
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 
+// This class
 #include "grins/simulation_builder.h"
+
+// libMesh
+#include "libmesh/error_estimator.h"
+#include "libmesh/adjoint_refinement_estimator.h"
 
 namespace GRINS
 {
@@ -36,9 +41,9 @@ namespace GRINS
       _solver_factory( new SolverFactory ),
       _vis_factory( new VisualizationFactory ),
       _bc_factory( new BoundaryConditionsFactory ),
-      _error_estimator_factory( new ErrorEstimatorFactory ),
       _qoi_factory( new QoIFactory ),
-      _postprocessing_factory( new PostprocessingFactory )
+      _postprocessing_factory( new PostprocessingFactory ),
+      _error_estimator_factory( new ErrorEstimatorFactory )
   {
     return;
   }
