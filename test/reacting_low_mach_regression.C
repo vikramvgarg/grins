@@ -3,21 +3,21 @@
 // 
 // GRINS - General Reacting Incompressible Navier-Stokes 
 //
-// Copyright (C) 2010-2012 The PECOS Development Team
+// Copyright (C) 2010-2013 The PECOS Development Team
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the Version 2 GNU General
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the Version 2.1 GNU Lesser General
 // Public License as published by the Free Software Foundation.
 //
-// This program is distributed in the hope that it will be useful,
+// This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// General Public License for more details.
+// Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this library; if not, write to the Free Software
-// Foundation, Inc. 51 Franklin Street, Fifth Floor, Boston, MA
-// 02110-1301 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc. 51 Franklin Street, Fifth Floor,
+// Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
 //
@@ -71,19 +71,28 @@ int main(int argc, char* argv[])
 
   int return_flag = 0;
 
-  // If we have Cantera, always run
-#ifdef GRINS_HAVE_CANTERA
-  return_flag = run(argc,argv,libMesh_inputfile);
-#else
-  if( std::string( libMesh_inputfile("Physics/ReactingLowMachNavierStokes/chemistry_library", "DIE!") ) == std::string("cantera") )
+  std::string chem_lib = libMesh_inputfile("Physics/ReactingLowMachNavierStokes/thermochemistry_library", "DIE!");
+
+  if( chem_lib == std::string("cantera") )
     {
+#ifdef GRINS_HAVE_CANTERA
+      return_flag = run(argc,argv,libMesh_inputfile);
+#else
       return_flag = 77;
+#endif
+    }
+  else if( chem_lib == std::string("antioch") )
+    {
+#ifdef GRINS_HAVE_ANTIOCH
+      return_flag = run(argc,argv,libMesh_inputfile);
+#else
+      return_flag = 77;
+#endif
     }
   else
     {
-      return_flag = run(argc,argv,libMesh_inputfile);
+      return_flag = 1;
     }
-#endif
 
   return return_flag;
 }
@@ -197,7 +206,7 @@ int run( int argc, char* argv[], const GetPot& input )
 
   // This is the tolerance of the iterative linear solver so
   // it's unreasonable to expect anything better than this.
-  double tol = 1.0e-10;
+  double tol = 5.0e-10;
   
   if( u_l2error > tol   || u_h1error > tol   ||
       v_l2error > tol   || v_h1error > tol   ||

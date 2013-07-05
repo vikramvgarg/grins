@@ -47,7 +47,8 @@ namespace GRINS
   template< class Conductivity>
   AxisymmetricHeatTransfer<Conductivity>::AxisymmetricHeatTransfer( const std::string& physics_name,
 								    const GetPot& input)
-    : Physics(physics_name, input)
+    : Physics(physics_name, input),
+      _k(input)
   {
     this->read_input_options(input);
   
@@ -73,15 +74,13 @@ namespace GRINS
       libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_heat_transfer+"/T_order", "SECOND") );
 
     this->_V_FE_family =
-      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/FE_family", "LAGRANGE") );
+      libMesh::Utility::string_to_enum<libMeshEnums::FEFamily>( input("Physics/"+incompressible_navier_stokes+"/FE_family", "LAGRANGE") );
 
     this->_V_order =
-      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+axisymmetric_incomp_navier_stokes+"/V_order", "SECOND") );
+      libMesh::Utility::string_to_enum<libMeshEnums::Order>( input("Physics/"+incompressible_navier_stokes+"/V_order", "SECOND") );
 
     this->_rho = input("Physics/"+axisymmetric_heat_transfer+"/rho", 1.0); //TODO: same as Incompressible NS
     this->_Cp  = input("Physics/"+axisymmetric_heat_transfer+"/Cp", 1.0);
-
-    this->_k.read_input_options( input );
 
     this->_T_var_name = input("Physics/VariableNames/Temperature", T_var_name_default );
 

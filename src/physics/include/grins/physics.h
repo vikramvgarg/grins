@@ -165,23 +165,23 @@ namespace GRINS
     void attach_dirichlet_bound_func( const GRINS::DBCContainer& dirichlet_bc );
 
     virtual void compute_element_time_derivative_cache( const libMesh::FEMContext& context,
-							CachedValues& cache ) const;
+							CachedValues& cache );
 
     virtual void compute_side_time_derivative_cache( const libMesh::FEMContext& context,
-						     CachedValues& cache ) const;
+						     CachedValues& cache );
 
     virtual void compute_element_constraint_cache( const libMesh::FEMContext& context,
-						   CachedValues& cache ) const;
+						   CachedValues& cache );
 
     virtual void compute_side_constraint_cache( const libMesh::FEMContext& context,
-						CachedValues& cache ) const;
+						CachedValues& cache );
 
     virtual void compute_mass_residual_cache( const libMesh::FEMContext& context,
-					      CachedValues& cache ) const;
+					      CachedValues& cache );
 
     virtual void compute_element_cache( const libMesh::FEMContext& context, 
 					const std::vector<libMesh::Point>& points,
-					CachedValues& cache ) const;
+					CachedValues& cache );
 
     BCHandlingBase* get_bc_handler(); 
 
@@ -205,6 +205,8 @@ namespace GRINS
     /*! This is need, for example, in flow stabilization as the tau terms change
         depending on whether the solver is steady or unsteady. */
     static bool _is_steady;
+
+    bool _is_axisymmetric;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     GRVY::GRVY_Timer_Class* _timer;
