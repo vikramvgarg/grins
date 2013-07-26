@@ -371,9 +371,9 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
       // Get the bdry id for this bdry
       short int bc_id = *it;
       
-      libMesh::Real pot_set_0 = 1.;
-      libMesh::Real pot_set_1 = 0.;
-      libMesh::Real pot_set_2 = 0.;
+      libMesh::Real pot_set_0 = 0.;
+      libMesh::Real pot_set_1 = 1.;
+      libMesh::Real pot_set_2 = 1.;
       
       for (unsigned int qp=0; qp != n_qpoints; qp++)
 	{
