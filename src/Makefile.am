@@ -75,6 +75,8 @@ libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_transfer_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/low_mach_navier_stokes_stab_helper.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/heat_conduction.C
 libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reacting_low_mach_navier_stokes_instantiate.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/reduced_electroosmosis.C
+libgrins_la_SOURCES += $(top_srcdir)/src/physics/src/full_electroosmosis.C
 
 # src/properties files
 libgrins_la_SOURCES += $(top_srcdir)/src/properties/src/constant_conductivity.C
@@ -194,6 +196,8 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/low_mach_navier_stoke
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/reduced_electroosmosis.h
+include_HEADERS += $(top_srcdir)/src/physics/include/grins/full_electroosmosis.h
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h

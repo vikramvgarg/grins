@@ -59,6 +59,9 @@
 #include "grins/heat_conduction.h"
 #include "grins/constant_source_func.h"
 
+#include "grins/reduced_electroosmosis.h"
+#include "grins/full_electroosmosis.h"
+
 #include "grins/antioch_wilke_transport_evaluator.h"
 #include "grins/antioch_constant_transport_mixture.h"
 #include "grins/antioch_constant_transport_evaluator.h"
@@ -267,6 +270,16 @@ namespace GRINS
     else if( physics_to_add == reacting_low_mach_navier_stokes )
       {
         this->add_reacting_low_mach( input, physics_to_add, physics_list );
+      }
+    else if( physics_to_add == reduced_electroosmosis )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new ReducedElectroosmosis(physics_to_add,input) );
+      }
+    else if( physics_to_add == full_electroosmosis )
+      {
+	physics_list[physics_to_add] = 
+	  PhysicsPtr(new FullElectroosmosis(physics_to_add,input) );
       }
     else
       {

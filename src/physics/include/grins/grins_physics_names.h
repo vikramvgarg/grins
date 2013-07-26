@@ -51,6 +51,7 @@ namespace GRINS
   const PhysicsName low_mach_navier_stokes_vms_stab = "LowMachNavierStokesVMSStabilization";
   const PhysicsName reacting_low_mach_navier_stokes = "ReactingLowMachNavierStokes";
   const PhysicsName reduced_electroosmosis = "ReducedElectroosmosis";
+  const PhysicsName full_electroosmosis = "FullElectroosmosis";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H
