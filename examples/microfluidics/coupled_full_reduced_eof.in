@@ -1,0 +1,96 @@
+# Mesh related options
+[mesh-options]
+mesh_option = 'read_mesh_from_file'
+mesh_filename = 'T_channel_quad_full_subdomains.xda'
+element_type = QUAD9
+make_mesh_second_order = true
+uniformly_refine = 3
+
+# Options for time solvers
+[unsteady-solver]
+transient = false 
+theta = 0.5
+n_timesteps = 1
+deltat = 0.1
+
+#Linear and nonlinear solver options
+[linear-nonlinear-solver]
+max_nonlinear_iterations = 20 
+max_linear_iterations = 10000
+
+initial_linear_tolerance = '1.0e-12'
+
+verify_analytic_jacobians = '0.0'
+
+use_numerical_jacobians_only = 'true'
+
+require_residual_reduction = 'true'
+
+# Visualization options
+[vis-options]
+output_vis_time_series = 'false'
+output_vis = 'true' 
+vis_output_file_prefix = 'full_reduced'
+output_format = 'gmv'
+
+# Options for print info to the screen
+[screen-options]
+print_equation_system_info = 'true' 
+print_mesh_info = 'true'
+print_log_info = 'true'
+solver_verbose = 'true'
+solver_quiet = 'false'
+
+echo_physics = 'true'
+
+# Options related to all Physics
+[Physics]
+
+enabled_physics = 'FullElectroosmosis ReducedElectroosmosis'
+
+# Options for Full EOF physics
+[./FullElectroosmosis]
+enabled_subdomains = '0'
+
+E_FE_family = 'LAGRANGE'
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+T_FE_family = 'LAGRANGE'
+
+E_order = 'SECOND'
+V_order = 'SECOND'
+T_order = 'SECOND'
+P_order = 'FIRST'
+
+Debye_Huckel = 1.0
+
+# Options for Reduced EOF physics
+[../ReducedElectroosmosis]
+enabled_subdomains = '1'
+
+V_FE_family = 'LAGRANGE'
+P_FE_family = 'LAGRANGE'
+T_FE_family = 'LAGRANGE'
+
+V_order = 'SECOND'
+T_order = 'SECOND'
+P_order = 'FIRST'
+
+lambda = 1.0
+
+[../VariableNames]
+
+Boltzmann_Potential = 'E'
+Applied_Potential = 'T'
+u_velocity = 'u'
+v_velocity = 'v'
+pressure = 'p'
+
+[]
+
+
+
+
+
+
+

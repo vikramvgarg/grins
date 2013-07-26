@@ -1,20 +1,22 @@
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'ReducedElectroosmosis'
+enabled_physics = 'FullElectroosmosis'
 
 # Options for  physics
-[./ReducedElectroosmosis]
+[./FullElectroosmosis]
 
+E_FE_family = 'LAGRANGE'
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'
 T_FE_family = 'LAGRANGE'
 
+E_order = 'SECOND'
 V_order = 'SECOND'
 T_order = 'SECOND'
 P_order = 'FIRST'
 
-lambda = 1.0
+Debye_Huckel = 1.0
 
 # # Boundary ids:
 # # j = bottom -> 0
@@ -73,7 +75,7 @@ mesh_option = read_mesh_from_file
 mesh_filename = T_channel_quad_full.xda
 element_type = QUAD9
 make_mesh_second_order = true
-uniformly_refine = 1
+uniformly_refine = 3
 
 # Options for time solvers
 [unsteady-solver]
@@ -85,7 +87,7 @@ deltat = 50.0
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations = 100 
-max_linear_iterations = 1000
+max_linear_iterations = 2500
 
 verify_analytic_jacobians = 0.0
 
@@ -103,7 +105,7 @@ vis_output_file_prefix = 'microfluidics'
 
 output_residual = 'false'
 
-output_format = 'mesh_only'
+output_format = 'gmv'
 
 #output_vars = 'rho'
 
