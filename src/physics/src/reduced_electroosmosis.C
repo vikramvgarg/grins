@@ -390,6 +390,9 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
       // x and y co-ordinates of the current qp
       Real x = qside_point[qp](0);
       Real y = qside_point[qp](1);
+      
+      // The sign of x
+      Real sign_x = (x > 0) ? 1 : ((x < 0) ? -1 : 0);
 
       switch (bc_id)
 	{
@@ -480,14 +483,15 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
 	      {
 		Fu(i) += JxW_side[qp] * _penalty * ( u - 0.0 ) * phi_side[i][qp]; // Enforces No Penetration for u
 
-		Fv(i) += JxW_side[qp] * _penalty * ( v + ( _lambda * grad_T(1) ) ) * phi_side[i][qp]; // Enforces Slip Condition for v
+		//Fv(i) += JxW_side[qp] * _penalty * ( v + ( _lambda * grad_T(1) ) ) * phi_side[i][qp]; // Enforces Slip Condition for v
+		Fv(i) += JxW_side[qp] * _penalty * ( v + 0.01 ) * phi_side[i][qp]; // Enforces Slip Condition for v
 							    		
 		if (compute_jacobian)
 		  for (unsigned int j=0; j != n_u_dofs; ++j)
 		    {
-		      Kuu(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for u		      
+		      Kuu(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for u	    
 		      		      		      
-		      KvT(i,j) += JxW_side[qp] * _penalty * _lambda * dphi_side[j][qp](1) * phi_side[i][qp]; // Enforces Slip Condition for v
+		      //KvT(i,j) += JxW_side[qp] * _penalty * _lambda * dphi_side[j][qp](1) * phi_side[i][qp]; // Enforces Slip Condition for v
 		      Kvv(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for v		      
 		    }
 						    
@@ -500,14 +504,15 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
 	    // Penalize non-slip velocities
 	    for (unsigned int i=0; i != n_u_dofs; i++)
 	      {
-		Fu(i) += JxW_side[qp] * _penalty * ( u + ( _lambda * grad_T(0) ) ) * phi_side[i][qp]; // Enforces Slip Condition for u
+		//Fu(i) += JxW_side[qp] * _penalty * ( u + ( _lambda * grad_T(0) ) ) * phi_side[i][qp]; // Enforces Slip Condition for u
+		Fu(i) += JxW_side[qp] * _penalty * ( u + 0.005 ) * phi_side[i][qp]; // Enforces Slip Condition for u
 
 		Fv(i) += JxW_side[qp] * _penalty * ( v - 0.0 ) * phi_side[i][qp]; // Enforces No Penetration for v
 							    		
 		if (compute_jacobian)
 		  for (unsigned int j=0; j != n_u_dofs; ++j)
 		    {
-		      KuT(i,j) += JxW_side[qp] * _penalty * _lambda * dphi_side[j][qp](0) * phi_side[i][qp]; // Enforces Slip Condition for u
+		      //KuT(i,j) += JxW_side[qp] * _penalty * _lambda * dphi_side[j][qp](0) * phi_side[i][qp]; // Enforces Slip Condition for u
 		      Kuu(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for u		      
 		      		      		      
 		      Kvv(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for v		      
@@ -522,15 +527,17 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
 	    // Penalize non-slip velocities
 	    for (unsigned int i=0; i != n_u_dofs; i++)
 	      {
-		Fu(i) += JxW_side[qp] * _penalty * (-u - ( _lambda * grad_T(0) ) ) * phi_side[i][qp]; // Enforces Slip Condition for u
+		//Fu(i) += JxW_side[qp] * _penalty * (-u - ( _lambda * grad_T(0) ) ) * phi_side[i][qp]; // Enforces Slip Condition for u
+		Fu(i) += JxW_side[qp] * _penalty * (u - (-sign_x*0.005) ) * phi_side[i][qp]; // Enforces Slip Condition for u
 
 		Fv(i) += JxW_side[qp] * _penalty * ( v - 0.0 ) * phi_side[i][qp]; // Enforces No Penetration for v
 							    		
 		if (compute_jacobian)
 		  for (unsigned int j=0; j != n_u_dofs; ++j)
 		    {
-		      KuT(i,j) += JxW_side[qp] * _penalty * _lambda * -dphi_side[j][qp](0) * phi_side[i][qp]; // Enforces Slip Condition for u
-		      Kuu(i,j) += JxW_side[qp] * _penalty * -phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for u		      
+		      //KuT(i,j) += JxW_side[qp] * _penalty * _lambda * -dphi_side[j][qp](0) * phi_side[i][qp]; // Enforces Slip Condition for u
+		      // Kuu(i,j) += JxW_side[qp] * _penalty * -phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for u
+		      Kuu(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for u
 		      		      		      
 		      Kvv(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for v		      
 		    }
@@ -544,17 +551,22 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
 	    // Penalize non-slip velocities
 	    for (unsigned int i=0; i != n_u_dofs; i++)
 	      {
-		Fu(i) += JxW_side[qp] * _penalty * ( u + ( _lambda * grad_T(0) ) ) * phi_side[i][qp]; // Enforces Slip Condition for u 
+		//Fu(i) += JxW_side[qp] * _penalty * ( u + ( _lambda * grad_T(0) ) ) * phi_side[i][qp]; // Enforces Slip Condition for u 
 
-		Fv(i) += JxW_side[qp] * _penalty * ( - v  - 0.0) * phi_side[i][qp]; // Enforces No Penetration for v
+		//Fv(i) += JxW_side[qp] * _penalty * ( - v  - 0.0) * phi_side[i][qp]; // Enforces No Penetration for v
+
+		Fu(i) += JxW_side[qp] * _penalty * ( u - 0.005 ) * phi_side[i][qp]; // Enforces Slip Condition for u 
+
+		Fv(i) += JxW_side[qp] * _penalty * ( v  - 0.0) * phi_side[i][qp]; // Enforces No Penetration for v
 							    		
 		if (compute_jacobian)
 		  for (unsigned int j=0; j != n_u_dofs; ++j)
 		    {
-		      KuT(i,j) += JxW_side[qp] * _penalty * _lambda * dphi_side[j][qp](0) * phi_side[i][qp]; // Enforces Slip Condition for u 
+		      //KuT(i,j) += JxW_side[qp] * _penalty * _lambda * dphi_side[j][qp](0) * phi_side[i][qp]; // Enforces Slip Condition for u 
 		      Kuu(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for u 		      
 		      		      		      
-		      Kvv(i,j) += JxW_side[qp] * _penalty * -phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for v
+		      //Kvv(i,j) += JxW_side[qp] * _penalty * -phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for v
+		      Kvv(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for v
 		    }
 						    
 	      }
@@ -568,15 +580,18 @@ void ReducedElectroosmosis::side_constraint (bool compute_jacobian,
 	      {
 		Fu(i) += JxW_side[qp] * _penalty * ( u - 0.0 ) * phi_side[i][qp]; // Enforces No Penetration for u
 
-		Fv(i) += JxW_side[qp] * _penalty * ( -v - ( _lambda * grad_T(1) ) ) * phi_side[i][qp]; // Enforces Slip Condition for v
+		//Fv(i) += JxW_side[qp] * _penalty * ( -v - ( _lambda * grad_T(1) ) ) * phi_side[i][qp]; // Enforces Slip Condition for v
+		Fv(i) += JxW_side[qp] * _penalty * ( v + 0.01 ) * phi_side[i][qp]; // Enforces Slip Condition for v
 							    		
 		if (compute_jacobian)
 		  for (unsigned int j=0; j != n_u_dofs; ++j)
 		    {
 		      Kuu(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces No Penetration for u		      
 		      		      		      
-		      KvT(i,j) += JxW_side[qp] * _penalty * _lambda * -dphi_side[j][qp](1) * phi_side[i][qp]; // Enforces Slip Condition for v
-		      Kvv(i,j) += JxW_side[qp] * _penalty * -phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for v		      
+		      //KvT(i,j) += JxW_side[qp] * _penalty * _lambda * -dphi_side[j][qp](1) * phi_side[i][qp]; // Enforces Slip Condition for v
+		      //Kvv(i,j) += JxW_side[qp] * _penalty * -phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for v
+
+		      Kvv(i,j) += JxW_side[qp] * _penalty * phi_side[j][qp] * phi_side[i][qp]; // Enforces Slip Condition for v
 		    }
 						    
 	      }
