@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_SIMULATION_H
 #define GRINS_SIMULATION_H
@@ -75,7 +71,7 @@ namespace GRINS
 
     std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
 
-    Number get_qoi( unsigned int qoi_index ) const;
+    libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
 
 #ifdef GRINS_USE_GRVY_TIMERS
     void attach_grvy_timer( GRVY::GRVY_Timer_Class* grvy_timer );
@@ -100,11 +96,10 @@ namespace GRINS
     //! GRINS::Multiphysics system name
     std::string _system_name;
     
+    // This needs to be a standard pointer, as _equation_system will own and destroy the object.
     GRINS::MultiphysicsSystem* _multiphysics_system;
 
     std::tr1::shared_ptr<GRINS::Visualization> _vis;
-
-    std::tr1::shared_ptr<QoIBase> _qoi;
 
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > _postprocessing;
 
@@ -117,6 +112,10 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+
+    unsigned int _timesteps_per_vis;
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> _error_estimator;
 
   private:
 

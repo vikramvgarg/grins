@@ -20,24 +20,32 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_STRING_UTILS_H
 #define GRINS_STRING_UTILS_H
 
-// C++
-#include <string>
-#include <vector>
-
 // libMesh
 #include "libmesh/libmesh_common.h"
 
+// C++
+#include <sstream>
+#include <string>
+#include <vector>
+
 namespace GRINS
 {
+  template <typename T>
+  inline
+  T string_to_T(const std::string& input)
+  {
+    std::istringstream converter(input);
+    T returnval;
+    converter >> returnval;
+    libmesh_assert(!converter.fail());
+    return returnval;
+  }
+
   /*!
     Split on colon, and return name, int value pair.
     Taken from FIN-S for XML parsing.
@@ -100,9 +108,16 @@ namespace GRINS
 
     newPos = input.find (delimiter, 0);
 
-    if( newPos < 0 )
+    /* We already checked if the input size was zero, so if we didn't
+       find any delimiters, we assume that there is exactly one entry
+       in the input and just return that. */
+    /*! \todo We should probably try and trim white space in this case */
+    if( newPos == input.npos )
       { 
-	return 0; 
+        results.push_back(input);
+
+        // We found 1 entry
+        return 1;
       }
 
     int numFound = 0;

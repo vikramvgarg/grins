@@ -20,20 +20,19 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/heat_transfer_stab_base.h"
+
+// GRINS
+#include "grins/assembly_context.h"
 
 namespace GRINS
 {
 
   HeatTransferStabilizationBase::HeatTransferStabilizationBase( const std::string& physics_name, 
-								const GetPot& input )
+                                                                const GetPot& input )
     : HeatTransferBase(physics_name,input),
       _stab_helper( input )
   {
@@ -47,37 +46,25 @@ namespace GRINS
     return;
   }
 
-  void HeatTransferStabilizationBase::init_context( libMesh::FEMContext& context )
+  void HeatTransferStabilizationBase::init_variables( libMesh::FEMSystem* system )
+  {
+    // First call base class
+    HeatTransferBase::init_variables(system);
+
+    _stab_helper.init(*system);
+
+    return;
+  }
+
+  void HeatTransferStabilizationBase::init_context( AssemblyContext& context )
   {
     // First call base class
     HeatTransferBase::init_context(context);
 
     // We also need second derivatives, so initialize those.
-    context.element_fe_var[this->_T_var]->get_d2phi();
+    context.get_element_fe(this->_temp_vars.T_var())->get_d2phi();
 
     return;
-  }
-
-  libMesh::Real HeatTransferStabilizationBase::compute_res_steady( libMesh::FEMContext& context,
-								   unsigned int qp ) const
-  {
-    libMesh::Gradient grad_T = context.fixed_interior_gradient(this->_T_var, qp);
-    libMesh::Tensor hess_T = context.fixed_interior_hessian(this->_T_var, qp);
-
-    libMesh::RealGradient rhocpU( _rho*_Cp*context.fixed_interior_value(this->_u_var, qp), 
-				  _rho*_Cp*context.fixed_interior_value(this->_v_var, qp) );
-    if(this->_dim == 3)
-      rhocpU(2) = _rho*_Cp*context.fixed_interior_value(this->_w_var, qp);
-
-    return rhocpU*grad_T - _k*(hess_T(0,0) + hess_T(1,1) + hess_T(2,2));
-  }
-
-  libMesh::Real HeatTransferStabilizationBase::compute_res_transient( libMesh::FEMContext& context,
-								      unsigned int qp ) const
-  {
-    libMesh::Real T_dot = context.interior_value(this->_T_var, qp);
-
-    return _rho*_Cp*T_dot;
   }
 
 } // namespace GRINS

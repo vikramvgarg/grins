@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/solver_context.h"
@@ -38,6 +34,7 @@ namespace GRINS
     : system(NULL),
       equation_system( std::tr1::shared_ptr<libMesh::EquationSystems>() ),
       vis( std::tr1::shared_ptr<GRINS::Visualization>() ),
+      timesteps_per_vis( 1 ),
       output_vis( false ),
       output_residual( false ),
       postprocessing( std::tr1::shared_ptr<PostProcessedQuantities<Real> >() )

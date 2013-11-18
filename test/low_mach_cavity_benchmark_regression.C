@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // C++
 #include <iostream>
@@ -86,13 +82,13 @@ int main(int argc, char* argv[])
 
   grins.run();
 
-  Real qoi = grins.get_qoi(0);
+  Real qoi = grins.get_qoi_value(0);
 
   // Note that this is a *really* coarse mesh. This is just for testing
   // and not even close to the real QoI for this problem.
-  const Real exact_qoi = 4.8158910675853654e+00;
+  const Real exact_qoi = 4.8158910676325055;
 
-  const Real tol = 5.0e-12;
+  const Real tol = 1.0e-11;
 
   int return_flag = 0;
 

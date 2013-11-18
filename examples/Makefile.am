@@ -1,4 +1,7 @@
 BUILT_SOURCES   = .license.stamp
+
+CLEANFILES = .license.stamp
+
 EXTRA_DIST =
 
 AM_CPPFLAGS = 
@@ -23,6 +26,7 @@ AM_LDFLAGS =
 if CANTERA_ENABLED
    AM_CPPFLAGS += $(CANTERA_CPPFLAGS)
    AM_LDFLAGS  += $(CANTERA_LDFLAGS)
+   LIBGRINS_LIBS += $(CANTERA_LIBS)
 endif
 
 #----------------
@@ -30,7 +34,6 @@ endif
 #----------------
 if ANTIOCH_ENABLED
    AM_CPPFLAGS += $(ANTIOCH_CPPFLAGS)
-   AM_LDFLAGS  += $(ANTIOCH_PREFIX)/lib/libantioch.la
 endif
 
 #=======================================================================
@@ -52,6 +55,8 @@ toyprob_DATA = $(top_srcdir)/examples/toyprob/toy.in
 
 toy_SOURCES = $(top_srcdir)/examples/toyprob/toy.C
 toy_LDADD = $(LIBGRINS_LIBS)
+
+EXTRA_DIST += $(toyprob_DATA)
 
 #=======================================================================
 # Cavity Benchmark
@@ -80,6 +85,15 @@ liddrivencavity_DATA = $(top_srcdir)/examples/lid_driven_cavity/lid_driven_cavit
 liddrivencavity_SCRIPTS = $(top_builddir)/examples/lid_driven_cavity/run.sh
 
 EXTRA_DIST += $(liddrivencavity_DATA)
+
+#=======================================================================
+# Convection Cell Example
+#=======================================================================
+convectioncelldir = $(prefix)/examples/convection_cell
+convectioncell_DATA = $(top_srcdir)/examples/convection_cell/convection_cell.in
+convectioncell_SCRIPTS = $(top_builddir)/examples/convection_cell/run.sh
+
+EXTRA_DIST += $(convectioncell_DATA)
 
 #=======================================================================
 # Mass Injection Example
@@ -131,16 +145,21 @@ rlmnsex_DATA += $(top_srcdir)/examples/reacting_flow/air_2sp.xml
 rlmns_SOURCES = $(top_srcdir)/examples/reacting_flow/rlmns.C
 rlmns_LDADD = $(LIBGRINS_LIBS)
 
+EXTRA_DIST += $(rlmnsex_DATA)
+
 #=======================================================================
 # Vortex Example
 #=======================================================================
-#vortexexdir = $(prefix)/examples/thermal_vortex
-#vortexex_PROGRAMS = vortex
-#vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+vortexexdir = $(prefix)/examples/thermal_vortex
+vortexex_PROGRAMS = vortex
+vortexex_DATA = $(top_srcdir)/examples/thermal_vortex/vortex.in
+vortexex_SCRIPTS = $(top_builddir)/examples/thermal_vortex/run.sh
 
-#vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
+vortex_SOURCES = $(top_srcdir)/examples/thermal_vortex/vortex.C
 
-#vortex_LDADD = $(LIBGRINS_LIBS)
+vortex_LDADD = $(LIBGRINS_LIBS)
+
+EXTRA_DIST += $(vortexex_DATA)
 
 #=======================================================================
 # Laminar Flame Example
@@ -150,6 +169,12 @@ laminarflame_PROGRAMS = bunsen
 laminarflame_DATA  = $(top_srcdir)/examples/laminar_flame/bunsen.in
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/elements.xml
 laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen.xml
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/ignite_initial_guess.h
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/bunsen_source.h 
+laminarflame_DATA += $(top_srcdir)/examples/laminar_flame/medium.exo
+
+EXTRA_DIST += $(laminarflame_DATA)
 
 bunsen_SOURCES  = $(top_srcdir)/examples/laminar_flame/bunsen.C
 bunsen_SOURCES += $(top_srcdir)/examples/laminar_flame/constant_with_exp_layer.C

@@ -62,7 +62,7 @@ AC_PROG_FC
 dnl----------------
 dnl Libmesh Config
 dnl----------------
-AX_PATH_LIBMESH_NEW(0.9.1,yes)
+AX_PATH_LIBMESH_NEW(0.9.2,yes)
 
 AC_ARG_ENABLE([libmesh-flags],
                AC_HELP_STRING([--disable-libmesh-flags],[disable use of libmesh cxxflags for CXXFLAGS]),
@@ -84,6 +84,27 @@ fi
 
 dnl -Wall warnings, -Wall the time.
 AX_CXXFLAGS_WARN_ALL
+
+dnl--------------------------
+dnl Even if no dependency needed it,
+dnl C++11 makes our asserts nicer,
+dnl so let's try and enable it.
+dnl--------------------------
+AC_ARG_ENABLE(cxx11,
+              AC_HELP_STRING([--enable-cxx11],
+                             [build with C++11 support]),
+              [case "${enableval}" in
+                yes)  enablecxx11=yes ;;
+                 no)  enablecxx11=no ;;
+                  *)  AC_MSG_ERROR(bad value ${enableval} for --enable-cxx11) ;;
+               esac],
+               [enablecxx11=optional])
+
+if (test x$enablecxx11 = xyes); then
+  AX_CXX_COMPILE_STDCXX_11(noext, mandatory)
+elif (test x$enablecxx11 = xoptional); then
+  AX_CXX_COMPILE_STDCXX_11(noext, optional)
+fi
 
 dnl---------------------------------------------------------
 dnl Add libMesh flags manually if it's not a libtool build
@@ -172,36 +193,39 @@ if test "$enable_cantera" != no; then
 
    ac_cantera_save_CPPFLAGS="$CPPFLAGS"
    ac_cantera_save_LDFLAGS="$LDFLAGS"
+   ac_cantera_save_LIBS="$LIBS"
 
    CANTERA_PREFIX=$with_cantera
 
    CPPFLAGS="-I$CANTERA_PREFIX/include"
    # v2.0.x with scons
-   LDFLAGS="-L$CANTERA_PREFIX/lib -lcantera_shared"
+   LDFLAGS="-L$CANTERA_PREFIX/lib"
+   LIBS="-lcantera_shared"
    
    if (test -f $CANTERA_PREFIX/lib/libcvode_shared*); then
-      LDFLAGS="$LDFLAGS -lcvode_shared"
+      LIBS="$LIBS -lcvode_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libctmath_shared*); then
-      LDFLAGS="$LDFLAGS -lctmath_shared"
+      LIBS="$LIBS -lctmath_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libctf2c_shared*); then
-      LDFLAGS="$LDFLAGS -lctf2c_shared"
+      LIBS="$LIBS -lctf2c_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libexecstream_shared*); then
-      LDFLAGS="$LDFLAGS -lexecstream_shared"
+      LIBS="$LIBS -lexecstream_shared"
    fi
 
    CANTERA_CPPFLAGS="${CPPFLAGS}"
    CANTERA_LDFLAGS="${LDFLAGS}"
+   CANTERA_LIBS="${LIBS}"
 
    dnl We don't want these in the final link line since we'll already have BLAS
    dnl from PETSC etc., but these are needed for the test to pass.
    if (test -f $CANTERA_PREFIX/lib/libctblas_shared*); then
-      LDFLAGS="$LDFLAGS -lctblas_shared"
+      LIBS="$LIBS -lctblas_shared"
    fi
    if (test -f $CANTERA_PREFIX/lib/libctlapack_shared*); then
-      LDFLAGS="$LDFLAGS -lctlapack_shared"
+      LIBS="$LIBS -lctlapack_shared"
    fi
 
    #--------------------------------------------------------------
@@ -220,17 +244,20 @@ if test "$enable_cantera" != no; then
 
    CPPFLAGS="$ac_cantera_save_CPPFLAGS"
    LDFLAGS="$ac_cantera_save_LDFLAGS"
+   LIBS="$ac_cantera_save_LIBS"
 
    if test "x${found_cantera_library}" = "xyes" ; then
       HAVE_CANTERA=1
       AC_DEFINE(HAVE_CANTERA, 1, [Flag indicating support for Cantera chemistry])
       AC_SUBST(CANTERA_CPPFLAGS)
       AC_SUBST(CANTERA_LDFLAGS)
+      AC_SUBST(CANTERA_LIBS)
       AC_SUBST(CANTERA_PREFIX)
    else
       AC_MSG_NOTICE([Disabling optional Cantera chemistry support])
       CANTERA_CPPFLAGS=""
       CANTERA_LDFLAGS=""
+      CANTERA_LIBS=""
    fi
 fi
 
@@ -238,7 +265,7 @@ AC_SUBST(HAVE_CANTERA)
 AM_CONDITIONAL(CANTERA_ENABLED,test x$HAVE_CANTERA = x1)
 
 
-AX_PATH_ANTIOCH(0.0.5,no)
+AX_PATH_ANTIOCH(0.0.8,no)
 
  
 dnl-------------------
@@ -323,6 +350,7 @@ AC_CONFIG_FILES(test/cantera_transport_regression.sh,                     [chmod
 AC_CONFIG_FILES(test/input_files/cantera_transport.in)
 AC_CONFIG_FILES(test/cantera_evaluator_regression.sh,                     [chmod +x test/cantera_evaluator_regression.sh])
 AC_CONFIG_FILES(test/catalytic_wall_unit_cantera.sh,                      [chmod +x test/catalytic_wall_unit_cantera.sh])
+AC_CONFIG_FILES(test/catalytic_wall_unit_antioch.sh,                      [chmod +x test/catalytic_wall_unit_antioch.sh])
 AC_CONFIG_FILES(test/antioch_mixture_unit.sh,                             [chmod +x test/antioch_mixture_unit.sh])
 AC_CONFIG_FILES(test/antioch_kinetics_regression.sh,                      [chmod +x test/antioch_kinetics_regression.sh])
 AC_CONFIG_FILES(test/antioch_evaluator_regression.sh,                     [chmod +x test/antioch_evaluator_regression.sh])
@@ -345,8 +373,14 @@ AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_constant_pra
 AC_CONFIG_FILES(test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh, [chmod +x test/reacting_low_mach_antioch_cea_constant_prandtl_regression.sh])
 AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_cea_constant_prandtl_regression.in)
 
-AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.sh])
-AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_catalytic_wall_regression.in)
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_constant_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_arrhenius_catalytic_wall_regression.in)
+
+AC_CONFIG_FILES(test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh, [chmod +x test/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.sh])
+AC_CONFIG_FILES(test/input_files/reacting_low_mach_antioch_statmech_blottner_eucken_lewis_power_catalytic_wall_regression.in)
 
 dnl-----------------------------------------------
 dnl Generate run scripts for examples
@@ -354,9 +388,11 @@ dnl-----------------------------------------------
 AC_CONFIG_FILES(examples/cavity_benchmark/run.sh,	     [chmod +x examples/cavity_benchmark/run.sh])
 AC_CONFIG_FILES(examples/backward_facing_step/run.sh,	     [chmod +x examples/backward_facing_step/run.sh])
 AC_CONFIG_FILES(examples/lid_driven_cavity/run.sh,	     [chmod +x examples/lid_driven_cavity/run.sh])
+AC_CONFIG_FILES(examples/convection_cell/run.sh,	     [chmod +x examples/convection_cell/run.sh])
 AC_CONFIG_FILES(examples/mass_injection/run.sh,	             [chmod +x examples/mass_injection/run.sh])
 AC_CONFIG_FILES(examples/rayleigh_taylor/run.sh,	     [chmod +x examples/rayleigh_taylor/run.sh])
 AC_CONFIG_FILES(examples/coupled_stokes_navierstokes/run.sh, [chmod +x examples/coupled_stokes_navierstokes/run.sh])
+AC_CONFIG_FILES(examples/thermal_vortex/run.sh,              [chmod +x examples/thermal_vortex/run.sh])
 
 dnl-----------------------------------------------
 dnl Generate header files
@@ -371,6 +407,9 @@ AC_CONFIG_FILES([Makefile src/Makefile test/Makefile doxygen/Makefile
 
 # Must still call AC_OUTPUT() after generating all the files
 AC_OUTPUT()
+
+dnl Hackish fix for Ubuntu/Debian libtool
+perl -pi -e 's/link_all_deplibs=no/link_all_deplibs=yes/' libtool
 
 dnl------------------------------
 dnl Final summary

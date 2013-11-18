@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_SIMULATION_BUILDER_H
 #define GRINS_SIMULATION_BUILDER_H
@@ -37,6 +33,7 @@
 #include "grins/bc_factory.h"
 #include "grins/qoi_factory.h"
 #include "grins/postprocessing_factory.h"
+#include "grins/error_estimation_factory.h"
 
 namespace GRINS
 {
@@ -59,9 +56,12 @@ namespace GRINS
 
     std::map< GRINS::PhysicsName, GRINS::NBCContainer > build_neumann_bcs( libMesh::EquationSystems& equation_system );
 
-    std::tr1::shared_ptr<QoIBase> build_qoi( const GetPot& input );
+    std::tr1::shared_ptr<CompositeQoI> build_qoi( const GetPot& input );
 
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > build_postprocessing( const GetPot& input );
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> build_error_estimator( const GetPot& input,
+                                                                         const libMesh::QoISet& qoi_set );
 
     void attach_physics_factory( std::tr1::shared_ptr<PhysicsFactory> physics_factory );
 
@@ -77,8 +77,9 @@ namespace GRINS
 
     void attach_postprocessing_factory( std::tr1::shared_ptr<PostprocessingFactory> postprocessing_factory );
 
-  protected:
+    void attach_error_estimator_factory( std::tr1::shared_ptr<ErrorEstimatorFactory> error_estimator_factory );
 
+  protected:
     
     std::tr1::shared_ptr<PhysicsFactory> _physics_factory;
     std::tr1::shared_ptr<MeshBuilder> _mesh_builder;
@@ -87,6 +88,7 @@ namespace GRINS
     std::tr1::shared_ptr<BoundaryConditionsFactory> _bc_factory;
     std::tr1::shared_ptr<QoIFactory> _qoi_factory;
     std::tr1::shared_ptr<PostprocessingFactory> _postprocessing_factory;
+    std::tr1::shared_ptr<ErrorEstimatorFactory> _error_estimator_factory;
       
   }; //class SimulationBuilder
 } // namespace GRINS

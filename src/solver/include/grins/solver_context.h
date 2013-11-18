@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #ifndef GRINS_SOLVER_CONTEXT_H
 #define GRINS_SOLVER_CONTEXT_H
@@ -58,10 +54,13 @@ namespace GRINS
     GRINS::MultiphysicsSystem* system;
     std::tr1::shared_ptr<libMesh::EquationSystems> equation_system;
     std::tr1::shared_ptr<GRINS::Visualization> vis;
+    unsigned int timesteps_per_vis;
     bool output_vis;
     bool output_residual;
 
     std::tr1::shared_ptr<PostProcessedQuantities<Real> > postprocessing;
+
+    std::tr1::shared_ptr<libMesh::ErrorEstimator> error_estimator;
 
   };
 

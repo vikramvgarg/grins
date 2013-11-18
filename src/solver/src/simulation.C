@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 // This class
 #include "grins/simulation.h"
@@ -34,25 +30,29 @@
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
 
+// libMesh
+#include "libmesh/dof_map.h"
+
 namespace GRINS
 {
 
   Simulation::Simulation( const GetPot& input,
-			  SimulationBuilder& sim_builder )
+                          SimulationBuilder& sim_builder )
     :  _mesh( sim_builder.build_mesh(input) ),
        _equation_system( new libMesh::EquationSystems( *_mesh ) ),
        _solver( sim_builder.build_solver(input) ),
        _system_name( input("screen-options/system_name", "GRINS" ) ),
        _multiphysics_system( &(_equation_system->add_system<MultiphysicsSystem>( _system_name )) ),
        _vis( sim_builder.build_vis(input) ),
-       _qoi( sim_builder.build_qoi(input) ),
        _postprocessing( sim_builder.build_postprocessing(input) ),
-       _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
-       _print_log_info( input("screen-options/print_log_info", false ) ),
-       _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
-       _print_qoi( input("screen-options/print_qoi", false ) ),
-       _output_vis( input("vis-options/output_vis", false ) ),
-       _output_residual( input( "vis-options/output_residual", false ) )
+    _print_mesh_info( input("screen-options/print_mesh_info", false ) ),
+    _print_log_info( input("screen-options/print_log_info", false ) ),
+    _print_equation_system_info( input("screen-options/print_equation_system_info", false ) ),
+    _print_qoi( input("screen-options/print_qoi", false ) ),
+    _output_vis( input("vis-options/output_vis", false ) ),
+    _output_residual( input( "vis-options/output_residual", false ) ),
+    _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
+    _error_estimator() // effectively NULL
   {
     // Only print libMesh logging info if the user requests it
     libMesh::perflog.disable_logging();
@@ -73,22 +73,30 @@ namespace GRINS
 
     _solver->initialize( input, _equation_system, _multiphysics_system );
 
+    // Useful for debugging
+    if( input("screen-options/print_dof_constraints", false ) )
+      {
+        _multiphysics_system->get_dof_map().print_dof_constraints();
+      }
+
     // This *must* be done after equation_system->init in order to get variable indices
     this->attach_neumann_bc_funcs( sim_builder.build_neumann_bcs( *_equation_system ), _multiphysics_system );
 
     // If the user actually asks for a QoI, then we add it.
-    if( this->_qoi.use_count() > 0 )
+    std::tr1::shared_ptr<CompositeQoI> qois = sim_builder.build_qoi( input );
+    if( qois->n_qois() > 0 )
       {
-	// This *must* be done after equation_system->init in order to get variable indices
-	this->_qoi->init(input, *_multiphysics_system );
+        // This *must* be done after equation_system->init in order to get variable indices
+        qois->init(input, *_multiphysics_system );
       
-	/*! \todo We're missing the qoi's init_context call by putting it after equation_system->init,
-	  but we also need to be able to get system variable numbers... */
-	/* Note that we are effectively transfering ownership of the qoi pointer because
-	   it will be cloned in _multiphysics_system and all the calculations are done there. */
-	
-	_multiphysics_system->attach_qoi( &(*(this->_qoi)) );
+        /* Note that we are effectively transfering ownership of the qoi pointer because
+           it will be cloned in _multiphysics_system and all the calculations are done there. */
+        
+        _multiphysics_system->attach_qoi( qois.get() );
       }
+
+    // Must be called after setting QoI on the MultiphysicsSystem
+    _error_estimator = sim_builder.build_error_estimator( input, libMesh::QoISet(*_multiphysics_system) );
 
     this->check_for_restart( input );
 
@@ -108,17 +116,19 @@ namespace GRINS
     context.system = _multiphysics_system;
     context.equation_system = _equation_system;
     context.vis = _vis;
+    context.timesteps_per_vis = _timesteps_per_vis;
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
     context.postprocessing = _postprocessing;
+    context.error_estimator = _error_estimator;
 
     _solver->solve( context );
 
     if( this->_print_qoi )
       {
-	_multiphysics_system->assemble_qoi( libMesh::QoISet( *_multiphysics_system ) );
-	const QoIBase* my_qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
-	my_qoi->output_qoi( std::cout );
+        _multiphysics_system->assemble_qoi();
+        const CompositeQoI* my_qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+        my_qoi->output_qoi( std::cout );
       }
 
     return;
@@ -140,10 +150,10 @@ namespace GRINS
     return _equation_system;
   }
 
-  Number Simulation::get_qoi( unsigned int qoi_index ) const
+  libMesh::Number Simulation::get_qoi_value( unsigned int qoi_index ) const
   {
-    const QoIBase* qoi = libmesh_cast_ptr<const QoIBase*>(this->_multiphysics_system->get_qoi());
-    return qoi->get_qoi(qoi_index);
+    const CompositeQoI* qoi = libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+    return qoi->get_qoi_value(qoi_index);
   }
 
   void Simulation::check_for_restart( const GetPot& input )
@@ -153,68 +163,68 @@ namespace GRINS
     // Most of this was pulled from FIN-S
     if (restart_file != "none")
       {
-	std::cout << " ====== Restarting from " << restart_file << std::endl;      
+        std::cout << " ====== Restarting from " << restart_file << std::endl;      
 
-	// Must have correct file type to restart
-	if (restart_file.rfind(".xdr") < restart_file.size())
-	  _equation_system->read(restart_file,libMeshEnums::DECODE,
-				 //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
-				 EquationSystems::READ_DATA |
-				 EquationSystems::READ_ADDITIONAL_DATA);
+        // Must have correct file type to restart
+        if (restart_file.rfind(".xdr") < restart_file.size())
+          _equation_system->read(restart_file,libMeshEnums::DECODE,
+                                 //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
+                                 EquationSystems::READ_DATA |
+                                 EquationSystems::READ_ADDITIONAL_DATA);
       
-	else if  (restart_file.rfind(".xda") < restart_file.size())
-	  _equation_system->read(restart_file,libMeshEnums::READ,
-				 //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
-				 EquationSystems::READ_DATA |
-				 EquationSystems::READ_ADDITIONAL_DATA);
+        else if  (restart_file.rfind(".xda") < restart_file.size())
+          _equation_system->read(restart_file,libMeshEnums::READ,
+                                 //EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
+                                 EquationSystems::READ_DATA |
+                                 EquationSystems::READ_ADDITIONAL_DATA);
 
-	else
-	  {
-	    std::cerr << "Error: Restart filename must have .xdr or .xda extension!" << std::endl;
-	    libmesh_error();
-	  }
+        else
+          {
+            std::cerr << "Error: Restart filename must have .xdr or .xda extension!" << std::endl;
+            libmesh_error();
+          }
       
-	const std::string system_name = input("screen-options/system_name", "GRINS" );
+        const std::string system_name = input("screen-options/system_name", "GRINS" );
 
-	MultiphysicsSystem& system = 
-	  _equation_system->get_system<MultiphysicsSystem>(system_name);
+        MultiphysicsSystem& system = 
+          _equation_system->get_system<MultiphysicsSystem>(system_name);
 
-	// Update the old data
-	system.update();
+        // Update the old data
+        system.update();
       }
 
     return;
   }
 
   void Simulation::attach_neumann_bc_funcs( std::map< std::string, NBCContainer > neumann_bcs,
-					    MultiphysicsSystem* system )
+                                            MultiphysicsSystem* system )
   {
     //_neumann_bc_funcs = neumann_bcs;
 
     if( neumann_bcs.size() > 0 )
       {
-	for( std::map< std::string, NBCContainer >::iterator bc = neumann_bcs.begin();
-	     bc != neumann_bcs.end();
-	     bc++ )
-	  {
-	    std::tr1::shared_ptr<Physics> physics = system->get_physics( bc->first );
-	    physics->attach_neumann_bound_func( bc->second );
-	  }
+        for( std::map< std::string, NBCContainer >::iterator bc = neumann_bcs.begin();
+             bc != neumann_bcs.end();
+             bc++ )
+          {
+            std::tr1::shared_ptr<Physics> physics = system->get_physics( bc->first );
+            physics->attach_neumann_bound_func( bc->second );
+          }
       }
 
     return;
   }
 
   void Simulation::attach_dirichlet_bc_funcs( std::multimap< PhysicsName, DBCContainer > dbc_map,
-					      MultiphysicsSystem* system )
+                                              MultiphysicsSystem* system )
   {
     for( std::multimap< PhysicsName, DBCContainer >::const_iterator it = dbc_map.begin();
-	 it != dbc_map.end();
-	 it++ )
+         it != dbc_map.end();
+         it++ )
       {
-	std::tr1::shared_ptr<Physics> physics = system->get_physics( it->first );
+        std::tr1::shared_ptr<Physics> physics = system->get_physics( it->first );
       
-	physics->attach_dirichlet_bound_func( it->second );
+        physics->attach_dirichlet_bound_func( it->second );
       }
     return;
   }

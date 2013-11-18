@@ -20,11 +20,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-//
-// $Id$
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
+
 
 #include "grins_config.h"
 
@@ -203,9 +199,10 @@ Number exact_solution( const Point& p,
   const double r1 = 2.0;
   const double u0 = 2.0;
 
-  Number f;
+  Number f = 0;
   // Hardcoded to velocity in input file.
   if( var == "z_vel" ) f = u0*std::log( r1/r )/std::log( r1/r0 );
+  else libmesh_assert(false);
 
   return f;
 }
