@@ -247,15 +247,12 @@ include_HEADERS += $(top_srcdir)/src/physics/include/grins/low_mach_navier_stoke
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes_base.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reacting_low_mach_navier_stokes.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/heat_conduction.h
-<<<<<<< HEAD
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/reduced_electroosmosis.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/full_electroosmosis.h
-=======
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_flow_fe_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_variables.h
 include_HEADERS += $(top_srcdir)/src/physics/include/grins/primitive_temp_fe_variables.h
->>>>>>> 27d3b6b5c381a33cb5113e934aaa0620440d9f2d
 
 # src/properties headers
 include_HEADERS += $(top_srcdir)/src/properties/include/grins/property_types.h

@@ -1,7 +1,7 @@
 # Mesh related options
 [mesh-options]
 mesh_option = 'read_mesh_from_file'
-mesh_filename = 'T_channel_quad_full_subdomains.xda'
+mesh_filename = 'T_channel_quad_full.xda'
 element_type = QUAD9
 make_mesh_second_order = true
 uniformly_refine = 3
@@ -46,11 +46,15 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'FullElectroosmosis ReducedElectroosmosis'
+#enabled_physics = 'FullElectroosmosis ReducedElectroosmosis'
+enabled_physics = 'ReducedElectroosmosis'
 
 # Options for Full EOF physics
 [./FullElectroosmosis]
-enabled_subdomains = '0'
+enabled_subdomains = '1'
+
+subdomain_restricted_vars = 'E'
+subdomain_restriced_ids = '1'
 
 E_FE_family = 'LAGRANGE'
 V_FE_family = 'LAGRANGE'
@@ -62,11 +66,11 @@ V_order = 'SECOND'
 T_order = 'SECOND'
 P_order = 'FIRST'
 
-Debye_Huckel = 1.0
+Debye_Huckel = 10.0
 
 # Options for Reduced EOF physics
 [../ReducedElectroosmosis]
-enabled_subdomains = '1'
+enabled_subdomains = '0'
 
 V_FE_family = 'LAGRANGE'
 P_FE_family = 'LAGRANGE'

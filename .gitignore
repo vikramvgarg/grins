@@ -14,4 +14,6 @@ doxygen/Makefile.in
 examples/Makefile.in
 src/Makefile.in
 test/Makefile.in
+*.lo
+*.o
 

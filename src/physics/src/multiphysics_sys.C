@@ -172,6 +172,8 @@ namespace GRINS
   {
     AssemblyContext& c = libmesh_cast_ref<AssemblyContext&>(context);
   
+    //std::cout<<"Elem subdomain id: "<<c.get_elem().subdomain_id()<<std::endl;
+
     bool compute_jacobian = true;
     if( !request_jacobian || _use_numerical_jacobians_only ) compute_jacobian = false;
 
@@ -190,9 +192,12 @@ namespace GRINS
 	 physics_iter != _physics_list.end();
 	 physics_iter++ )
       {
+
+	//std::cout<<"Checking whether physics "<<physics_iter->first<<"contributes to this element"<<std::endl;
 	// Only compute if physics is active on current subdomain or globally
 	if( (physics_iter->second)->enabled_on_elem( &c.get_elem() ) )
 	  {
+	    //std::cout<<"Getting contributions from physics "<<physics_iter->first<<std::endl<<std::endl;
 	    (physics_iter->second)->element_time_derivative( compute_jacobian, c,
 							     cache );
 	  }

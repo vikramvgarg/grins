@@ -80,6 +80,19 @@ namespace GRINS
 
   bool Physics::enabled_on_elem( const libMesh::Elem* elem )
   {
+    // std::cout<<"Elem subdomain id again : "<<elem->subdomain_id()<<std::endl;
+
+    // typedef std::set<libMesh::subdomain_id_type>::iterator _enabled_subdomains_iterator;
+    
+    // _enabled_subdomains_iterator _enabled_subdomains_it = _enabled_subdomains.begin();
+
+    // const _enabled_subdomains_iterator _enabled_subdomains_end = _enabled_subdomains.end();
+
+    // for(; _enabled_subdomains_it !=  _enabled_subdomains.end() ;++_enabled_subdomains_it)
+    //   {
+    // 	std::cout<<"Enabled subdomains on this element include: "<<*_enabled_subdomains_it<<std::endl;
+    //   }
+ 
     // Check if enabled_subdomains flag has been set
     if( _enabled_subdomains.empty() ) 
       return true;

@@ -144,13 +144,8 @@ namespace GRINS
 	  context.get_element_fe(_v_var)->get_dphi();
 
 	// Local DOF count and quadrature point count
-<<<<<<< HEAD
-	const unsigned int n_T_dofs = c.dof_indices_var[0].size();
-	unsigned int n_qpoints = (c.get_element_qrule()).n_points();  
-=======
 	const unsigned int n_T_dofs = context.get_dof_indices(0).size();
 	unsigned int n_qpoints = context.get_element_qrule().n_points();  
->>>>>>> 27d3b6b5c381a33cb5113e934aaa0620440d9f2d
 
 	// Warning: we assume here that vorticity is the only QoI!
 	// This should be consistent with the assertion in grins_mesh_adaptive_solver.C
