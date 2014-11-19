@@ -55,7 +55,7 @@ namespace GRINS
 
     ConstantConductivity();
     
-    const libMesh::Real _k;
+    libMesh::Real _k;
 
   };
   

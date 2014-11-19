@@ -44,6 +44,18 @@ echo_physics = 'true'
 
 enabled_physics = 'IncompressibleNavierStokes'
 
+[Materials]
+
+[./Viscosity]
+
+#mu = '2.95456e-5' #[kg/m-s]
+viscosity = 'parsed'
+mu = 1.0
+
+[./Conductivity]
+conductivity = 'parsed'
+k = 1.0
+
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
 
@@ -52,7 +64,6 @@ V_order = SECOND
 P_order = FIRST
 
 rho = 1.0
-mu = 1.0
 
 bc_ids = '2 0'
 bc_types = 'prescribed_vel no_slip'
