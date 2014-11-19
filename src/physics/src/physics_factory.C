@@ -62,6 +62,7 @@
 #include "grins/constant_specific_heat.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
+#include "grins/parsed_conductivity.h"
 
 #include "grins/reacting_low_mach_navier_stokes.h"
 #include "grins/heat_conduction.h"
@@ -140,16 +141,27 @@ namespace GRINS
     if( physics_to_add == incompressible_navier_stokes )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
 	
-	if( viscosity == "constant" )
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -159,17 +171,28 @@ namespace GRINS
     else if( physics_to_add == stokes )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
 	
-	if( viscosity == "constant" )
-	  {
-	    physics_list[physics_to_add] =
-	      PhysicsPtr(new Stokes<ConstantViscosity>(physics_to_add,input));
-	  }
-	else if( viscosity == "parsed" )
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new Stokes<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
+	else if( viscosity == "parsed" && conductivity == "constant")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
+	  }	
 	else
 	  {
 	    this->visc_error(physics_to_add, viscosity);
@@ -177,17 +200,28 @@ namespace GRINS
       }      
     else if( physics_to_add == incompressible_navier_stokes_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );	
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
+	
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ConstantViscosity>(physics_to_add,input) );
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesAdjointStabilization<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -196,17 +230,28 @@ namespace GRINS
       }
     else if( physics_to_add == incompressible_navier_stokes_spgsm_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );	
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
 	
-	if( viscosity == "constant" )
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ConstantViscosity>(physics_to_add,input) );
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new IncompressibleNavierStokesSPGSMStabilization<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -216,16 +261,27 @@ namespace GRINS
     else if( physics_to_add == velocity_drag )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
+	
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityDrag<ConstantViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityDrag<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -235,16 +291,27 @@ namespace GRINS
     else if( physics_to_add == velocity_penalty )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
+	
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenalty<ConstantViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenalty<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -253,17 +320,28 @@ namespace GRINS
       }
     else if( physics_to_add == velocity_penalty_adjoint_stab )
       {
-	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
+	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );	
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
+	
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ConstantViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new VelocityPenaltyAdjointStabilization<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -273,16 +351,27 @@ namespace GRINS
     else if( physics_to_add == averaged_fan )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
+	
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedFan<ConstantViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedFan<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
@@ -292,16 +381,27 @@ namespace GRINS
     else if( physics_to_add == averaged_turbine )
       {
 	std::string viscosity     = input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
-
-	if( viscosity == "constant" )
+	std::string conductivity     = input( "Physics/"+incompressible_navier_stokes+"/conductivity_model", "constant" );
+	
+	if( viscosity == "constant" && conductivity == "constant" )
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedTurbine<ConstantViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ConstantConductivity>(physics_to_add,input));
 	  }
-	else if( viscosity == "parsed" )
+	else if( viscosity == "parsed" && conductivity == "constant")
 	  {
 	    physics_list[physics_to_add] = 
-	      PhysicsPtr(new AveragedTurbine<ParsedViscosity>(physics_to_add,input));
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ConstantConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "constant" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ConstantViscosity, ParsedConductivity>(physics_to_add,input));
+	  }
+	else if( viscosity == "parsed" && conductivity == "parsed")
+	  {
+	    physics_list[physics_to_add] = 
+	      PhysicsPtr(new IncompressibleNavierStokes<ParsedViscosity, ParsedConductivity>(physics_to_add,input));
 	  }
 	else
 	  {
