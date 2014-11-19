@@ -41,9 +41,9 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  Stokes<Mu>::Stokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+  template<class Mu, class K>
+  Stokes<Mu, K>::Stokes(const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name,input),
       _p_pinning(input,physics_name),   
       _pin_pressure( input("Physics/"+stokes+"/pin_pressure", false ) )
   {
@@ -54,14 +54,14 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  Stokes<Mu>::~Stokes()
+  template<class Mu, class K>
+  Stokes<Mu, K>::~Stokes()
   {
     return;
   }
   
-  template<class Mu>
-  void Stokes<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void Stokes<Mu, K>::element_time_derivative( bool compute_jacobian,
                                         AssemblyContext& context,
                                         CachedValues& /*cache*/ )
   {
@@ -212,8 +212,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void Stokes<Mu>::element_constraint( bool compute_jacobian,
+  template<class Mu, class K>
+  void Stokes<Mu, K>::element_constraint( bool compute_jacobian,
                                    AssemblyContext& context,
                                    CachedValues& /*cache*/ )
   {
@@ -307,8 +307,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void Stokes<Mu>::mass_residual( bool compute_jacobian,
+  template<class Mu, class K>
+  void Stokes<Mu, K>::mass_residual( bool compute_jacobian,
                               AssemblyContext& context,
                               CachedValues& /*cache*/)
   {

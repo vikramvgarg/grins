@@ -23,8 +23,8 @@
 //-----------------------------------------------------------------------el-
 
 
-#ifndef GRINS_PARSED_VISCOSITY_H
-#define GRINS_PARSED_VISCOSITY_H
+#ifndef GRINS_PARSED_CONDUCTIVITY_H
+#define GRINS_PARSED_CONDUCTIVITY_H
 
 //GRINS
 #include "grins/assembly_context.h"
@@ -40,27 +40,27 @@ class GetPot;
 
 namespace GRINS
 {
-  class ParsedViscosity
+  class ParsedConductivity
   {
   public:
 
-    ParsedViscosity( const GetPot& input );
-    ~ParsedViscosity();
+    ParsedConductivity( const GetPot& input );
+    ~ParsedConductivity();
     
     libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
     
   private:
 
-    ParsedViscosity();
+    ParsedConductivity();
     
     // User specified parsed function
-    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > mu;
+    libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > k;
 
   };
 
   /* ------------------------- Inline Functions -------------------------*/  
   inline
-    libMesh::Real ParsedViscosity::operator()(AssemblyContext& context, unsigned int qp) const
+    libMesh::Real ParsedConductivity::operator()(AssemblyContext& context, unsigned int qp) const
   {
     // FIXME: We should be getting the variable index to get the qps from the context
     // not hardcode it to be 0
@@ -68,11 +68,11 @@ namespace GRINS
 
     const libMesh::Point& x_qp = x[qp];
 
-    libMesh::Number _mu_value = (*mu)(x_qp,context.time);
+    libMesh::Number _k_value = (*k)(x_qp,context.time);
 
-    return _mu_value;
+    return _k_value;
   }    
 
 } // end namespace GRINS
 
-#endif // GRINS_PARSED_VISCOSITY_H
+#endif // GRINS_PARSED_CONDUCTIVITY_H

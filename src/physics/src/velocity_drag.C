@@ -41,23 +41,23 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  VelocityDrag<Mu>::VelocityDrag( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input)
+  template<class Mu, class K>
+  VelocityDrag<Mu, K>::VelocityDrag( const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name, input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  template<class Mu>
-  VelocityDrag<Mu>::~VelocityDrag()
+  template<class Mu, class K>
+  VelocityDrag<Mu, K>::~VelocityDrag()
   {
     return;
   }
 
-  template<class Mu>
-  void VelocityDrag<Mu>::read_input_options( const GetPot& input )
+  template<class Mu, class K>
+  void VelocityDrag<Mu, K>::read_input_options( const GetPot& input )
   {
     _exponent = input("Physics/"+velocity_drag+"/exponent", libMesh::Real(2));
 
@@ -72,8 +72,8 @@ namespace GRINS
       std::cout << "Warning! Zero VelocityDrag specified!" << std::endl;
   }
 
-  template<class Mu>
-  void VelocityDrag<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void VelocityDrag<Mu, K>::element_time_derivative( bool compute_jacobian,
 					      AssemblyContext& context,
 					      CachedValues& /* cache */ )
   {

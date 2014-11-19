@@ -38,24 +38,24 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  IncompressibleNavierStokesAdjointStabilization<Mu>::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name, 
+  template<class Mu, class K>
+  IncompressibleNavierStokesAdjointStabilization<Mu, K>::IncompressibleNavierStokesAdjointStabilization( const std::string& physics_name, 
                                                                                                   const GetPot& input )
-    : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
+    : IncompressibleNavierStokesStabilizationBase<Mu, K>(physics_name,input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  template<class Mu>
-  IncompressibleNavierStokesAdjointStabilization<Mu>::~IncompressibleNavierStokesAdjointStabilization()
+  template<class Mu, class K>
+  IncompressibleNavierStokesAdjointStabilization<Mu, K>::~IncompressibleNavierStokesAdjointStabilization()
   {
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokesAdjointStabilization<Mu, K>::element_time_derivative( bool compute_jacobian,
                                                                                 AssemblyContext& context,
                                                                                 CachedValues& /*cache*/ )
   {
@@ -384,8 +384,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokesAdjointStabilization<Mu, K>::element_constraint( bool compute_jacobian,
                                                                              AssemblyContext& context,
                                                                              CachedValues& /*cache*/ )
   {
@@ -547,8 +547,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesAdjointStabilization<Mu>::mass_residual( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokesAdjointStabilization<Mu, K>::mass_residual( bool compute_jacobian,
                                                                       AssemblyContext& context,
                                                                       CachedValues& /*cache*/ )
   {

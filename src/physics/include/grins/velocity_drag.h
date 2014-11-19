@@ -48,8 +48,8 @@ namespace GRINS
     proportional to an exponent of the magnitude of) a specified
     vector field.
    */
-  template<class Viscosity>
-  class VelocityDrag : public IncompressibleNavierStokesBase<Viscosity>
+  template<class Viscosity, class Conductivity>
+    class VelocityDrag : public IncompressibleNavierStokesBase<Viscosity, Conductivity>
   {
   public:
 

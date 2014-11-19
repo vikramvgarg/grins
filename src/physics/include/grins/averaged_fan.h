@@ -47,8 +47,8 @@ namespace GRINS
     This physics class imposes lift/drag forces on velocity as
     affected by a region in which airfoils are moving.
    */
-  template<class Viscosity> 
-  class AveragedFan : public IncompressibleNavierStokesBase<Viscosity>
+  template<class Viscosity, class Conductivity> 
+    class AveragedFan : public IncompressibleNavierStokesBase<Viscosity, Conductivity>
   {
   public:
 

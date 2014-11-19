@@ -38,9 +38,9 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  VelocityPenaltyBase<Mu>::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input),
+  template<class Mu, class K>
+  VelocityPenaltyBase<Mu, K>::VelocityPenaltyBase( const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name, input),
     _quadratic_scaling(false)
   {
     this->read_input_options(input);
@@ -48,14 +48,14 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  VelocityPenaltyBase<Mu>::~VelocityPenaltyBase()
+  template<class Mu, class K>
+  VelocityPenaltyBase<Mu, K>::~VelocityPenaltyBase()
   {
     return;
   }
   
-  template<class Mu>  
-  void VelocityPenaltyBase<Mu>::read_input_options( const GetPot& input )
+  template<class Mu, class K>  
+  void VelocityPenaltyBase<Mu, K>::read_input_options( const GetPot& input )
   {
     std::string penalty_function =
       input("Physics/"+velocity_penalty+"/penalty_function",
@@ -86,8 +86,8 @@ namespace GRINS
       input("Physics/"+velocity_penalty+"/quadratic_scaling", false);
   }
 
-  template<class Mu>
-  bool VelocityPenaltyBase<Mu>::compute_force
+  template<class Mu, class K>
+  bool VelocityPenaltyBase<Mu, K>::compute_force
     ( const libMesh::Point& point,
       const libMesh::Real time,
       const libMesh::NumberVectorValue& U,

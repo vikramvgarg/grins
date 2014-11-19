@@ -35,26 +35,26 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
+  template<class Mu, class K>
+  IncompressibleNavierStokesStabilizationBase<Mu, K>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
                                                                                             const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name,input),
       _stab_helper( input )
   {
     return;
   }
 
-  template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::~IncompressibleNavierStokesStabilizationBase()
+  template<class Mu, class K>
+  IncompressibleNavierStokesStabilizationBase<Mu, K>::~IncompressibleNavierStokesStabilizationBase()
   {
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_context( AssemblyContext& context )
+  template<class Mu, class K>
+  void IncompressibleNavierStokesStabilizationBase<Mu, K>::init_context( AssemblyContext& context )
   {
     // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_context(context);
+    IncompressibleNavierStokesBase<Mu, K>::init_context(context);
   
     // We need pressure derivatives
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
@@ -65,11 +65,11 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesStabilizationBase<Mu>::init_variables( libMesh::FEMSystem* system )
+  template<class Mu, class K>
+  void IncompressibleNavierStokesStabilizationBase<Mu, K>::init_variables( libMesh::FEMSystem* system )
   {
     // First call base class
-    IncompressibleNavierStokesBase<Mu>::init_variables(system);
+    IncompressibleNavierStokesBase<Mu, K>::init_variables(system);
 
     _stab_helper.init(*system);
 

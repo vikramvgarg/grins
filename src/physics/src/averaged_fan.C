@@ -41,23 +41,23 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  AveragedFan<Mu>::AveragedFan( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input)
+  template<class Mu, class K>
+  AveragedFan<Mu, K>::AveragedFan( const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name, input)
   {
     this->read_input_options(input);
 
     return;
   }
 
-  template<class Mu>
-  AveragedFan<Mu>::~AveragedFan()
+  template<class Mu, class K>
+  AveragedFan<Mu, K>::~AveragedFan()
   {
     return;
   }
 
-  template<class Mu>
-  void AveragedFan<Mu>::read_input_options( const GetPot& input )
+  template<class Mu, class K>
+  void AveragedFan<Mu, K>::read_input_options( const GetPot& input )
   {
     std::string base_function =
       input("Physics/"+averaged_fan+"/base_velocity",
@@ -139,8 +139,8 @@ namespace GRINS
       (new libMesh::ParsedFunction<libMesh::Number>(aoa_function_string));
   }
 
-  template<class Mu>
-  void AveragedFan<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void AveragedFan<Mu, K>::element_time_derivative( bool compute_jacobian,
 					        AssemblyContext& context,
 					        CachedValues& /* cache */ )
   {

@@ -41,24 +41,25 @@
 
 namespace GRINS
 {
-  template<class Mu>
-  IncompressibleNavierStokesBase<Mu>::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
+  template<class Mu, class K>
+  IncompressibleNavierStokesBase<Mu, K>::IncompressibleNavierStokesBase(const std::string& physics_name, const GetPot& input )
     : Physics(physics_name, input),
       _flow_vars(input, incompressible_navier_stokes),
       _mu(input),
+      _k(input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) )      
   {
     return;
   }
 
-  template<class Mu>
-  IncompressibleNavierStokesBase<Mu>::~IncompressibleNavierStokesBase()
+  template<class Mu, class K>
+  IncompressibleNavierStokesBase<Mu, K>::~IncompressibleNavierStokesBase()
   {
     return;
   }  
   
-  template<class Mu>
-  void IncompressibleNavierStokesBase<Mu>::init_variables( libMesh::FEMSystem* system )
+  template<class Mu, class K>
+  void IncompressibleNavierStokesBase<Mu, K>::init_variables( libMesh::FEMSystem* system )
   {
     this->_dim = system->get_mesh().mesh_dimension();
 
@@ -67,8 +68,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class Mu, class K>
+  void IncompressibleNavierStokesBase<Mu, K>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     const unsigned int dim = system->get_mesh().mesh_dimension();
 
@@ -83,8 +84,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokesBase<Mu>::init_context( AssemblyContext& context )
+  template<class Mu, class K>
+  void IncompressibleNavierStokesBase<Mu, K>::init_context( AssemblyContext& context )
   {
     // We should prerequest all the data
     // we will need to build the linear system

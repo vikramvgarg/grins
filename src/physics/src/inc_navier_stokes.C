@@ -40,9 +40,9 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  IncompressibleNavierStokes<Mu>::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name,input),
+  template<class Mu, class K>
+  IncompressibleNavierStokes<Mu, K>::IncompressibleNavierStokes(const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name,input),
       _p_pinning(input,physics_name)
   {
     this->read_input_options(input);
@@ -60,14 +60,14 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  IncompressibleNavierStokes<Mu>::~IncompressibleNavierStokes()
+  template<class Mu, class K>
+  IncompressibleNavierStokes<Mu, K>::~IncompressibleNavierStokes()
   {
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::read_input_options( const GetPot& input )
+  template<class Mu, class K>
+  void IncompressibleNavierStokes<Mu, K>::read_input_options( const GetPot& input )
   {
     // Other quantities read in base class
 
@@ -77,8 +77,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokes<Mu, K>::element_time_derivative( bool compute_jacobian,
                                                             AssemblyContext& context,
                                                             CachedValues& /*cache*/ )
   {
@@ -314,8 +314,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::element_constraint( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokes<Mu, K>::element_constraint( bool compute_jacobian,
                                                        AssemblyContext& context,
                                                        CachedValues& /*cache*/ )
   {
@@ -431,8 +431,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::side_constraint( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokes<Mu, K>::side_constraint( bool compute_jacobian,
                                                     AssemblyContext& context,
                                                     CachedValues& /* cache */)
   {
@@ -445,8 +445,8 @@ namespace GRINS
     return;
   }
   
-  template<class Mu>
-  void IncompressibleNavierStokes<Mu>::mass_residual( bool compute_jacobian,
+  template<class Mu, class K>
+  void IncompressibleNavierStokes<Mu, K>::mass_residual( bool compute_jacobian,
                                                   AssemblyContext& context,
                                                   CachedValues& /*cache*/ )
   {

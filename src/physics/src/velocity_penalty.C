@@ -37,21 +37,21 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  VelocityPenalty<Mu>::VelocityPenalty( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase<Mu>(physics_name, input)
+  template<class Mu, class K>
+  VelocityPenalty<Mu, K>::VelocityPenalty( const std::string& physics_name, const GetPot& input )
+    : VelocityPenaltyBase<Mu, K>(physics_name, input)
   {
     return;
   }
 
-  template<class Mu>
-  VelocityPenalty<Mu>::~VelocityPenalty()
+  template<class Mu, class K>
+  VelocityPenalty<Mu, K>::~VelocityPenalty()
   {
     return;
   }
 
-  template<class Mu>
-  void VelocityPenalty<Mu>::init_context( AssemblyContext& context )
+  template<class Mu, class K>
+  void VelocityPenalty<Mu, K>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
     context.get_element_fe(this->_flow_vars.u_var())->get_phi();
@@ -59,8 +59,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void VelocityPenalty<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void VelocityPenalty<Mu, K>::element_time_derivative( bool compute_jacobian,
 					         AssemblyContext& context,
 					         CachedValues& /* cache */ )
   {
@@ -175,8 +175,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void VelocityPenalty<Mu>::compute_element_cache
+  template<class Mu, class K>
+  void VelocityPenalty<Mu, K>::compute_element_cache
     ( const AssemblyContext& context, 
       const std::vector<libMesh::Point>& points,
       CachedValues& cache )

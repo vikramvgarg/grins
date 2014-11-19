@@ -42,10 +42,10 @@ namespace GRINS
 
     libMesh::Real operator()() const;
 
+    libMesh::Real operator()(AssemblyContext& context, unsigned int qp) const;
+
     libMesh::Real operator()( const libMesh::Real T ) const;
-
-    libMesh::Real operator()( const libMesh::Real mu, const libMesh::Real cp ) const;
-
+    
     libMesh::Real deriv( const libMesh::Real T ) const;
 
   private:

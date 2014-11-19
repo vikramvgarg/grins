@@ -38,8 +38,8 @@ namespace GRINS
     Physics. Intended to be used with
     IncompressibleNavierStokesAdjointStabilization.
    */
-  template<class Viscosity>
-  class VelocityPenaltyAdjointStabilization : public VelocityPenaltyBase<Viscosity>
+  template<class Viscosity, class Conductivity>
+    class VelocityPenaltyAdjointStabilization : public VelocityPenaltyBase<Viscosity, Conductivity>
   {
   public:
     

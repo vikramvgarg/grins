@@ -40,7 +40,7 @@ namespace GRINS
     (right now:ConstantViscosity or SpatiallyVaryingViscosity) to allow the user
     to specify a constant or spatially varying viscosity in the input file
    */
-  template<class Viscosity>
+  template<class Viscosity, class Conductivity>
   class IncompressibleNavierStokesBase : public Physics
   {
   public:
@@ -77,6 +77,9 @@ namespace GRINS
 
     //! Viscosity object
     Viscosity _mu;
+
+    //! Conductivity object
+    Conductivity _k;
     
   private:
     IncompressibleNavierStokesBase();

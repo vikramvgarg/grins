@@ -42,9 +42,9 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  AveragedTurbine<Mu>::AveragedTurbine( const std::string& physics_name, const GetPot& input )
-    : IncompressibleNavierStokesBase<Mu>(physics_name, input)
+  template<class Mu, class K>
+  AveragedTurbine<Mu, K>::AveragedTurbine( const std::string& physics_name, const GetPot& input )
+    : IncompressibleNavierStokesBase<Mu, K>(physics_name, input)
   {
     this->read_input_options(input);
 
@@ -53,32 +53,32 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>  
-  AveragedTurbine<Mu>::~AveragedTurbine()
+  template<class Mu, class K>  
+  AveragedTurbine<Mu, K>::~AveragedTurbine()
   {
     return;
   }
 
-  template<class Mu> 
-  void AveragedTurbine<Mu>::init_variables( libMesh::FEMSystem* system )
+  template<class Mu, class K> 
+  void AveragedTurbine<Mu, K>::init_variables( libMesh::FEMSystem* system )
   {
     this->_fan_speed_var = system->add_variable(_fan_speed_var_name,
                                                 libMesh::FIRST,
                                                 libMesh::SCALAR);
 
-    IncompressibleNavierStokesBase<Mu>::init_variables(system);
+    IncompressibleNavierStokesBase<Mu, K>::init_variables(system);
   }
 
-  template<class Mu> 
-  void AveragedTurbine<Mu>::set_time_evolving_vars( libMesh::FEMSystem* system )
+  template<class Mu, class K> 
+  void AveragedTurbine<Mu, K>::set_time_evolving_vars( libMesh::FEMSystem* system )
   {
     system->time_evolving(this->fan_speed_var());
 
-    IncompressibleNavierStokesBase<Mu>::set_time_evolving_vars(system);
+    IncompressibleNavierStokesBase<Mu, K>::set_time_evolving_vars(system);
   }
 
-  template<class Mu>
-  void AveragedTurbine<Mu>::read_input_options( const GetPot& input )
+  template<class Mu, class K>
+  void AveragedTurbine<Mu, K>::read_input_options( const GetPot& input )
   {
     std::string base_function =
       input("Physics/"+averaged_turbine+"/base_velocity",
@@ -184,8 +184,8 @@ namespace GRINS
                             fan_speed_var_name_default);
   }
 
-  template<class Mu>
-  void AveragedTurbine<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void AveragedTurbine<Mu, K>::element_time_derivative( bool compute_jacobian,
 					        AssemblyContext& context,
 					        CachedValues& /* cache */ )
   {
@@ -460,8 +460,8 @@ namespace GRINS
   }
 
 
-  template<class Mu>
-  void AveragedTurbine<Mu>::nonlocal_time_derivative(bool compute_jacobian,
+  template<class Mu, class K>
+  void AveragedTurbine<Mu, K>::nonlocal_time_derivative(bool compute_jacobian,
 				                 AssemblyContext& context,
 				                 CachedValues& /* cache */ )
   {
@@ -499,8 +499,8 @@ namespace GRINS
   }
 
 
-  template<class Mu>
-  void AveragedTurbine<Mu>::nonlocal_mass_residual( bool compute_jacobian,
+  template<class Mu, class K>
+  void AveragedTurbine<Mu, K>::nonlocal_mass_residual( bool compute_jacobian,
 				                AssemblyContext& context,
 				                CachedValues& /* cache */ )
   {

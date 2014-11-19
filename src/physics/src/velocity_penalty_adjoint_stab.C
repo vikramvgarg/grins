@@ -40,9 +40,9 @@
 namespace GRINS
 {
 
-  template<class Mu>
-  VelocityPenaltyAdjointStabilization<Mu>::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
-    : VelocityPenaltyBase<Mu>(physics_name,input),
+  template<class Mu, class K>
+  VelocityPenaltyAdjointStabilization<Mu, K>::VelocityPenaltyAdjointStabilization( const std::string& physics_name, const GetPot& input )
+    : VelocityPenaltyBase<Mu, K>(physics_name,input),
       _rho( input("Physics/"+incompressible_navier_stokes+"/rho", 1.0) ),
       _mu( input("Physics/"+incompressible_navier_stokes+"/mu", 1.0) ),
       _stab_helper( input )
@@ -50,14 +50,14 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  VelocityPenaltyAdjointStabilization<Mu>::~VelocityPenaltyAdjointStabilization()
+  template<class Mu, class K>
+  VelocityPenaltyAdjointStabilization<Mu, K>::~VelocityPenaltyAdjointStabilization()
   {
     return;
   }
 
-  template<class Mu>
-  void VelocityPenaltyAdjointStabilization<Mu>::init_context( AssemblyContext& context )
+  template<class Mu, class K>
+  void VelocityPenaltyAdjointStabilization<Mu, K>::init_context( AssemblyContext& context )
   {
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 
@@ -69,8 +69,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void VelocityPenaltyAdjointStabilization<Mu>::element_time_derivative( bool compute_jacobian,
+  template<class Mu, class K>
+  void VelocityPenaltyAdjointStabilization<Mu, K>::element_time_derivative( bool compute_jacobian,
                                                                      AssemblyContext& context,
                                                                      CachedValues& /*cache*/ )
   {
@@ -242,8 +242,8 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void VelocityPenaltyAdjointStabilization<Mu>::element_constraint( bool compute_jacobian,
+  template<class Mu, class K>
+  void VelocityPenaltyAdjointStabilization<Mu, K>::element_constraint( bool compute_jacobian,
                                                                 AssemblyContext& context,
                                                                 CachedValues& /*cache*/ )
   {

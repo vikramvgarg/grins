@@ -46,8 +46,8 @@ namespace GRINS
     This physics class imposes a penalty on any velocity component in
     the direction of (and proportional to) a specified vector field.
    */
-  template<class Viscosity> 
-  class VelocityPenalty : public VelocityPenaltyBase<Viscosity>
+  template<class Viscosity, class Conductivity> 
+    class VelocityPenalty : public VelocityPenaltyBase<Viscosity, Conductivity>
   {
   public:
 
