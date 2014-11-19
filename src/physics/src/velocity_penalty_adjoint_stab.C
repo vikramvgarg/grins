@@ -31,6 +31,7 @@
 #include "grins/assembly_context.h"
 #include "grins/constant_viscosity.h"
 #include "grins/parsed_viscosity.h"
+#include "grins/parsed_conductivity.h"
 #include "grins/inc_nav_stokes_macro.h"
 
 // libMesh

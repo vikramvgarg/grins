@@ -51,7 +51,7 @@ namespace GRINS
     
   private:
 
-    ParsedConductivity();
+     ParsedConductivity();
     
     // User specified parsed function
     libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > k;

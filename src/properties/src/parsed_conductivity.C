@@ -51,7 +51,7 @@ namespace GRINS
       return;
       }
 
-  ParsedViscosity::~ParsedViscosity()
+  ParsedConductivity::~ParsedConductivity()
   {
     return;
   }
