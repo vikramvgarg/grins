@@ -49,4 +49,44 @@ namespace GRINS
    * Default constructor: Needs a ParameterVector to hold the various instances
    * of the parameter we are pointing to
    */
-  ParameterMultiPointer (libMesh::ParameterVector)
+  ParameterMultiPointer (libMesh::ParameterVector &parameter_copies);
+
+  /**
+   * Clear a ParameterMultiPointer and set it to "no parameters"
+   */
+  void clear();
+
+  /**
+   * Returns the size of parameter_copies aka the number of the instances of 
+   * the parameter registered with ParameterManager
+   */
+  unsigned int size() { return _parameter_copies.size(); }
+
+  /**
+   * Set the size of parameter_copies
+   */
+  void resize(unsigned int s);
+
+  /**
+   * This function returns the value of the parameter whose instances are stored in
+   * parameter_copies
+   */
+  Number operator[]();
+
+  /**
+   * Multiplication operator; multiplies all copies of the parameter by a 
+   */
+  libMesh::ParameterVector& operator *= (const Number a);
+
+  /**
+   * Addition operator. Note that in contrast to the same operator for ParameterVector
+   * this operator has only a Number as argument, since the ParameterVector owned by
+   * ParameterMultiPointer stores copies of the same parameter
+   */
+  libMesh::ParameterVector& operator += (const Number a);
+
+ protected:
+  libMesh::ParameterVector _parameter_copies;
+  
+  
+    
