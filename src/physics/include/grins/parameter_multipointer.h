@@ -52,6 +52,11 @@ namespace GRINS
   ParameterMultiPointer (libMesh::ParameterVector &parameter_copies);
 
   /**
+   * Destructor - deletes ParameterAccessor objects
+   */
+  ~ParameterVector(this->clear());
+
+  /**
    * Clear a ParameterMultiPointer and set it to "no parameters"
    */
   void clear();
@@ -68,13 +73,18 @@ namespace GRINS
   void resize(unsigned int s);
 
   /**
+   * Add an instance of a variable to _parameter_copies
+   */
+  void add_paramter_copy( Physics & physics_name, string & parameter_name);
+
+  /**
    * This function returns the value of the parameter whose instances are stored in
    * parameter_copies
    */
   Number operator[]();
 
   /**
-   * Multiplication operator; multiplies all copies of the parameter by a 
+   * Multiplication operator; multiplies all copies of the parameter by a Number a 
    */
   libMesh::ParameterVector& operator *= (const Number a);
 
@@ -86,7 +96,11 @@ namespace GRINS
   libMesh::ParameterVector& operator += (const Number a);
 
  protected:
+
+  /**
+   * The ParameterVector owned by this class
+   */
   libMesh::ParameterVector _parameter_copies;
-  
+};
   
     
