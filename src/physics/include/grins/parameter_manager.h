@@ -22,45 +22,37 @@
 //
 //-----------------------------------------------------------------------el-
 
-// This class
-#include "grins/parameter_multipointer.h"
+
+// The ParameterManager Class 
+
+#ifndef GRINS_PARAMETER_MANAGER_H
+#define GRINS_PARAMETER_MANAGER_H
+
+// GRINS include files
+
+// libMesh include files
+
 
 namespace GRINS
 {
-  // ------------------------------------------------
-  // ParameterMutliPointer implementation
-
-  void ParameterMultiPointer::clear()
+  class ParameterManager
   {
-    _parameter_copies.clear();
-  }
+  public:
+  /**
+   * Default constructor: Needs a ParameterVector to hold the various instances
+   * of the parameter we are pointing to
+   */
+  ParameterManager();
+
+  /**
+   * Destructor - deletes ParameterAccessor objects
+   */
+  ~ParameterManager();
   
-  void ParameterMultiPointer::resize(unsigned int s)
-  {
-    // Resize the _parameter_copies
-  }
-
-  Number * ParameterMultiPointer::operator[] (unsigned int i)
-  {
-    libmesh_assert_greater (_parameter_copies.size(), i);
-    
-    return _parameter_copies[i];
-  }
-
-  void ParameterMultiPointer::operator*= (const Number a)
-  {
-    const unsigned int N_copies = cast_int<unsigned int>
-      (this->_parameter_copies.size());
-    for (unsigned int i=0; i != N_copies; ++i)
-      *(this->_parameter_copies[i]) *= a;
-  }
-
-  void ParameterMultiPointer::operator+= (const Number a)
-  {
-    const unsigned int N_copies = cast_int<unsigned int>
-      (this->_parameter_copies.size());
-    for (unsigned int i=0; i != N_copies; ++i)
-      *(this->_parameter_copies[i]) += a;
-  }
+ protected:
+  
+  }; //end Class ParameterManager definition
 
 }; // end namespace GRINS
+  
+    

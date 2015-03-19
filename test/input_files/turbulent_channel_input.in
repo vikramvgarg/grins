@@ -36,7 +36,8 @@ output_format = 'ExodusII'
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-mu = '2.434e-5'
+#mu = '2.434e-5'
+mu = '2.434e-3'
 
 # Options for print info to the screen
 [screen-options]
@@ -112,6 +113,6 @@ wall_ids = '0 2'
 ic_ids = '0'
 ic_types = 'parsed'
 ic_variables = 'nu'
-ic_values = '0.1*y*(1.0-y)'
+ic_values = '0.001*y*(1.0-y)'
 
 []
