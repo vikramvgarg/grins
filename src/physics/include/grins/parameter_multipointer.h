@@ -23,12 +23,12 @@
 //-----------------------------------------------------------------------el-
 
 
-// The ParameterMultiPointer Class offers the capability to organize and modify different 
+// The ParameterMultiPointer Class offers the capability to store and modify different 
 // instances of a variable with the same name and meaning (for e.g. density 'rho') existing
 // as member variables of different Physics ('rho' for example is declared in Navier-Stokes 
 // as well as Heat Transfer)
 
-// A ParameterHandler object will instruct each instantiated Physics to register its instance
+// A ParameterManager object will instruct each instantiated Physics to register its instance
 // of a variable with the corresponding ParameterMultiPointer object. For e.g. a ParameterHandler 
 // will tell the NavierStokes and HeatTransfer Physics to register their instance of 'rho'
 // with a single RhoMultiPointer object. The ParameterHandler can then ask RhoMultiPointer 
@@ -48,8 +48,7 @@ namespace GRINS
   {
   public:
   /**
-   * Default constructor: Needs a ParameterVector to hold the various instances
-   * of the parameter we are pointing to
+   * Default constructor
    */
   ParameterMultiPointer();
 
@@ -75,11 +74,6 @@ namespace GRINS
   void resize(unsigned int s);
 
   /**
-   * Add an instance of a variable to _parameter_copies
-   */
-  void add_paramter_copy( Physics & physics_name, string & parameter_name);
-
-  /**
    * This function returns the value of the parameter whose instances are stored in
    * parameter_copies
    */
@@ -100,9 +94,10 @@ namespace GRINS
  protected:
 
   /**
-   * The ParameterVector owned by this class
+   * A vector of pointers to Numbers i.e. copies of the same variable owned by
+   * different physics objects
    */
-  libMesh::ParameterVector _parameter_copies;
+  std::vector<Number *>  _parameter_copies;
 
   }; //end Class ParameterMultiPointer definition
 

@@ -32,6 +32,8 @@
 
 // libMesh include files
 
+// A ParameterManager object will be owned by every base Physics class 
+// The ParameterManager 
 
 namespace GRINS
 {
