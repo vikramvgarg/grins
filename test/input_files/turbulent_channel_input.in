@@ -25,9 +25,16 @@ initial_linear_tolerance = 1.0e-12
 #verify_analytic_jacobians = 1.e-6
 use_numerical_jacobians_only = 'true'
 
+[MeshAdaptivity]
+mesh_adaptive = 'true'
+absolute_global_tolerance = '1.0e-2'
+estimator_type = 'adjoint_residual'
+max_refinement_steps = '1'
+
 # Visualization options
 [vis-options]
 output_vis = 'true'
+output_adjoint = 'true' 
 vis_output_file_prefix = 'turbulent_channel'
 output_format = 'ExodusII'
 
@@ -114,4 +121,9 @@ ic_types = 'parsed'
 ic_variables = 'nu'
 ic_values = '0.1*y*(1.0-y)'
 
+# Options for adaptivity
+[QoI]
+enabled_qois = 'integral_u'
+[./Vorticity]
+enabled_subdomains = '0'
 []

@@ -174,6 +174,9 @@ namespace GRINS
 	  context.vis->output_residual( context.equation_system, context.system,
                                         t_step, sim_time );
 
+	if( context.output_adjoint)
+	  context.vis->output_adjoint( context.equation_system, context.system, 0);
+
         if ( context.print_scalars )
           for (unsigned int v=0; v != context.system->n_vars(); ++v)
             if (context.system->variable(v).type().family ==

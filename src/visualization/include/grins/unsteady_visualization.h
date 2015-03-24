@@ -45,6 +45,9 @@ namespace GRINS
 				  const unsigned int time_step,
 				  const libMesh::Real time);
 
+    virtual void output_adjoint( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+				  GRINS::MultiphysicsSystem* system,
+				  const unsigned int qoi_index );
   };
 
 } // end namespace GRINS

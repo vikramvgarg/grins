@@ -31,6 +31,7 @@
 #include "grins/qoi_names.h"
 #include "grins/average_nusselt_number.h"
 #include "grins/vorticity.h"
+#include "grins/integral_u.h"
 
 namespace GRINS
 {
@@ -88,6 +89,11 @@ namespace GRINS
     else if( qoi_name == vorticity )
       {
         qoi =  new Vorticity( vorticity );
+      }
+
+    else if( qoi_name == integral_u )
+      {
+        qoi =  new Vorticity( integral_u );
       }
 
     else

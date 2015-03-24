@@ -93,4 +93,12 @@ namespace GRINS
     return;
   }
 
+  void UnsteadyVisualization::output_adjoint
+    ( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+      MultiphysicsSystem* system,
+      unsigned int qoi_index )
+  {
+    libmesh_not_implemented();
+  }
+
 } // namespace GRINS

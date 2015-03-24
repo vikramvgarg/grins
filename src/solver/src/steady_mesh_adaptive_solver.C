@@ -111,6 +111,11 @@ namespace GRINS
             context.vis->output_residual( context.equation_system, context.system );
           }
 
+	if( context.output_adjoint )
+          {
+            context.vis->output_adjoint( context.equation_system, context.system, 0 );
+          }	
+
         // Now we construct the data structures for the mesh refinement process 
         libMesh::ErrorVector error;
         

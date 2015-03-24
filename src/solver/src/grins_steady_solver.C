@@ -100,6 +100,8 @@ namespace GRINS
 
     if( context.output_residual ) context.vis->output_residual( context.equation_system, context.system );
 
+    if( context.output_adjoint ) context.vis->output_adjoint( context.equation_system, context.system, 0 );
+
     return;
   }
 
