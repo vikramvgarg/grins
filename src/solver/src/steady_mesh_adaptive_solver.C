@@ -101,9 +101,9 @@ namespace GRINS
             libMesh::NumericVector<libMesh::Number>& dual_solution = context.system->get_adjoint_solution(0);
 
             // Swap primal and dual to write out dual solution
-            primal_solution.swap( dual_solution );          
+            primal_solution.swap( dual_solution );
             context.vis->output( context.equation_system );
-            primal_solution.swap( dual_solution );          
+            primal_solution.swap( dual_solution );
           }
 
         if( context.output_residual )
@@ -111,9 +111,14 @@ namespace GRINS
             context.vis->output_residual( context.equation_system, context.system );
           }
 
-        // Now we construct the data structures for the mesh refinement process 
+	if( context.output_adjoint )
+	{
+	  context.vis->output_adjoint( context.equation_system, context.system, 0 );
+	}
+
+        // Now we construct the data structures for the mesh refinement process
         libMesh::ErrorVector error;
-        
+
         std::cout << "==========================================================" << std::endl
                   << "Estimating error" << std::endl
                   << "==========================================================" << std::endl;
@@ -130,7 +135,7 @@ namespace GRINS
                   << "Checking convergence" << std::endl
                   << "==========================================================" << std::endl;
         bool converged = this->check_for_convergence( error );
-        
+
         if( converged )
           {
             // Break out of adaptive loop
@@ -150,15 +155,15 @@ namespace GRINS
 
                 this->flag_elements_for_refinement( error );
                 _mesh_refinement->refine_and_coarsen_elements();
-    
+
                 // Dont forget to reinit the system after each adaptive refinement!
                 context.equation_system->reinit();
 
                 // This output cannot be toggled in the input file.
                 std::cout << "==========================================================" << std::endl
-                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem() 
+                          << "Refined mesh to " << std::setw(12) << mesh.n_active_elem()
                           << " active elements" << std::endl
-                          << "            " << std::setw(16) << context.system->n_active_dofs() 
+                          << "            " << std::setw(16) << context.system->n_active_dofs()
                           << " active dofs" << std::endl
                           << "==========================================================" << std::endl;
 

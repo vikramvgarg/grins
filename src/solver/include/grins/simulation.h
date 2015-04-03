@@ -75,12 +75,12 @@ namespace GRINS
                 LIBMESH_CAN_DEFAULT_TO_COMMWORLD );
 
     virtual ~Simulation();
-	
+
     void run();
 
     void print_sim_info();
 
-    std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();	      
+    std::tr1::shared_ptr<libMesh::EquationSystems> get_equation_system();
 
     libMesh::Number get_qoi_value( unsigned int qoi_index ) const;
 
@@ -91,12 +91,12 @@ namespace GRINS
 #endif
 
   protected:
-    
+
     void read_restart( const GetPot& input );
 
     void attach_neumann_bc_funcs( std::map< GRINS::PhysicsName, GRINS::NBCContainer > neumann_bcs,
 				  GRINS::MultiphysicsSystem* system );
-    
+
     void attach_dirichlet_bc_funcs( std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > dbc_map,
 				    GRINS::MultiphysicsSystem* system );
 
@@ -125,7 +125,7 @@ namespace GRINS
 
     //! GRINS::Multiphysics system name
     std::string _system_name;
-    
+
     // This needs to be a standard pointer, as _equation_system will own and destroy the object.
     GRINS::MultiphysicsSystem* _multiphysics_system;
 
@@ -144,6 +144,7 @@ namespace GRINS
     // Visualization options
     bool _output_vis;
     bool _output_residual;
+    bool _output_adjoint;
     bool _output_solution_sensitivities;
 
     unsigned int _timesteps_per_vis;

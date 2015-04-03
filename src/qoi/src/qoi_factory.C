@@ -31,6 +31,7 @@
 #include "grins/qoi_names.h"
 #include "grins/average_nusselt_number.h"
 #include "grins/vorticity.h"
+#include "grins/integral_u.h"
 #include "grins/parsed_interior_qoi.h"
 
 namespace GRINS
@@ -39,7 +40,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   QoIFactory::~QoIFactory()
   {
     return;
@@ -57,7 +58,7 @@ namespace GRINS
       }
 
     std::tr1::shared_ptr<CompositeQoI> qois( new CompositeQoI );
-    
+
     if( !qoi_names.empty() )
       {
         for( std::vector<std::string>::const_iterator name = qoi_names.begin();
@@ -86,6 +87,11 @@ namespace GRINS
         qoi = new AverageNusseltNumber( avg_nusselt );
       }
 
+    else if( qoi_name == integral_u )
+      {
+        qoi =  new Integral_U( integral_u );
+      }
+
     else if( qoi_name == parsed_interior )
       {
         qoi =  new ParsedInteriorQoI( parsed_interior );
@@ -109,14 +115,14 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::check_qoi_physics_consistency( const GetPot& input, 
+  void QoIFactory::check_qoi_physics_consistency( const GetPot& input,
 						  const std::string& qoi_name )
   {
     int num_physics =  input.vector_variable_size("Physics/enabled_physics");
 
     // This should be checked other places, but let's be double sure.
     libmesh_assert(num_physics > 0);
-  
+
     std::set<std::string> requested_physics;
     std::set<std::string> required_physics;
 
@@ -125,8 +131,8 @@ namespace GRINS
       {
 	requested_physics.insert( input("Physics/enabled_physics", "NULL", i ) );
       }
-  
-    /* If it's Nusselt, we'd better have HeatTransfer or LowMachNavierStokes. 
+
+    /* If it's Nusselt, we'd better have HeatTransfer or LowMachNavierStokes.
        HeatTransfer implicitly requires fluids, so no need to check for those. `*/
     if( qoi_name == avg_nusselt )
       {
@@ -134,7 +140,7 @@ namespace GRINS
 	required_physics.insert(low_mach_navier_stokes);
 	this->consistency_helper( requested_physics, required_physics, qoi_name );
       }
-      
+
     return;
   }
 
@@ -143,10 +149,10 @@ namespace GRINS
     /*! \todo Generalize to multiple QoI case when CompositeQoI is implemented in libMesh */
     std::cout << "==========================================================" << std::endl
 	      << "List of Enabled QoIs:" << std::endl;
-    
+
     for( unsigned int q = 0; q < qois->n_qois(); q++ )
       {
-        std::cout << qois->get_qoi(q).name() << std::endl;      
+        std::cout << qois->get_qoi(q).name() << std::endl;
       }
 
     std::cout <<  "==========================================================" << std::endl;
@@ -155,7 +161,7 @@ namespace GRINS
   }
 
   void QoIFactory::consistency_helper( const std::set<std::string>& requested_physics,
-				       const std::set<std::string>& required_physics, 
+				       const std::set<std::string>& required_physics,
 				       const std::string& qoi_name )
   {
     bool physics_found = false;
@@ -173,20 +179,20 @@ namespace GRINS
     return;
   }
 
-  void QoIFactory::consistency_error_msg( const std::string& qoi_name, 
+  void QoIFactory::consistency_error_msg( const std::string& qoi_name,
 					  const std::set<std::string>& required_physics )
   {
     libMesh::err << "================================================================" << std::endl
 		 << "QoI " << qoi_name << std::endl
 		 << "requires one of the following physics which were not found:" <<std::endl;
-    
+
     for( std::set<std::string>::const_iterator name = required_physics.begin();
 	 name != required_physics.end();
 	 name++ )
       {
 	libMesh::err << *name << std::endl;
       }
-  
+
     libMesh::err << "================================================================" << std::endl;
 
     libmesh_error();

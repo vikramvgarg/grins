@@ -58,6 +58,7 @@ namespace GRINS
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
+    _output_adjoint( input( "vis-options/output_adjoint", false ) ),
     _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
@@ -102,6 +103,7 @@ namespace GRINS
     _print_scalars( input("screen-options/print_scalars", false ) ),
     _output_vis( input("vis-options/output_vis", false ) ),
     _output_residual( input( "vis-options/output_residual", false ) ),
+    _output_adjoint( input( "vis-options/output_adjoint", false ) ),
     _output_solution_sensitivities( input( "vis-options/output_solution_sensitivities", false ) ),
     _timesteps_per_vis( input("vis-options/timesteps_per_vis", 1 ) ),
     _timesteps_per_perflog( input("screen-options/timesteps_per_perflog", 0 ) ),
@@ -302,6 +304,7 @@ namespace GRINS
     context.timesteps_per_perflog = _timesteps_per_perflog;
     context.output_vis = _output_vis;
     context.output_residual = _output_residual;
+    context.output_adjoint = _output_adjoint;
     context.output_solution_sensitivities = _output_solution_sensitivities;
     context.print_scalars = _print_scalars;
     context.print_perflog = _print_log_info;
@@ -414,7 +417,7 @@ namespace GRINS
     // Most of this was pulled from FIN-S
     if (restart_file != "none")
       {
-        std::cout << " ====== Restarting from " << restart_file << std::endl;      
+        std::cout << " ====== Restarting from " << restart_file << std::endl;
 
         // Must have correct file type to restart
         if (restart_file.rfind(".xdr") < restart_file.size())
@@ -422,7 +425,7 @@ namespace GRINS
                                  //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
                                  libMesh::EquationSystems::READ_DATA |
                                  libMesh::EquationSystems::READ_ADDITIONAL_DATA);
-      
+
         else if  (restart_file.rfind(".xda") < restart_file.size())
           _equation_system->read(restart_file,GRINSEnums::READ,
                                  //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
@@ -434,10 +437,10 @@ namespace GRINS
             std::cerr << "Error: Restart filename must have .xdr or .xda extension!" << std::endl;
             libmesh_error();
           }
-      
+
         const std::string system_name = input("screen-options/system_name", "GRINS" );
 
-        MultiphysicsSystem& system = 
+        MultiphysicsSystem& system =
           _equation_system->get_system<MultiphysicsSystem>(system_name);
 
         // Update the old data
@@ -474,7 +477,7 @@ namespace GRINS
          it++ )
       {
         std::tr1::shared_ptr<Physics> physics = system->get_physics( it->first );
-      
+
         physics->attach_dirichlet_bound_func( it->second );
       }
     return;

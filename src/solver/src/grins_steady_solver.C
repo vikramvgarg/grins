@@ -63,7 +63,7 @@ namespace GRINS
   {
     libmesh_assert( context.system );
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
@@ -92,13 +92,15 @@ namespace GRINS
             std::cout << '}' << std::endl;
           }
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
       }
 
     if( context.output_residual ) context.vis->output_residual( context.equation_system, context.system );
+
+    if( context.output_adjoint ) context.vis->output_adjoint( context.equation_system, context.system, 0 );
 
     return;
   }

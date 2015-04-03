@@ -83,7 +83,7 @@ namespace GRINS
 
     if (_target_tolerance)
       {
-        libMesh::TwostepTimeSolver *outer_solver = 
+        libMesh::TwostepTimeSolver *outer_solver =
           new libMesh::TwostepTimeSolver(*system);
 
         outer_solver->target_tolerance = _target_tolerance;
@@ -94,7 +94,7 @@ namespace GRINS
         outer_solver->core_time_solver =
           libMesh::AutoPtr<libMesh::UnsteadySolver>(time_solver);
         system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(outer_solver);
-      } 
+      }
     else
       {
         system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
@@ -112,17 +112,17 @@ namespace GRINS
     libmesh_assert( context.system );
 
     context.system->deltat = this->_deltat;
-  
+
     libMesh::Real sim_time;
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
       }
 
     std::time_t first_wall_time = std::time(NULL);
-    
+
     // Now we begin the timestep loop to compute the time-accurate
     // solution of the equations.
     for (unsigned int t_step=0; t_step < this->_n_timesteps; t_step++)
@@ -133,7 +133,7 @@ namespace GRINS
 		  << "   Beginning time step " << t_step  <<
                      ", t = " << context.system->time <<
                      ", dt = " << context.system->deltat <<
-                     ", runtime = " << (latest_wall_time - first_wall_time) << 
+                     ", runtime = " << (latest_wall_time - first_wall_time) <<
                      std::endl
 		  << "==========================================================" << std::endl;
 
@@ -174,6 +174,9 @@ namespace GRINS
 	  context.vis->output_residual( context.equation_system, context.system,
                                         t_step, sim_time );
 
+	if( context.output_adjoint)
+	  context.vis->output_adjoint( context.equation_system, context.system, 0);
+
         if ( context.print_perflog && context.timesteps_per_perflog
              && !((t_step+1)%context.timesteps_per_perflog) )
           libMesh::perflog.print_log();
@@ -205,7 +208,7 @@ namespace GRINS
     std::time_t final_wall_time = std::time(NULL);
     std::cout << "==========================================================" << std::endl
 	      << "   Ending time stepping, t = " << context.system->time <<
-                 ", runtime = " << (final_wall_time - first_wall_time) << 
+                 ", runtime = " << (final_wall_time - first_wall_time) <<
                  std::endl
               << "==========================================================" << std::endl;
 

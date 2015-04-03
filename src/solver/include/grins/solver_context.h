@@ -44,12 +44,12 @@ namespace GRINS
   //! Simple class to hold objects passed to Solver::solve
   /*! Allows some flexibility for adding objects needed to pass to the Solver::solve
       method so that the solver can still be agnostic to creation etc. of those objects,
-      but can operate on them. 
+      but can operate on them.
    */
   class SolverContext
   {
   public:
-    
+
     SolverContext();
     ~SolverContext();
 
@@ -60,6 +60,7 @@ namespace GRINS
     unsigned int timesteps_per_perflog;
     bool output_vis;
     bool output_residual;
+    bool output_adjoint;
     bool output_solution_sensitivities;
     bool print_perflog;
     bool print_scalars;

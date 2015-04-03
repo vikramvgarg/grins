@@ -38,7 +38,7 @@ namespace GRINS
 
   SteadyVisualization::SteadyVisualization
     ( const GetPot& input,
-      const libMesh::Parallel::Communicator &comm ) 
+      const libMesh::Parallel::Communicator &comm )
     : Visualization(input, comm)
   {
     return;
@@ -72,6 +72,30 @@ namespace GRINS
 
     return;
   }
+
+  void SteadyVisualization::output_adjoint( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+					    MultiphysicsSystem* system,
+					    const unsigned int qoi_index)
+  {
+    std::string filename = this->_vis_output_file_prefix+"_adjoint";
+
+    // Idea is that this->rhs stashes the residual. Thus, when we swap
+    // with the solution, we should be dumping the residual. Then, we swap
+    // back once we're done outputting.
+
+    // Swap solution with computed residual
+    system->solution->swap( (system->get_adjoint_solution(qoi_index)) );
+    equation_system->update();
+
+    this->dump_visualization( equation_system, filename, 0.0 );
+
+    // Now swap back and reupdate
+    system->solution->swap( (system->get_adjoint_solution(qoi_index)) );
+    equation_system->update();
+
+    return;
+  }
+
 
   void SteadyVisualization::output_solution_sensitivities
     (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,

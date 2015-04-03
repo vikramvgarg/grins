@@ -66,6 +66,10 @@ namespace GRINS
 				  GRINS::MultiphysicsSystem* system,
 				  const unsigned int time_step, const libMesh::Real time ) =0;
 
+    virtual void output_adjoint( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
+				 GRINS::MultiphysicsSystem* system,
+				 const unsigned int qoi_index ) =0;
+
     void output_solution_sensitivities
       (std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
        GRINS::MultiphysicsSystem* system,
@@ -79,7 +83,7 @@ namespace GRINS
 
     void dump_visualization( std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			     const std::string& filename_prefix, const libMesh::Real time );
-    
+
   protected:
 
     // Visualization options
