@@ -27,9 +27,13 @@
 
 // GRINS
 #include "grins/source_term_base.h"
+#include "primitive_flow_fe_variables.h"
+#include "grins/turbulence_fe_variables.h"
 
-// libMesh
-#include "libmesh/masa.h"
+// MASA
+#ifdef GRINS_HAVE_MASA
+#include "masa.h"
+#endif
 
 namespace GRINS
 {
@@ -47,7 +51,15 @@ namespace GRINS
 					  CachedValues& cache );
 
   protected:
-    libMesh::Real parameter_1, parameter_2;
+
+    // The flow variables
+    PrimitiveFlowFEVariables _flow_vars;
+
+    // These are defined for each physics
+    TurbulenceFEVariables _turbulence_vars;
+
+    // A string to hold the particular manufactured solution we want to verify against
+    string solution_name;
 
   private:
 

@@ -37,11 +37,12 @@ namespace GRINS
 {
   MasaSourceTerm::MasaSourceTerm( const std::string& physics_name, const GetPot& input )
     : SourceTermBase(physics_name,input),
-      parameter_1(input("Physics/"+spalart_allmaras+"/Parameters/masa_parameter_1",1.0)),
-      parameter_2(input("Physics/"+spalart_allmaras+"/Parameters/masa_parameter_2",1.0))
+      _flow_vars(input,incompressible_navier_stokes),
+      _turbulence_vars(input, spalart_allmaras),
+      solution_name(input("Physics/"+spalart_allmaras+"/Parameters/solution_name","fans_sa_transient_shear"))
   {
-    // initialize the problem
-    err = MASA::masa_init<Scalar>("sa example","fans_sa_transient_free_shear");
+    // initialize the problem with the solution the user asked for
+    err = MASA::masa_init<Scalar>("sa example",solution_name);
 
     // call the sanity check routine
     // (tests that all variables have been initialized)
@@ -93,9 +94,9 @@ namespace GRINS
 
       for (unsigned int i=0; i != n_dofs; i++)
       {
-	F_u(i) += (MASA::masa_eval_source_rho_u<Scalar>  (x_qp[0],x_qp[1],t))*phi[i][qp]*JxW[qp];
-	F_v(i) += (MASA::masa_eval_source_rho_v<Scalar>  (x_qp[0],x_qp[1],t))*phi[i][qp]*JxW[qp];
-	F_nu(i) += (MASA::masa_eval_source_nu<Scalar>  (x_qp[0],x_qp[1],t))*phi[i][qp]*JxW[qp];
+	F_u(i) += (MASA::masa_eval_source_rho_u<Scalar>  (x_qp[0],x_qp[1],t))*phi_u[i][qp]*JxW[qp];
+	F_v(i) += (MASA::masa_eval_source_rho_v<Scalar>  (x_qp[0],x_qp[1],t))*phi_u[i][qp]*JxW[qp];
+	F_nu(i) += (MASA::masa_eval_source_nu<Scalar>  (x_qp[0],x_qp[1],t))*phi_nu[i][qp]*JxW[qp];
       }
     }
 
