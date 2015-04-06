@@ -29,11 +29,19 @@ relative_step_tolerance = 1e-10
 use_numerical_jacobians_only = 'true'
 []
 
+#Meshing options
+[MeshAdaptivity]
+mesh_adaptive = 'true'
+absolute_global_tolerance = '1.0e-2'
+estimator_type = 'adjoint_residual'
+max_refinement_steps = '1'
+
 # Visualization options
 [vis-options]
-output_vis = 'false'
+output_vis = 'true'
+output_adjoint = 'true'
 vis_output_file_prefix = 'turbulent_channel'
-output_format = 'ExodusII xdr'
+output_format = 'ExodusII'
 
 [Materials]
 
@@ -110,5 +118,11 @@ ic_ids = '0'
 ic_types = 'parsed'
 ic_variables = 'nu'
 ic_values = '0.1*y*(1.0-y)'
+
+# Options for adaptivity
+[QoI]
+enabled_qois = 'vorticity'
+[./Vorticity]
+enabled_subdomains = '0'
 
 []

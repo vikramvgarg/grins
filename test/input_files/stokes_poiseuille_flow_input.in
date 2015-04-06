@@ -10,32 +10,42 @@
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = false 
+transient = false
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
 
 verify_analytic_jacobians = 1.e-6
 
+#Meshing options
+[MeshAdaptivity]
+mesh_adaptive = 'true'
+absolute_global_tolerance = '1.0e-2'
+estimator_type = 'adjoint_residual'
+max_refinement_steps = '1'
+
 # Visualization options
 [vis-options]
-output_vis = 'false' 
-vis_output_file_prefix = couette_poiseuille 
-output_format = 'ExodusII xdr'
+output_vis = 'true'
+output_adjoint = 'true'
+vis_output_file_prefix = couette_poiseuille
+output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
-solver_verbose = 'true' 
+solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
+echo_qoi = 'true' # which QoIs activated
+print_qoi = 'true' # print numerical values of QoIs
 
 [Materials]
 
@@ -79,5 +89,11 @@ u_velocity = 'u'
 v_velocity = 'v'
 w_velocity = 'w'
 pressure = 'p'
+
+# Options for adaptivity
+[QoI]
+enabled_qois = 'vorticity'
+[./Vorticity]
+enabled_subdomains = '0'
 
 []
