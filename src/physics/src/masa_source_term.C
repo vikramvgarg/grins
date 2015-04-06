@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
+#ifdef GRINS_HAVE_MASA
+
 // This class
 #include "grins/masa_source_term.h"
 
@@ -104,3 +106,5 @@ namespace GRINS
   }
 
 } // end namespace GRINS
+
+#endif // GRINS_HAVE_MASA

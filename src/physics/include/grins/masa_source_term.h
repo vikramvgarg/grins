@@ -33,7 +33,6 @@
 // MASA
 #ifdef GRINS_HAVE_MASA
 #include "masa.h"
-#endif
 
 namespace GRINS
 {
@@ -68,5 +67,7 @@ namespace GRINS
   };
 
 } // end namespace GRINS
+
+#endif // End if GRINS_HAVE_MASA
 
 #endif // GRINS_MASA_SOURCE_TERM_H
