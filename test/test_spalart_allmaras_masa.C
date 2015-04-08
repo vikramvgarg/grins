@@ -30,12 +30,23 @@
 #include <iostream>
 
 // GRINS
+#include "grins/mesh_builder.h"
 #include "grins/simulation.h"
 #include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/parabolic_profile.h"
 
 //libMesh
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/fe_base.h"
+#include "libmesh/fe_interface.h"
+#include "libmesh/mesh_function.h"
+#include "libmesh/serial_mesh.h"
+#include "libmesh/edge_edge2.h"
+#include "libmesh/mesh_generation.h"
+#include "libmesh/linear_implicit_system.h"
+#include "libmesh/gmv_io.h"
 #include "libmesh/exact_solution.h"
 
 //MASA
@@ -58,17 +69,74 @@ exact_derivative( const libMesh::Point& p,
 		  const std::string&,  // sys_name, not needed
 		  const std::string&); // unk_name, not needed);
 
-class ParabolicBCFactory : public GRINS::BoundaryConditionsFactory
+class MasaBCFactory : public GRINS::BoundaryConditionsFactory
 {
 public:
 
-  ParabolicBCFactory( )
+  MasaBCFactory( )
     : GRINS::BoundaryConditionsFactory()
   { return; };
 
-  ~ParabolicBCFactory(){return;};
+  ~MasaBCFactory(){return;};
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > build_dirichlet( );
+};
+
+// Class to construct the Dirichlet boundary object and operator for the MASA specified u, v velocity and pressure components
+class MasaBdyFunctionU : public libMesh::FunctionBase<libMesh::Number>
+{
+public:
+  MasaBdyFunctionU ()
+  { this->_initialized = true; }
+
+  virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
+  { libmesh_not_implemented(); }
+
+  virtual void operator() (const libMesh::Point& p,
+                           const libMesh::Real t,
+                           libMesh::DenseVector<libMesh::Number>& output)
+  {
+    output.resize(3);
+    output.zero();
+
+    // The x-component
+    output(0) = MASA::masa_eval_exact_u<libMesh::Real>  ( p(0), p(1) );;
+    // The y-component
+    output(1) = MASA::masa_eval_exact_v<libMesh::Real>  ( p(0), p(1) );;
+    // The pressure
+    output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );;
+  }
+
+  virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new MasaBdyFunctionU()); }
+
+};
+
+// Class to construct the Dirichlet boundary object and operator for the MASA specified nu
+class MasaBdyFunctionNu : public libMesh::FunctionBase<libMesh::Number>
+{
+public:
+  MasaBdyFunctionNu ()
+  { this->_initialized = true; }
+
+  virtual libMesh::Number operator() (const libMesh::Point&, const libMesh::Real = 0)
+  { libmesh_not_implemented(); }
+
+  virtual void operator() (const libMesh::Point& p,
+                           const libMesh::Real t,
+                           libMesh::DenseVector<libMesh::Number>& output)
+  {
+    output.resize(1);
+    output.zero();
+
+    // The turbulent viscosity
+    output(0) = MASA::masa_eval_exact_nu<libMesh::Real>  ( p(0), p(1) );;
+
+  }
+
+  virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
+  { return libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > (new MasaBdyFunctionNu()); }
+
 };
 
 int main(int argc, char* argv[])
@@ -102,7 +170,7 @@ int main(int argc, char* argv[])
 
   GRINS::SimulationBuilder sim_builder;
 
-  std::tr1::shared_ptr<ParabolicBCFactory> bc_factory( new ParabolicBCFactory );
+  std::tr1::shared_ptr<MasaBCFactory> bc_factory( new MasaBCFactory );
 
   sim_builder.attach_bc_factory(bc_factory);
 
@@ -196,20 +264,36 @@ int main(int argc, char* argv[])
   return return_flag;
 }
 
-std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > ParabolicBCFactory::build_dirichlet( )
+std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_dirichlet( )
 {
-  GRINS::DBCContainer cont;
-  cont.add_var_name( "u" );
-  cont.add_bc_id( 1 );
-  cont.add_bc_id( 3 );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > uvp_func( new GRINS::MasaBdyFunctionU );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > nu_func( new GRINS::MasaBdyFunctionNu );
 
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > u_func( new GRINS::ParabolicProfile );
+  GRINS::DBCContainer cont_U;
+  cont_U.add_var_name( "u" );
+  cont_U.add_var_name( "v" );
+  cont_U.add_var_name( "p" );
+  cont_U.add_bc_id( 0 );
+  cont_U.add_bc_id( 1 );
+  cont_U.add_bc_id( 2 );
+  cont_U.add_bc_id( 3 );
 
-  cont.set_func( u_func );
+  cont_U.set_func( uvp_func );
+
+  GRINS::DBCContainer cont_nu;
+  cont_nu.add_var_name( "nu" );
+  cont_U.add_bc_id( 0 );
+  cont_U.add_bc_id( 1 );
+  cont_U.add_bc_id( 2 );
+  cont_U.add_bc_id( 3 );
+
+  cont_U.set_func( nu_func );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::stokes,  cont) );
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont_U) );
+
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
 
   return mymap;
 }
@@ -239,30 +323,17 @@ exact_derivative( const libMesh::Point& p,
 		  const std::string& /*sys_name*/,  // sys_name, not needed
 		  const std::string& var)  // unk_name, not needed);
 {
+  const double x = p(0);
   const double y = p(1);
 
   libMesh::Gradient g;
-
   // Hardcoded to velocity in input file.
-  if( var == "u" )
-    {
-      g(0) = 0.0;
-      g(1) = 4*(1-y) - 4*y;
+  if( var == "u" ) g = MASA::masa_eval_2d_grad_u<libMesh::Real>  ( x, y );
+  if( var == "v" ) g = MASA::masa_eval_2d_grad_v<libMesh::Real>  ( x, y );
+  if( var == "p" ) g = MASA::masa_eval_2d_grad_p<libMesh::Real>  ( x, y );
+  if( var == "nu" ) g = MASA::masa_eval_2d_grad_nu<libMesh::Real>  ( x, y );
 
-#if LIBMESH_DIM > 2
-      g(2) = 0.0;
-#endif
-    }
 
-  if( var == "p" )
-    {
-      g(0) = (80.0-120.0)/5.0;
-      g(1) = 0.0;
-
-#if LIBMESH_DIM > 2
-      g(2) = 0.0;
-#endif
-    }
   return g;
 }
 
