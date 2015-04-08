@@ -25,6 +25,8 @@
 
 #include "grins_config.h"
 
+#ifdef GRINS_HAVE_MASA
+
 #include <iostream>
 
 // GRINS
@@ -35,6 +37,9 @@
 
 //libMesh
 #include "libmesh/exact_solution.h"
+
+//MASA
+#include "masa.h"
 
 // GRVY
 #ifdef GRINS_HAVE_GRVY
@@ -127,35 +132,65 @@ int main(int argc, char* argv[])
   // Compute error and get it in various norms
   exact_sol.compute_error("GRINS", "u");
 
-  double l2error = exact_sol.l2_error("GRINS", "u");
-  double h1error = exact_sol.h1_error("GRINS", "u");
+  double l2error_u = exact_sol.l2_error("GRINS", "u");
+  double h1error_u = exact_sol.h1_error("GRINS", "u");
 
   const double errortol = 1.0e-8;
 
   int return_flag = 0;
 
-  if( l2error > errortol || h1error > errortol )
+  if( l2error_u > errortol || h1error_u > errortol )
     {
       return_flag = 1;
 
-      std::cout << "Tolerance exceeded for velocity in Poiseuille test." << std::endl
-		<< "l2 error = " << l2error << std::endl
-		<< "h1 error = " << h1error << std::endl;
+      std::cout << "Tolerance exceeded for velocity in SA shear test." << std::endl
+		<< "l2 error = " << l2error_u << std::endl
+		<< "h1 error = " << h1error_u << std::endl;
+    }
+
+  // Compute error and get it in various norms
+  exact_sol.compute_error("GRINS", "v");
+
+  double l2error_v = exact_sol.l2_error("GRINS", "v");
+  double h1error_v = exact_sol.h1_error("GRINS", "v");
+
+  if( l2error_v > errortol || h1error_v > errortol )
+    {
+      return_flag = 1;
+
+      std::cout << "Tolerance exceeded for velocity in SA shear test." << std::endl
+		<< "l2 error = " << l2error_v << std::endl
+		<< "h1 error = " << h1error_v << std::endl;
     }
 
   // Compute error and get it in various norms
   exact_sol.compute_error("GRINS", "p");
 
-  l2error = exact_sol.l2_error("GRINS", "p");
-  h1error = exact_sol.h1_error("GRINS", "p");
+  double l2error_p = exact_sol.l2_error("GRINS", "p");
+  double h1error_p = exact_sol.h1_error("GRINS", "p");
 
-  if( l2error > errortol || h1error > errortol )
+  if( l2error_p > errortol || h1error_p > errortol )
     {
       return_flag = 1;
 
-      std::cout << "Tolerance exceeded for pressure in Poiseuille test." << std::endl
-		<< "l2 error = " << l2error << std::endl
-		<< "h1 error = " << h1error << std::endl;
+      std::cout << "Tolerance exceeded for pressure in SA shear test." << std::endl
+		<< "l2 error = " << l2error_p << std::endl
+		<< "h1 error = " << h1error_p << std::endl;
+    }
+
+  // Compute error and get it in various norms
+  exact_sol.compute_error("GRINS", "nu");
+
+  double l2error_nu = exact_sol.l2_error("GRINS", "nu");
+  double h1error_nu = exact_sol.h1_error("GRINS", "nu");
+
+  if( l2error_nu > errortol || h1error_nu > errortol )
+    {
+      return_flag = 1;
+
+      std::cout << "Tolerance exceeded for pressure in SA shear test." << std::endl
+		<< "l2 error = " << l2error_nu << std::endl
+		<< "h1 error = " << h1error_nu << std::endl;
     }
 
   return return_flag;
@@ -190,8 +225,10 @@ exact_solution( const libMesh::Point& p,
 
   libMesh::Number f = 0.0;
   // Hardcoded to velocity in input file.
-  if( var == "u" ) f = 4*y*(1-y);
-  if( var == "p" ) f = 120.0 + (80.0-120.0)/5.0*x;
+  if( var == "u" ) f = MASA::masa_eval_exact_u<libMesh::Real>  ( x, y );
+  if( var == "v" ) f = MASA::masa_eval_exact_v<libMesh::Real>  ( x, y );
+  if( var == "p" ) f = MASA::masa_eval_exact_p<libMesh::Real>  ( x, y );
+  if( var == "nu" ) f = MASA::masa_eval_exact_nu<libMesh::Real>  ( x, y );
 
   return f;
 }
@@ -228,3 +265,5 @@ exact_derivative( const libMesh::Point& p,
     }
   return g;
 }
+
+#endif // GRINS_HAVE_MASA

@@ -10,6 +10,7 @@ check_PROGRAMS += test_axi_ns_poiseuille_flow
 check_PROGRAMS += test_axi_ns_con_cyl_flow
 check_PROGRAMS += test_thermally_driven_flow
 check_PROGRAMS += test_turbulent_channel
+check_PROGRAMS += test_spalart_allmaras_masa
 check_PROGRAMS += gaussian_profiles
 check_PROGRAMS += vorticity_qoi
 check_PROGRAMS += low_mach_cavity_benchmark_regression
@@ -37,7 +38,7 @@ check_PROGRAMS += suspended_cable_regression
 check_PROGRAMS += ufo_unit
 check_PROGRAMS += generic_solution_regression
 
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include
@@ -56,7 +57,7 @@ AM_CPPFLAGS += $(GRVY_CFLAGS)
 LIBS =
 LIBS += $(LIBGRINS_LIBS)
 
-AM_LDFLAGS = 
+AM_LDFLAGS =
 
 #----------------
 # Cantera support
@@ -93,6 +94,7 @@ test_axi_ns_poiseuille_flow_SOURCES = test_axi_ns_poiseuille_flow.C
 test_axi_ns_con_cyl_flow_SOURCES = test_axi_ns_con_cyl_flow.C
 test_thermally_driven_flow_SOURCES = test_thermally_driven_flow.C
 test_turbulent_channel_SOURCES = test_turbulent_channel.C
+test_spalart_allmaras_masa_SOURCES = test_spalart_allmaras_masa.C
 gaussian_profiles_SOURCES = gaussian_profiles.C
 vorticity_qoi_SOURCES = test_vorticity_qoi.C
 low_mach_cavity_benchmark_regression_SOURCES = low_mach_cavity_benchmark_regression.C

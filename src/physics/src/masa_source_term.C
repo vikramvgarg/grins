@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include "grins_config.h"
+
 #ifdef GRINS_HAVE_MASA
 
 // This class
@@ -44,11 +46,11 @@ namespace GRINS
       solution_name(input("Physics/"+spalart_allmaras+"/Parameters/solution_name","fans_sa_transient_shear"))
   {
     // initialize the problem with the solution the user asked for
-    err = MASA::masa_init<Scalar>("sa example",solution_name);
+    MASA::masa_init<libMesh::Real>("sa example",solution_name);
 
     // call the sanity check routine
     // (tests that all variables have been initialized)
-    err = MASA::masa_sanity_check<Scalar>();
+    MASA::masa_sanity_check<libMesh::Real>();
   }
 
   MasaSourceTerm::~MasaSourceTerm()
@@ -74,9 +76,13 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& phi_nu =
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_phi();
 
-    const std::vector<libMesh::Point>& x_qp = context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+    const std::vector<libMesh::Point>& qp_loc = context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
+    // Getting time, but we are using steady solutions for now
     libMesh::Real t = context.get_time();
+
+    // Only have 2d turb solutions
+    libmesh_assert(context.get_dim()==2);
 
     // Get residuals
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
@@ -94,11 +100,19 @@ namespace GRINS
     for (unsigned int qp=0; qp != n_qpoints; qp++)
     {
 
-      for (unsigned int i=0; i != n_dofs; i++)
+      for (unsigned int i=0; i != n_u_dofs; i++)
       {
-	F_u(i) += (MASA::masa_eval_source_rho_u<Scalar>  (x_qp[0],x_qp[1],t))*phi_u[i][qp]*JxW[qp];
-	F_v(i) += (MASA::masa_eval_source_rho_v<Scalar>  (x_qp[0],x_qp[1],t))*phi_u[i][qp]*JxW[qp];
-	F_nu(i) += (MASA::masa_eval_source_nu<Scalar>  (x_qp[0],x_qp[1],t))*phi_nu[i][qp]*JxW[qp];
+	// third arg here is time, but we're using as steady solution is
+	// steady so t is irrelevant
+	Fu(i) += (MASA::masa_eval_source_rho_u<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_u[i][qp]*JxW[qp];
+	Fv(i) += (MASA::masa_eval_source_rho_v<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_u[i][qp]*JxW[qp];
+      }
+
+      for (unsigned int i=0; i != n_nu_dofs; i++)
+      {
+	// third arg here is time, but we're using as steady solution is
+	// steady so t is irrelevant
+	Fnu(i) += (MASA::masa_eval_source_nu<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_nu[i][qp]*JxW[qp];
       }
     }
 

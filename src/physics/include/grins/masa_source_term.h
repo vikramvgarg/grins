@@ -58,7 +58,7 @@ namespace GRINS
     TurbulenceFEVariables _turbulence_vars;
 
     // A string to hold the particular manufactured solution we want to verify against
-    string solution_name;
+    std::string solution_name;
 
   private:
 
