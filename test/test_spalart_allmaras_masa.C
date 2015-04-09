@@ -266,8 +266,8 @@ int main(int argc, char* argv[])
 
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_dirichlet( )
 {
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > uvp_func( new GRINS::MasaBdyFunctionU );
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > nu_func( new GRINS::MasaBdyFunctionNu );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > uvp_func( new MasaBdyFunctionU );
+  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > nu_func( new MasaBdyFunctionNu );
 
   GRINS::DBCContainer cont_U;
   cont_U.add_var_name( "u" );
@@ -327,12 +327,32 @@ exact_derivative( const libMesh::Point& p,
   const double y = p(1);
 
   libMesh::Gradient g;
-  // Hardcoded to velocity in input file.
-  if( var == "u" ) g = MASA::masa_eval_2d_grad_u<libMesh::Real>  ( x, y );
-  if( var == "v" ) g = MASA::masa_eval_2d_grad_v<libMesh::Real>  ( x, y );
-  if( var == "p" ) g = MASA::masa_eval_2d_grad_p<libMesh::Real>  ( x, y );
-  if( var == "nu" ) g = MASA::masa_eval_2d_grad_nu<libMesh::Real>  ( x, y );
 
+  // Hardcoded to velocity in input file.
+  if( var == "u" )
+  {
+    g(0) = MASA::masa_eval_grad_u<libMesh::Real>  ( x, y, 0 );
+    g(1) = MASA::masa_eval_grad_u<libMesh::Real>  ( x, y, 1 );
+  }
+
+  if( var == "v" )
+  {
+    g(0) = MASA::masa_eval_grad_v<libMesh::Real>  ( x, y, 0 );
+    g(1) = MASA::masa_eval_grad_v<libMesh::Real>  ( x, y, 1 );
+  }
+
+  if( var == "p" )
+  {
+    g(0) = MASA::masa_eval_grad_p<libMesh::Real>  ( x, y, 0 );
+    g(1) = MASA::masa_eval_grad_p<libMesh::Real>  ( x, y, 1 );
+  }
+
+  // MASA does not compute gradients of nu at this point, but we need to add it in
+  // if( var == "nu" )
+  // {
+  //   g(0) = MASA::masa_eval_grad_nu<libMesh::Real>  ( x, y, 0 );
+  //   g(1) = MASA::masa_eval_grad_nu<libMesh::Real>  ( x, y, 1 );
+  // }
 
   return g;
 }
