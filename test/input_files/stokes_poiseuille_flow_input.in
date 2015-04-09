@@ -3,8 +3,8 @@
    [./Generation]
       dimension = '2'
       element_type = 'QUAD9'
-      n_elems_x = '10'
-      n_elems_y = '10'
+      n_elems_x = '5'
+      n_elems_y = '5'
       x_max = '5.0'
 []
 
@@ -25,7 +25,7 @@ verify_analytic_jacobians = 1.e-6
 [MeshAdaptivity]
 mesh_adaptive = 'true'
 absolute_global_tolerance = '1.0e-2'
-estimator_type = 'adjoint_residual'
+estimator_type = 'adjoint_refinement'
 max_refinement_steps = '1'
 
 # Visualization options
@@ -92,8 +92,8 @@ pressure = 'p'
 
 # Options for adaptivity
 [QoI]
-enabled_qois = 'integral_u'
-[./Integral_U]
-enabled_subdomains = '0'
+enabled_qois = 'parsed_interior'
+[./ParsedInterior]
+qoi_functional = 'u*(x>2)*(.25<y)*(y<.75)'
 
 []
