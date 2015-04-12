@@ -104,6 +104,9 @@ namespace GRINS
     // No of walls
     unsigned int _no_of_walls;
 
+    // Infinite distance case
+    bool _infinite_distance;
+
   private:
     SpalartAllmaras();
 

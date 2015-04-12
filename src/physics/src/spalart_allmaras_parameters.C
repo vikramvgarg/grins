@@ -53,7 +53,7 @@ namespace GRINS
 
 
   libMesh::Real SpalartAllmarasParameters::source_fn(libMesh::Number nu, libMesh::Real mu,
-                                                     libMesh::Real wall_distance, libMesh::Real vorticity_value) const
+                                                     libMesh::Real wall_distance, libMesh::Real vorticity_value, bool infinite_distance) const
   {
     // Step 1
     libMesh::Real chi = nu/mu;
@@ -64,8 +64,16 @@ namespace GRINS
     // Step 3
     libMesh::Real fv2 = 1 - (chi/(1 + chi*fv1));
 
+    libMesh::Real S_bar = 0.0;
     // Step 4
-    libMesh::Real S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(fv2) ;
+    if(infinite_distance)
+    {
+      S_bar = 0.0;
+    }
+    else
+    {
+      S_bar = nu/(pow(_kappa, 2.0) * pow(wall_distance, 2.0))*(fv2) ;
+    }
 
     // Step 5, the absolute value of the vorticity
     libMesh::Real S = vorticity_value;
@@ -85,12 +93,18 @@ namespace GRINS
   }
 
   libMesh::Real SpalartAllmarasParameters::destruction_fn(libMesh::Number nu, libMesh::Real wall_distance,
-                                                          libMesh::Real S_tilde) const
+                                                          libMesh::Real S_tilde, bool infinite_distance) const
   {
     // Step 1
     libMesh::Real r = 0.0;
-
-    r = std::min(nu/(S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
+    if(infinite_distance)
+    {
+      r = 0.0;
+    }
+    else
+    {
+      r = std::min(nu/(S_tilde*pow(this->_kappa,2.0)*pow(wall_distance,2.0)), this->_r_lin);
+    }
 
     // Step 2
     libMesh::Real g = r + this->_c_w2*(pow(r,6.0) - r);

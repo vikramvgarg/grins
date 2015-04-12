@@ -100,11 +100,11 @@ public:
     output.zero();
 
     // The x-component
-    output(0) = MASA::masa_eval_exact_u<libMesh::Real>  ( p(0), p(1) );;
+    output(0) = MASA::masa_eval_exact_u<libMesh::Real>  ( p(0), p(1) );
     // The y-component
-    output(1) = MASA::masa_eval_exact_v<libMesh::Real>  ( p(0), p(1) );;
+    output(1) = MASA::masa_eval_exact_v<libMesh::Real>  ( p(0), p(1) );
     // The pressure
-    output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );;
+    output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
@@ -130,7 +130,7 @@ public:
     output.zero();
 
     // The turbulent viscosity
-    output(0) = MASA::masa_eval_exact_nu<libMesh::Real>  ( p(0), p(1) );;
+    output(0) = MASA::masa_eval_exact_nu<libMesh::Real>  ( p(0), p(1) );
 
   }
 
@@ -287,7 +287,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
   cont_U.add_bc_id( 2 );
   cont_U.add_bc_id( 3 );
 
-  cont_U.set_func( nu_func );
+  cont_nu.set_func( nu_func );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 

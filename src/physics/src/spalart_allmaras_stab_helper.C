@@ -66,7 +66,7 @@ namespace GRINS
   }
 
   libMesh::Real SpalartAllmarasStabilizationHelper::compute_res_spalart_steady( AssemblyContext& context,
-                                                                                unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp ) const
+                                                                                unsigned int qp, const libMesh::Real rho, const libMesh::Real mu, const libMesh::Real distance_qp, const bool infinite_distance ) const
   {
     // The flow velocity
     libMesh::Number u,v;
@@ -94,12 +94,20 @@ namespace GRINS
 
     // The source term
     libMesh::Real vorticity_value_qp = this->_spalart_allmaras_helper.vorticity(context, qp);
-    libMesh::Real S_tilde = this->_sa_params.source_fn(nu_value, mu, distance_qp, vorticity_value_qp);
+    libMesh::Real S_tilde = this->_sa_params.source_fn(nu_value, mu, distance_qp, vorticity_value_qp, infinite_distance);
     libMesh::Real source_term = this->_sa_params.get_cb1()*S_tilde*nu_value;
 
     // The destruction term
-    libMesh::Real fw = this->_sa_params.destruction_fn(nu_value, distance_qp, S_tilde);
-    libMesh::Real destruction_term =  this->_sa_params.get_cw1()*fw*pow(nu_value/distance_qp, 2.);
+    libMesh::Real fw = this->_sa_params.destruction_fn(nu_value, distance_qp, S_tilde, infinite_distance);
+    libMesh::Real destruction_term = 0.0;
+    if(infinite_distance)
+    {
+      destruction_term = 0.0;
+    }
+    else
+    {
+     destruction_term =  this->_sa_params.get_cw1()*fw*pow(nu_value/distance_qp, 2.);
+    }
 
     return rhoUdotGradnu + source_term + inv_sigmadivnuplusnuphysicalGradnu - destruction_term;
   }

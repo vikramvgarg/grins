@@ -173,7 +173,8 @@ namespace GRINS {
   void DistanceFunction::initialize ()
   {
     // Call the compute function
-    this->compute();
+    std::cout<<"Not computing the distance function."<<std::endl;
+    //this->compute();
     return;
   }
 
@@ -256,7 +257,12 @@ namespace GRINS {
         const libMesh::Elem* belem = *nm_el; //*el;
 
         // Ensure that elem defined by edge/face is linear
-        libmesh_assert( belem->default_order() == FIRST );
+        //libmesh_assert( belem->default_order() == FIRST );
+	if ( belem->default_order() != FIRST )
+	{
+	  libmesh_warning( "Returning garbage distances as orders other than FIRST are not supported.");
+	}
+
         // For now we assume that the boundary_elems are linear, but give a warning
         //libmesh_warning( "Moving ahead, but need to make sure that the boundary elems are linear");
 
@@ -275,8 +281,16 @@ namespace GRINS {
 
             //std::cout<<"Number of nodes: "<<belem->n_nodes()<<std::endl;
 
-            libmesh_assert( belem->n_nodes() == 2 );
-            libmesh_assert( belem->type() == EDGE2 );
+            //libmesh_assert( belem->n_nodes() == 2 );
+	    if( belem->n_nodes() != 2 )
+	    {
+	      libmesh_warning( "Returning garbage distances as orders other than FIRST are not supported.");
+	    }
+            //libmesh_assert( belem->type() == EDGE2 );
+	    if( belem->type() != EDGE2 )
+	    {
+	      libmesh_warning( "Returning garbage distances as orders other than FIRST are not supported.");
+	    }
 
             // Points defining the edge
             const libMesh::Point& p0 = belem->point(0);

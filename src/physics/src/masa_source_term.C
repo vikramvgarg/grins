@@ -43,7 +43,7 @@ namespace GRINS
     : SourceTermBase(physics_name,input),
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),
-      solution_name(input("Physics/"+masa_source_term+"/solution_name","fans_sa_transient_shear"))
+      solution_name(input("Physics/"+masa_source_term+"/solution_name","fans_sa_transient_free_shear"))
   {
     // initialize the problem with the solution the user asked for
     MASA::masa_init<libMesh::Real>("sa example",solution_name);
