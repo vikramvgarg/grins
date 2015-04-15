@@ -43,14 +43,20 @@ namespace GRINS
     : SourceTermBase(physics_name,input),
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),
-      solution_name(input("Physics/"+masa_source_term+"/solution_name","fans_sa_transient_free_shear"))
+      solution_name(input("Physics/"+masa_source_term+"/solution_name", "fans_sa_transient_free_shear"))
   {
     // initialize the problem with the solution the user asked for
-    MASA::masa_init<libMesh::Real>("sa example",solution_name);
+    MASA::masa_init<libMesh::Real>("sa_example",solution_name);
 
     // call the sanity check routine
     // (tests that all variables have been initialized)
     MASA::masa_sanity_check<libMesh::Real>();
+
+    // Set parameters
+    MASA::masa_set_param<libMesh::Real>("mu", 0.1);
+    MASA::masa_set_param<libMesh::Real>("p_0", 100);
+
+    MASA::masa_display_param<libMesh::Real>();
   }
 
   MasaSourceTerm::~MasaSourceTerm()
@@ -106,6 +112,9 @@ namespace GRINS
 	// steady so t is irrelevant
 	Fu(i) += (MASA::masa_eval_source_rho_u<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_u[i][qp]*JxW[qp];
 	Fv(i) += (MASA::masa_eval_source_rho_v<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_u[i][qp]*JxW[qp];
+
+	//std::cout<<"Fu at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fu(i)<<std::endl;
+	//std::cout<<"Fv at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fv(i)<<std::endl;
       }
 
       for (unsigned int i=0; i != n_nu_dofs; i++)
@@ -113,6 +122,8 @@ namespace GRINS
 	// third arg here is time, but we're using as steady solution is
 	// steady so t is irrelevant
 	Fnu(i) += (MASA::masa_eval_source_nu<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_nu[i][qp]*JxW[qp];
+
+	//std::cout<<"Fnu at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fnu(i)<<std::endl;
       }
     }
 

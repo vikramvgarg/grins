@@ -226,16 +226,22 @@ namespace GRINS
         //The source term
         libMesh::Real S_tilde = this->_sa_params.source_fn(nu, mu_qp, (*distance_qp)(qp), vorticity_value_qp, _infinite_distance);
 
+	//std::cout<<"S_tilde: "<<S_tilde<<std::endl;
+
         // The ft2 function needed for the negative S-A model
         libMesh::Real chi = nu/mu_qp;
         libMesh::Real f_t2 = this->_sa_params.get_c_t3()*exp(-this->_sa_params.get_c_t4()*chi*chi);
 
-        libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_sa_params.get_cb1()*(1 - f_t2)*S_tilde*nu;
+        //libMesh::Real source_term = ((*distance_qp)(qp)==0.0)?1.0:this->_sa_params.get_cb1()*(1 - f_t2)*S_tilde*nu;
+	libMesh::Real source_term = this->_sa_params.get_cb1()*(1 - f_t2)*S_tilde*nu;
+
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
             source_term = this->_sa_params.get_cb1()*(1 - this->_sa_params.get_c_t3())*vorticity_value_qp*nu;
           }
+
+	//std::cout<<"Source term: "<<source_term<<std::endl;
 
         // The wall destruction term
         libMesh::Real fw = this->_sa_params.destruction_fn(nu, (*distance_qp)(qp), S_tilde, _infinite_distance);
@@ -251,7 +257,8 @@ namespace GRINS
 	}
         libMesh::Real nud2 = nud*nud;
         libMesh::Real kappa2 = (this->_sa_params.get_kappa())*(this->_sa_params.get_kappa());
-        libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
+        //libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
+	libMesh::Real destruction_term = (this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
 
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
