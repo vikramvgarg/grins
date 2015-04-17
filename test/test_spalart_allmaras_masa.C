@@ -107,8 +107,15 @@ public:
     MASA::masa_sanity_check<libMesh::Real>();
 
     // Set parameters
-    MASA::masa_set_param<libMesh::Real>("mu", 0.1);
-    MASA::masa_set_param<libMesh::Real>("p_0", 100);
+    MASA::masa_set_param<libMesh::Real>("mu", 2.0);
+    MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
+    MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
+    MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
+    MASA::masa_set_param<libMesh::Real>("p_0", 100.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_0", 0.0);
 
     // The x-component
     output(0) = MASA::masa_eval_exact_u<libMesh::Real>  ( p(0), p(1) );
@@ -148,8 +155,15 @@ public:
     MASA::masa_sanity_check<libMesh::Real>();
 
     // Set parameters
-    MASA::masa_set_param<libMesh::Real>("mu", 0.1);
-    MASA::masa_set_param<libMesh::Real>("p_0", 100);
+    MASA::masa_set_param<libMesh::Real>("mu", 2.0);
+    MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
+    MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
+    MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
+    MASA::masa_set_param<libMesh::Real>("p_0", 100.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_0", 0.0);
 
     // The turbulent viscosity
     output(0) = MASA::masa_eval_exact_nu<libMesh::Real>  ( p(0), p(1) );
@@ -289,7 +303,7 @@ int main(int argc, char* argv[])
 std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_dirichlet( )
 {
   std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > uvp_func( new MasaBdyFunctionU );
-  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > nu_func( new MasaBdyFunctionNu );
+  //std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > nu_func( new MasaBdyFunctionNu );
 
   GRINS::DBCContainer cont_U;
   cont_U.add_var_name( "u" );
@@ -302,20 +316,20 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
 
   cont_U.set_func( uvp_func );
 
-  GRINS::DBCContainer cont_nu;
-  cont_nu.add_var_name( "nu" );
-  cont_U.add_bc_id( 0 );
-  cont_U.add_bc_id( 1 );
-  cont_U.add_bc_id( 2 );
-  cont_U.add_bc_id( 3 );
+  //GRINS::DBCContainer cont_nu;
+  //cont_nu.add_var_name( "nu" );
+  //cont_U.add_bc_id( 0 );
+  //cont_U.add_bc_id( 1 );
+  //cont_U.add_bc_id( 2 );
+  //cont_U.add_bc_id( 3 );
 
-  cont_nu.set_func( nu_func );
+  //cont_nu.set_func( nu_func );
 
   std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > mymap;
 
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont_U) );
 
-  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
+  //mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
 
   return mymap;
 }
@@ -328,17 +342,6 @@ exact_solution( const libMesh::Point& p,
 {
   const double x = p(0);
   const double y = p(1);
-
-  // initialize the problem with the solution the user asked for
-  MASA::masa_init<libMesh::Real>("sa_bc_U", "fans_sa_transient_free_shear");
-
-  // call the sanity check routine
-  // (tests that all variables have been initialized)
-  MASA::masa_sanity_check<libMesh::Real>();
-
-  // Set parameters
-  MASA::masa_set_param<libMesh::Real>("mu", 0.1);
-  MASA::masa_set_param<libMesh::Real>("p_0", 100);
 
   libMesh::Number f = 0.0;
   // Hardcoded to velocity in input file.
