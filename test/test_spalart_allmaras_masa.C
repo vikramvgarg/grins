@@ -109,15 +109,15 @@ public:
     // // Set parameters
     // MASA::masa_set_param<libMesh::Real>("mu", 2.0);
     // MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("u_x", 0.0);    
+    // MASA::masa_set_param<libMesh::Real>("u_x", 0.0);
     // MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
-    // MASA::masa_set_param<libMesh::Real>("v_x", 0.2);    
-    // MASA::masa_set_param<libMesh::Real>("v_y", 0.0);    
+    // MASA::masa_set_param<libMesh::Real>("v_x", 0.2);
+    // MASA::masa_set_param<libMesh::Real>("v_y", 0.0);
     // MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
     // MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
     // MASA::masa_set_param<libMesh::Real>("p_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("p_x", 0.5);    
-    // MASA::masa_set_param<libMesh::Real>("p_y", 0.5);        
+    // MASA::masa_set_param<libMesh::Real>("p_x", 0.5);
+    // MASA::masa_set_param<libMesh::Real>("p_y", 0.5);
     // MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.1);
     // MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.1);
     // MASA::masa_set_param<libMesh::Real>("nu_sa_0", 1.0);
@@ -162,15 +162,15 @@ public:
     // // Set parameters
     // MASA::masa_set_param<libMesh::Real>("mu", 2.0);
     // MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("u_x", 0.0);    
+    // MASA::masa_set_param<libMesh::Real>("u_x", 0.0);
     // MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
-    // MASA::masa_set_param<libMesh::Real>("v_x", 0.2);    
-    // MASA::masa_set_param<libMesh::Real>("v_y", 0.0);    
+    // MASA::masa_set_param<libMesh::Real>("v_x", 0.2);
+    // MASA::masa_set_param<libMesh::Real>("v_y", 0.0);
     // MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
     // MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
     // MASA::masa_set_param<libMesh::Real>("p_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("p_x", 0.5);    
-    // MASA::masa_set_param<libMesh::Real>("p_y", 0.5);        
+    // MASA::masa_set_param<libMesh::Real>("p_x", 0.5);
+    // MASA::masa_set_param<libMesh::Real>("p_y", 0.5);
     // MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.1);
     // MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.1);
     // MASA::masa_set_param<libMesh::Real>("nu_sa_0", 1.0);
@@ -302,7 +302,7 @@ int main(int argc, char* argv[])
     {
       return_flag = 1;
 
-      std::cout << "Tolerance exceeded for pressure in SA shear test." << std::endl
+      std::cout << "Tolerance exceeded for turbulent viscosity in SA shear test." << std::endl
   		<< "l2 error = " << l2error_nu << std::endl
   		<< "h1 error = " << h1error_nu << std::endl;
     }
@@ -350,6 +350,9 @@ exact_solution( const libMesh::Point& p,
 		const std::string& /*sys_name*/,  // sys_name, not needed
 		const std::string& var )  // unk_name, not needed);
 {
+  // Is the MASA solution we want still loaded and set to the params we want
+  //MASA::masa_display_param<libMesh::Real>();
+
   const double x = p(0);
   const double y = p(1);
 

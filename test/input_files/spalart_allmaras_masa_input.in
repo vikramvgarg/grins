@@ -6,8 +6,8 @@
       x_max = '1.0'
       y_min = '0.0'
       y_max = '1.0'
-      n_elems_x = '80'
-      n_elems_y = '80'
+      n_elems_x = '16'
+      n_elems_y = '16'
       element_type = 'QUAD9'
 
 []
@@ -73,7 +73,7 @@ viscosity_model = 'spalartallmaras'
 #ic_values = '1.0+(1.0*sin((3.0*3.14*x)/1.0))+(0.8*cos((1.0*3.14*y)/1.0))'
 
 pin_pressure = true
-pin_value = 1.5
+pin_value = 1.0
 pin_location = '0.0 0.0'
 
 [../VariableNames]

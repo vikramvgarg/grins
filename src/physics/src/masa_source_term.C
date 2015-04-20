@@ -55,17 +55,17 @@ namespace GRINS
     // Set parameters
     MASA::masa_set_param<libMesh::Real>("mu", 2.0);
     MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
-    MASA::masa_set_param<libMesh::Real>("u_x", 0.0);    
-    MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
-    MASA::masa_set_param<libMesh::Real>("v_x", 0.2);    
-    MASA::masa_set_param<libMesh::Real>("v_y", 0.0);    
+    MASA::masa_set_param<libMesh::Real>("u_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("u_y", 0.2);
+    MASA::masa_set_param<libMesh::Real>("v_x", 0.0);
+    MASA::masa_set_param<libMesh::Real>("v_y", 0.0);
     MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
     MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
     MASA::masa_set_param<libMesh::Real>("p_0", 1.0);
-    MASA::masa_set_param<libMesh::Real>("p_x", 0.5);    
-    MASA::masa_set_param<libMesh::Real>("p_y", 0.5);        
-    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.1);
-    MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.1);
+    MASA::masa_set_param<libMesh::Real>("p_x", 0.2);
+    MASA::masa_set_param<libMesh::Real>("p_y", 0.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 1.0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.0);
     MASA::masa_set_param<libMesh::Real>("nu_sa_0", 1.0);
 
     MASA::masa_display_param<libMesh::Real>();
