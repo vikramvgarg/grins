@@ -21,8 +21,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-
-
+      
 // This class
 #include "grins/spalart_allmaras_parameters.h"
 
@@ -110,7 +109,7 @@ namespace GRINS
     libMesh::Real g = r + this->_c_w2*(pow(r,6.0) - r);
 
     // Step 3
-    libMesh::Real fw = g*pow((1 + pow(this->_c_w3,6.0))/(pow(g,6.0) + pow(this->_c_w3,6.0)), 1.0/6.0);
+    libMesh::Real fw = g*pow(((1 + pow(this->_c_w3,6.0))/(pow(g,6.0) + pow(this->_c_w3,6.0))), 1.0/6.0);
 
     return fw;
   }
