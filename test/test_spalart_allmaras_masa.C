@@ -57,6 +57,10 @@
 #include "grvy.h"
 #endif
 
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
+		const std::string& system_name, const std::string& unknown_name );
+
 libMesh::Number
 exact_solution( const libMesh::Point& p,
 		const libMesh::Parameters&,   // parameters, not needed
@@ -96,7 +100,7 @@ public:
                            const libMesh::Real t,
                            libMesh::DenseVector<libMesh::Number>& output)
   {
-    output.resize(3);
+    output.resize(2);
     output.zero();
 
     // // initialize the problem with the solution the user asked for
@@ -127,7 +131,7 @@ public:
     // The y-component
     output(1) = MASA::masa_eval_exact_v<libMesh::Real>  ( p(0), p(1) );
     // The pressure
-    output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
+    //output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
@@ -224,6 +228,14 @@ int main(int argc, char* argv[])
 			   sim_builder,
                            libmesh_init.comm() );
 
+  // Assign initial conditions
+  std::string system_name = libMesh_inputfile( "screen-options/system_name", "GRINS" );
+  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
+  const libMesh::System& system = es->get_system(system_name);
+  libMesh::Parameters &params = es->parameters;
+
+  system.project_solution( initial_values, NULL, params );
+
 #ifdef GRINS_USE_GRVY_TIMERS
   grvy_timer.EndTimer("Initialize Solver");
 
@@ -233,9 +245,6 @@ int main(int argc, char* argv[])
 
   // Solve
   grins.run();
-
-  // Get equation systems to create ExactSolution object
-  std::tr1::shared_ptr<libMesh::EquationSystems> es = grins.get_equation_system();
 
   // Create Exact solution object and attach exact solution quantities
   libMesh::ExactSolution exact_sol(*es);
@@ -319,7 +328,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
   GRINS::DBCContainer cont_U;
   cont_U.add_var_name( "u" );
   cont_U.add_var_name( "v" );
-  cont_U.add_var_name( "p" );
+  //cont_U.add_var_name( "p" );
   cont_U.add_bc_id( 0 );
   cont_U.add_bc_id( 1 );
   cont_U.add_bc_id( 2 );
@@ -344,6 +353,23 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
   //mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
 
   return mymap;
+}
+
+libMesh::Real
+initial_values( const libMesh::Point& p, const libMesh::Parameters &params,
+		const std::string& , const std::string& unknown_name )
+{
+  libMesh::Real value = 0.0;
+
+  const double x = p(0);
+  const double y = p(1);
+
+  if( unknown_name == "u" ) value = MASA::masa_eval_exact_u<libMesh::Real>  ( x, y );
+  if( unknown_name == "v" ) value = MASA::masa_eval_exact_v<libMesh::Real>  ( x, y );
+  if( unknown_name == "p" ) value = MASA::masa_eval_exact_p<libMesh::Real>  ( x, y );
+  if( unknown_name == "nu" ) value = MASA::masa_eval_exact_nu<libMesh::Real>  ( x, y );
+
+  return value;
 }
 
 libMesh::Number

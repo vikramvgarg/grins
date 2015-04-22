@@ -64,6 +64,11 @@ namespace GRINS
     // A string to hold the particular manufactured solution we want to verify against
     std::string solution_name;
 
+    //! MASA solution parameters
+    libMesh::Real mu, u_0, u_x, u_y, v_0, v_x, v_y;
+    libMesh::Real rho_x, rho_y, p_0, p_x, p_y;
+    libMesh::Real nu_sa_0, nu_sa_x, nu_sa_y;
+
   private:
 
     MasaSourceTerm();

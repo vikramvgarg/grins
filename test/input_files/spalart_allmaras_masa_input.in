@@ -6,15 +6,18 @@
       x_max = '1.0'
       y_min = '0.0'
       y_max = '1.0'
-      n_elems_x = '40'
-      n_elems_y = '40'
+      n_elems_x = '16'
+      n_elems_y = '16'
       element_type = 'QUAD9'
 
 []
 
 # Options for time solvers
 [unsteady-solver]
-transient = false
+transient = 'false'
+#theta = '1.0'
+#n_timesteps = '1'
+#deltat = '0.1'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
@@ -72,9 +75,9 @@ viscosity_model = 'constant'
 #ic_variables = 'u'
 #ic_values = '1.0+(1.0*sin((3.0*3.14*x)/1.0))+(0.8*cos((1.0*3.14*y)/1.0))'
 
-#pin_pressure = true
-#pin_value = 1.0
-#pin_location = '0.0 0.0'
+pin_pressure = true
+pin_value = 1.0
+pin_location = '0.0 0.0'
 
 [../VariableNames]
 
@@ -108,6 +111,21 @@ turbulent_viscosity = 'nu'
 [../MasaSourceTerm]
 
 solution_name = 'fans_sa_transient_free_shear'
+mu = 2.0
+u_0 = 1.0
+u_x = 0.0
+u_y = 0.1
+v_0 = 1.0
+v_x = 0.1
+v_y = 0.0
+rho_x = 0.0
+rho_y = 0.0
+p_0 = 1.0
+p_x = 0.0
+p_y = 0.0
+nu_sa_0 = 0.0
+nu_sa_x = 0.0
+nu_sa_y = 0.0
 
 [./Variables]
 names = 'u'

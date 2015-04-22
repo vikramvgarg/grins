@@ -43,7 +43,22 @@ namespace GRINS
     : SourceTermBase(physics_name,input),
       _flow_vars(input,incompressible_navier_stokes),
       _turbulence_vars(input, spalart_allmaras),
-      solution_name(input("Physics/"+masa_source_term+"/solution_name", "fans_sa_transient_free_shear"))
+      solution_name(input("Physics/"+masa_source_term+"/solution_name", "fans_sa_transient_free_shear")),
+      mu(input("Physics/"+masa_source_term+"/mu", 1.0)),
+      u_0(input("Physics/"+masa_source_term+"/u_0", 0.0)),
+      u_x(input("Physics/"+masa_source_term+"/u_x", 0.0)),
+      u_y(input("Physics/"+masa_source_term+"/u_y", 0.0)),
+      v_0(input("Physics/"+masa_source_term+"/v_0", 0.0)),
+      v_x(input("Physics/"+masa_source_term+"/v_x", 0.0)),
+      v_y(input("Physics/"+masa_source_term+"/v_y", 0.0)),
+      rho_x(input("Physics/"+masa_source_term+"/rho_x", 0.0)),
+      rho_y(input("Physics/"+masa_source_term+"/rho_y", 0.0)),
+      p_0(input("Physics/"+masa_source_term+"/p_0", 0.0)),
+    p_x(input("Physics/"+masa_source_term+"/p_x", 0.0)),
+      p_y(input("Physics/"+masa_source_term+"/p_y", 0.0)),
+      nu_sa_0(input("Physics/"+masa_source_term+"/nu_sa_0", 0.0)),
+      nu_sa_x(input("Physics/"+masa_source_term+"/nu_sa_x", 0.0)),
+      nu_sa_y(input("Physics/"+masa_source_term+"/nu_sa_y", 0.0))
   {
     // initialize the problem with the solution the user asked for
     MASA::masa_init<libMesh::Real>("sa_example",solution_name);
@@ -53,21 +68,21 @@ namespace GRINS
     MASA::masa_sanity_check<libMesh::Real>();
 
     // Set parameters
-    MASA::masa_set_param<libMesh::Real>("mu", 2.0);
-    MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
-    MASA::masa_set_param<libMesh::Real>("u_x", 0.0);
-    MASA::masa_set_param<libMesh::Real>("u_y", 0.0);
-    MASA::masa_set_param<libMesh::Real>("v_0", 1.0);
-    MASA::masa_set_param<libMesh::Real>("v_x", 0.0);
-    MASA::masa_set_param<libMesh::Real>("v_y", 0.0);
-    MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
-    MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
-    MASA::masa_set_param<libMesh::Real>("p_0", 1.0);
-    MASA::masa_set_param<libMesh::Real>("p_x", 0.1);
-    MASA::masa_set_param<libMesh::Real>("p_y", 0.0);
-    MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.0);
-    MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.0);
-    MASA::masa_set_param<libMesh::Real>("nu_sa_0", 0.0);
+    MASA::masa_set_param<libMesh::Real>("mu", mu);
+    MASA::masa_set_param<libMesh::Real>("u_0", u_0);
+    MASA::masa_set_param<libMesh::Real>("u_x", u_x);
+    MASA::masa_set_param<libMesh::Real>("u_y", u_y);
+    MASA::masa_set_param<libMesh::Real>("v_0", v_0);
+    MASA::masa_set_param<libMesh::Real>("v_x", v_x);
+    MASA::masa_set_param<libMesh::Real>("v_y", v_y);
+    MASA::masa_set_param<libMesh::Real>("rho_x", rho_x);
+    MASA::masa_set_param<libMesh::Real>("rho_y", rho_y);
+    MASA::masa_set_param<libMesh::Real>("p_0", p_0);
+    MASA::masa_set_param<libMesh::Real>("p_x", p_x);
+    MASA::masa_set_param<libMesh::Real>("p_y", p_y);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_0", nu_sa_0);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_x", nu_sa_x);
+    MASA::masa_set_param<libMesh::Real>("nu_sa_y", nu_sa_y);
 
     MASA::masa_display_param<libMesh::Real>();
   }
@@ -123,8 +138,8 @@ namespace GRINS
       {
 	// third arg here is time, but we're using as steady solution is
 	// steady so t is irrelevant
-	Fu(i) += (MASA::masa_eval_source_rho_u<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_u[i][qp]*JxW[qp];
-	Fv(i) += (MASA::masa_eval_source_rho_v<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_u[i][qp]*JxW[qp];
+	Fu(i) += (MASA::masa_eval_source_rho_u<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_u[i][qp]*JxW[qp];
+	Fv(i) += (MASA::masa_eval_source_rho_v<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_u[i][qp]*JxW[qp];
 
 	//std::cout<<"Fu at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fu(i)<<std::endl;
 	//std::cout<<"Fv at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fv(i)<<std::endl;
@@ -180,7 +195,7 @@ namespace GRINS
         // computes the contributions of the continuity equation.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += (MASA::masa_eval_source_rho<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_p[i][qp]*JxW[qp];
+            Fp(i) += (MASA::masa_eval_source_rho<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_p[i][qp]*JxW[qp];
 
   	  } // end loop over p dofs
 
