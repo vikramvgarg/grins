@@ -53,7 +53,13 @@ namespace GRINS
     					  AssemblyContext& context,
     					  CachedValues& cache );
 
+    virtual void init_variables( libMesh::FEMSystem* system );
+
   protected:
+
+    //! Physical dimension of problem
+    /*! \todo Do we really need to cache this? */
+    unsigned int _dim;
 
     // The flow variables
     PrimitiveFlowFEVariables _flow_vars;

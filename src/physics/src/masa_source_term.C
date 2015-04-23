@@ -84,6 +84,7 @@ namespace GRINS
     MASA::masa_set_param<libMesh::Real>("nu_sa_x", nu_sa_x);
     MASA::masa_set_param<libMesh::Real>("nu_sa_y", nu_sa_y);
 
+    // Display what the parameters have been initialized to
     MASA::masa_display_param<libMesh::Real>();
   }
 
@@ -91,6 +92,16 @@ namespace GRINS
   {
     return;
   }
+
+  void MasaSourceTerm::init_variables( libMesh::FEMSystem* system)
+  {
+    this->_dim = system->get_mesh().mesh_dimension();
+
+    this->_flow_vars.init(system);
+
+    this->_turbulence_vars.init(system);
+  }
+
 
   void MasaSourceTerm::element_time_derivative( bool /*compute_jacobian*/,
                                                   AssemblyContext& context,
@@ -136,20 +147,16 @@ namespace GRINS
 
       for (unsigned int i=0; i != n_u_dofs; i++)
       {
-	// third arg here is time, but we're using as steady solution is
-	// steady so t is irrelevant
 	Fu(i) += (MASA::masa_eval_source_rho_u<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_u[i][qp]*JxW[qp];
 	Fv(i) += (MASA::masa_eval_source_rho_v<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_u[i][qp]*JxW[qp];
 
-	//std::cout<<"Fu at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fu(i)<<std::endl;
-	//std::cout<<"Fv at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fv(i)<<std::endl;
+	//std::cout<<"u Source at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<MASA::masa_eval_source_rho_u<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) )<<std::endl;
+	//std::cout<<"v Source at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<MASA::masa_eval_source_rho_v<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) )<<std::endl;
       }
 
       //for (unsigned int i=0; i != n_nu_dofs; i++)
       //{
-	// third arg here is time, but we're using as steady solution is
-	// steady so t is irrelevant
-	//Fnu(i) += (MASA::masa_eval_source_nu<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_nu[i][qp]*JxW[qp];
+      //Fnu(i) += (MASA::masa_eval_source_nu<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1), 0.0 ) )*phi_nu[i][qp]*JxW[qp];
 
 	//std::cout<<"Fnu at ("<<qp_loc[qp](0)<<","<<qp_loc[qp](1)<<") is: "<<Fnu(i)<<std::endl;
       //}
@@ -170,14 +177,14 @@ namespace GRINS
 
     // Element Jacobian * quadrature weights for interior integration.
     const std::vector<libMesh::Real> &JxW =
-      context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
+      context.get_element_fe(this->_flow_vars.p_var())->get_JxW();
 
     // The pressure shape functions at interior quadrature points.
     const std::vector<std::vector<libMesh::Real> >& phi_p =
       context.get_element_fe(this->_flow_vars.p_var())->get_phi();
 
     const std::vector<libMesh::Point>& qp_loc =
-      context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+      context.get_element_fe(this->_flow_vars.p_var())->get_xyz();
 
     // Getting time, but we are using steady solutions for now
     libMesh::Real t = context.get_time();
@@ -195,7 +202,8 @@ namespace GRINS
         // computes the contributions of the continuity equation.
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += (MASA::masa_eval_source_rho<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_p[i][qp]*JxW[qp];
+
+	    Fp(i) += 0.0*(MASA::masa_eval_source_rho<libMesh::Real>  ( qp_loc[qp](0), qp_loc[qp](1) ) )*phi_p[i][qp]*JxW[qp];
 
   	  } // end loop over p dofs
 

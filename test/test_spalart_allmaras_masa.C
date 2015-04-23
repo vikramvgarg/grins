@@ -100,38 +100,16 @@ public:
                            const libMesh::Real t,
                            libMesh::DenseVector<libMesh::Number>& output)
   {
-    output.resize(2);
+    output.resize(3);
     output.zero();
-
-    // // initialize the problem with the solution the user asked for
-    // MASA::masa_init<libMesh::Real>("sa_bc_U", "fans_sa_transient_free_shear");
-
-    // // call the sanity check routine
-    // // (tests that all variables have been initialized)
-    // MASA::masa_sanity_check<libMesh::Real>();
-
-    // // Set parameters
-    // MASA::masa_set_param<libMesh::Real>("mu", 2.0);
-    // MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("u_x", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
-    // MASA::masa_set_param<libMesh::Real>("v_x", 0.2);
-    // MASA::masa_set_param<libMesh::Real>("v_y", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("p_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("p_x", 0.5);
-    // MASA::masa_set_param<libMesh::Real>("p_y", 0.5);
-    // MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.1);
-    // MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.1);
-    // MASA::masa_set_param<libMesh::Real>("nu_sa_0", 1.0);
 
     // The x-component
     output(0) = MASA::masa_eval_exact_u<libMesh::Real>  ( p(0), p(1) );
     // The y-component
     output(1) = MASA::masa_eval_exact_v<libMesh::Real>  ( p(0), p(1) );
     // The pressure
-    //output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
+    output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
+
   }
 
   virtual libMesh::AutoPtr<libMesh::FunctionBase<libMesh::Number> > clone() const
@@ -155,29 +133,6 @@ public:
   {
     output.resize(1);
     output.zero();
-
-    // // initialize the problem with the solution the user asked for
-    // MASA::masa_init<libMesh::Real>("sa_bc_nu", "fans_sa_transient_free_shear");
-
-    // // call the sanity check routine
-    // // (tests that all variables have been initialized)
-    // MASA::masa_sanity_check<libMesh::Real>();
-
-    // // Set parameters
-    // MASA::masa_set_param<libMesh::Real>("mu", 2.0);
-    // MASA::masa_set_param<libMesh::Real>("u_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("u_x", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("u_y", 0.8);
-    // MASA::masa_set_param<libMesh::Real>("v_x", 0.2);
-    // MASA::masa_set_param<libMesh::Real>("v_y", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("rho_x", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("rho_y", 0.0);
-    // MASA::masa_set_param<libMesh::Real>("p_0", 1.0);
-    // MASA::masa_set_param<libMesh::Real>("p_x", 0.5);
-    // MASA::masa_set_param<libMesh::Real>("p_y", 0.5);
-    // MASA::masa_set_param<libMesh::Real>("nu_sa_x", 0.1);
-    // MASA::masa_set_param<libMesh::Real>("nu_sa_y", 0.1);
-    // MASA::masa_set_param<libMesh::Real>("nu_sa_0", 1.0);
 
     // The turbulent viscosity
     output(0) = MASA::masa_eval_exact_nu<libMesh::Real>  ( p(0), p(1) );
@@ -328,7 +283,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
   GRINS::DBCContainer cont_U;
   cont_U.add_var_name( "u" );
   cont_U.add_var_name( "v" );
-  //cont_U.add_var_name( "p" );
+  cont_U.add_var_name( "p" );
   cont_U.add_bc_id( 0 );
   cont_U.add_bc_id( 1 );
   cont_U.add_bc_id( 2 );

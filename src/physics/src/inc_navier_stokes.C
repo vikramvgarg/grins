@@ -148,7 +148,7 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.get_element_fe(this->_flow_vars.p_var())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The subvectors and submatrices we need to fill:
@@ -279,7 +279,7 @@ namespace GRINS
                        -this->_rho*u_phi[i][qp]*grad_u_x*u_phi[j][qp]             // convection term
                        -_mu_qp*(u_gradphi[i][qp]*u_gradphi[j][qp])); // diffusion term
 
-                    
+
                     if( this->_is_axisymmetric )
                       {
                         Kuu(i,j) -= u_phi[i][qp]*_mu_qp*u_phi[j][qp]/(r*r)*jac * context.get_elem_solution_derivative();
@@ -333,7 +333,7 @@ namespace GRINS
 
                   } // end of the inner dof (j) loop
 
-                
+
 
               } // end - if (compute_jacobian)
 
@@ -381,9 +381,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::Real> >& p_phi =
       context.get_element_fe(this->_flow_vars.p_var())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
-    
+
     // The subvectors and submatrices we need to fill:
     //
     // Kpu, Kpv, Kpw, Fp
@@ -454,8 +454,8 @@ namespace GRINS
       } // end of the quadrature point (qp) loop
 
 
-    
-  
+
+
 
 #ifdef GRINS_USE_GRVY_TIMERS
     this->_timer->EndTimer("IncompressibleNavierStokes::element_constraint");
@@ -477,7 +477,7 @@ namespace GRINS
 
     return;
   }
-  
+
   template<class Mu>
   void IncompressibleNavierStokes<Mu>::mass_residual( bool compute_jacobian,
                                                   AssemblyContext& context,
@@ -485,15 +485,15 @@ namespace GRINS
   {
     // Element Jacobian * quadrature weights for interior integration
     // We assume the same for each flow variable
-    const std::vector<libMesh::Real> &JxW = 
+    const std::vector<libMesh::Real> &JxW =
       context.get_element_fe(this->_flow_vars.u_var())->get_JxW();
 
     // The shape functions at interior quadrature points.
     // We assume the same for each flow variable
-    const std::vector<std::vector<libMesh::Real> >& u_phi = 
+    const std::vector<std::vector<libMesh::Real> >& u_phi =
       context.get_element_fe(this->_flow_vars.u_var())->get_phi();
 
-    const std::vector<libMesh::Point>& u_qpoint = 
+    const std::vector<libMesh::Point>& u_qpoint =
       context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
 
     // The number of local degrees of freedom in each variable
@@ -523,13 +523,13 @@ namespace GRINS
         // for us so we need to supply M(u_fixed)*u' for the residual.
         // u_fixed will be given by the fixed_interior_value function
         // while u' will be given by the interior_rate function.
-        libMesh::Real u_dot, v_dot, w_dot = 0.0; 
+        libMesh::Real u_dot, v_dot, w_dot = 0.0;
         context.interior_rate(this->_flow_vars.u_var(), qp, u_dot);
         context.interior_rate(this->_flow_vars.v_var(), qp, v_dot);
 
         if(this->_dim == 3 )
           context.interior_rate(this->_flow_vars.w_var(), qp, w_dot);
-      
+
         const libMesh::Number r = u_qpoint[qp](0);
 
         libMesh::Real jac = JxW[qp];
@@ -546,7 +546,7 @@ namespace GRINS
 
             if( this->_dim == 3 )
               (*F_w)(i) -= this->_rho*w_dot*u_phi[i][qp]*jac;
-          
+
             if( compute_jacobian )
               {
                 for (unsigned int j=0; j != n_u_dofs; j++)
