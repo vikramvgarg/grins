@@ -100,7 +100,7 @@ public:
                            const libMesh::Real t,
                            libMesh::DenseVector<libMesh::Number>& output)
   {
-    output.resize(3);
+    output.resize(2);
     output.zero();
 
     // The x-component
@@ -108,7 +108,7 @@ public:
     // The y-component
     output(1) = MASA::masa_eval_exact_v<libMesh::Real>  ( p(0), p(1) );
     // The pressure
-    output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
+    //output(2) = MASA::masa_eval_exact_p<libMesh::Real>  ( p(0), p(1) );
 
   }
 
@@ -213,7 +213,7 @@ int main(int argc, char* argv[])
   double l2error_u = exact_sol.l2_error("GRINS", "u");
   double h1error_u = 0.0; //exact_sol.h1_error("GRINS", "u");
 
-  const double errortol = 1.0e-8;
+  const double errortol = 1.0e-10;
 
   int return_flag = 0;
 
@@ -257,20 +257,20 @@ int main(int argc, char* argv[])
     }
 
   // Compute error and get it in various norms
-  std::cout<<"Not computing nu error"<<std::endl;
-  // exact_sol.compute_error("GRINS", "nu");
+  //std::cout<<"Not computing nu error"<<std::endl;
+  exact_sol.compute_error("GRINS", "nu");
 
-  // double l2error_nu = exact_sol.l2_error("GRINS", "nu");
-  // double h1error_nu = 0.0; //exact_sol.h1_error("GRINS", "nu");
+  double l2error_nu = exact_sol.l2_error("GRINS", "nu");
+  double h1error_nu = 0.0; //exact_sol.h1_error("GRINS", "nu");
 
-  // if( l2error_nu > errortol || h1error_nu > errortol )
-  //   {
-  //     return_flag = 1;
+  if( l2error_nu > errortol || h1error_nu > errortol )
+    {
+      return_flag = 1;
 
-  //     std::cout << "Tolerance exceeded for turbulent viscosity in SA shear test." << std::endl
-  // 		<< "l2 error = " << l2error_nu << std::endl
-  // 		<< "h1 error = " << h1error_nu << std::endl;
-  //   }
+      std::cout << "Tolerance exceeded for turbulent viscosity in SA shear test." << std::endl
+  		<< "l2 error = " << l2error_nu << std::endl
+  		<< "h1 error = " << h1error_nu << std::endl;
+    }
 
   return return_flag;
 }
@@ -283,7 +283,7 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
   GRINS::DBCContainer cont_U;
   cont_U.add_var_name( "u" );
   cont_U.add_var_name( "v" );
-  cont_U.add_var_name( "p" );
+  //cont_U.add_var_name( "p" );
   cont_U.add_bc_id( 0 );
   cont_U.add_bc_id( 1 );
   cont_U.add_bc_id( 2 );
@@ -304,8 +304,8 @@ std::multimap< GRINS::PhysicsName, GRINS::DBCContainer > MasaBCFactory::build_di
 
   mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::incompressible_navier_stokes,  cont_U) );
 
-  std::cout<<"Not inserting Spalart Allmaras boundary condition map."<<std::endl;
-  //mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
+  //std::cout<<"Not inserting Spalart Allmaras boundary condition map."<<std::endl;
+  mymap.insert( std::pair<GRINS::PhysicsName, GRINS::DBCContainer >(GRINS::spalart_allmaras,  cont_nu) );
 
   return mymap;
 }
