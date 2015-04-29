@@ -6,7 +6,7 @@ CLEANFILES =
 
 lib_LTLIBRARIES = libgrins.la
 
-bin_PROGRAMS    = grins grins_version 
+bin_PROGRAMS    = grins grins_version
 
 if CANTERA_ENABLED
    bin_PROGRAMS += cantera_kinetic_rates
@@ -133,6 +133,7 @@ libgrins_la_SOURCES += physics/src/source_term_base.C
 libgrins_la_SOURCES += physics/src/constant_source_term.C
 libgrins_la_SOURCES += physics/src/parsed_source_term.C
 libgrins_la_SOURCES += physics/src/masa_source_term.C
+libgrins_la_SOURCES += physics/src/forcing_function_evaluation.C
 
 # src/properties files
 libgrins_la_SOURCES += properties/src/constant_conductivity.C
@@ -344,6 +345,7 @@ include_HEADERS += physics/include/grins/source_term_base.h
 include_HEADERS += physics/include/grins/constant_source_term.h
 include_HEADERS += physics/include/grins/parsed_source_term.h
 include_HEADERS += physics/include/grins/masa_source_term.h
+include_HEADERS += physics/include/grins/forcing_function_evaluation.h
 
 # src/properties headers
 include_HEADERS += properties/include/grins/property_types.h
@@ -466,7 +468,7 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include

@@ -34,12 +34,14 @@ namespace GRINS
 {
 
   template<class Mu>
-  IncompressibleNavierStokesStabilizationBase<Mu>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name, 
+  IncompressibleNavierStokesStabilizationBase<Mu>::IncompressibleNavierStokesStabilizationBase( const std::string& physics_name,
                                                                                             const GetPot& input )
     : IncompressibleNavierStokesBase<Mu>(physics_name,
                                          incompressible_navier_stokes, /* "core" Physics name */
                                          input),
-      _stab_helper( physics_name+"StabHelper", input )
+      _stab_helper( physics_name+"StabHelper", input ),
+      forcing_function(false),
+      _forcing_function_evaluator("ForcingFunctionEvaluation",input)
   {
     return;
   }
@@ -55,7 +57,7 @@ namespace GRINS
   {
     // First call base class
     IncompressibleNavierStokesBase<Mu>::init_context(context);
-  
+
     // We need pressure derivatives
     context.get_element_fe(this->_flow_vars.p_var())->get_dphi();
 

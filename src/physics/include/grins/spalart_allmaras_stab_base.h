@@ -28,6 +28,7 @@
 //GRINS
 #include "grins/spalart_allmaras.h"
 #include "grins/spalart_allmaras_stab_helper.h"
+#include "grins/forcing_function_evaluation.h"
 
 //! GRINS namespace
 namespace GRINS
@@ -41,7 +42,7 @@ namespace GRINS
    SpalartAllmarasStabilizationBase( const GRINS::PhysicsName& physics_name, const GetPot& input );
 
     virtual ~SpalartAllmarasStabilizationBase();
-    
+
     //! Initialize context for added physics variables
     virtual void init_context( AssemblyContext& context );
 
@@ -50,6 +51,10 @@ namespace GRINS
   protected:
 
     SpalartAllmarasStabilizationHelper _stab_helper;
+
+    libMesh::bool forcing_function;
+
+    ForcingFunctionEvaluation _forcing_function_evaluator;
 
   private:
 

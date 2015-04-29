@@ -74,6 +74,7 @@ namespace GRINS
   const PhysicsName constant_source_term = "ConstantSourceTerm";
   const PhysicsName parsed_source_term = "ParsedSourceTerm";
   const PhysicsName masa_source_term = "MasaSourceTerm";
+  const PhysicsName forcing_function_evaluation = "ForcingFunctionEvaluation";
 }
 
 #endif //GRINS_PHYSICS_NAMES_H

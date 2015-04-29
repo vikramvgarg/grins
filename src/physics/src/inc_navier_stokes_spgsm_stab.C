@@ -36,7 +36,7 @@ namespace GRINS
 {
 
   template<class Mu>
-  IncompressibleNavierStokesSPGSMStabilization<Mu>::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name, 
+  IncompressibleNavierStokesSPGSMStabilization<Mu>::IncompressibleNavierStokesSPGSMStabilization( const std::string& physics_name,
                                                                                               const GetPot& input )
     : IncompressibleNavierStokesStabilizationBase<Mu>(physics_name,input)
   {
@@ -50,7 +50,7 @@ namespace GRINS
   {
     return;
   }
-  
+
   template<class Mu>
   void IncompressibleNavierStokesSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                               AssemblyContext& context,
@@ -78,6 +78,9 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& u_gradphi =
       context.get_element_fe(this->_flow_vars.u_var())->get_dphi();
 
+    // Quadrature point locations
+    const std::vector<libMesh::Point>& qp_loc = context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+
     libMesh::DenseSubVector<libMesh::Number> &Fu = context.get_elem_residual(this->_flow_vars.u_var()); // R_{u}
     libMesh::DenseSubVector<libMesh::Number> &Fv = context.get_elem_residual(this->_flow_vars.v_var()); // R_{v}
     libMesh::DenseSubVector<libMesh::Number> *Fw = NULL;
@@ -101,23 +104,35 @@ namespace GRINS
           {
             U(2) = context.interior_value( this->_flow_vars.w_var(), qp );
           }
-	
+
 	// Compute the viscosity at this qp
 	libMesh::Real _mu_qp = this->_mu(context, qp);
-	
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, this->_is_steady );
         libMesh::Real tau_C = this->_stab_helper.compute_tau_continuity( tau_M, g );
 
         libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
         libMesh::Real RC = this->_stab_helper.compute_res_continuity( context, qp );
 
+	// Compute forcing function contributions to the strong residuals
+	libMesh::Real f_C = 0.0;
+	libMesh::Real f_MS_0 = 0.0;
+	libMesh::Real f_MS_1 = 0.0;
+
+	if(this->forcing_function)
+	{
+	  f_C = this->_forcing_function_evaluator.compute_masa_forcing(qp_loc[qp](0), qp_loc[qp](1), "p");
+	  f_MS_0 = this->_forcing_function_evaluator.compute_masa_forcing(qp_loc[qp](0), qp_loc[qp](1), "u");
+	  f_MS_1 = this->_forcing_function_evaluator.compute_masa_forcing(qp_loc[qp](0), qp_loc[qp](1), "v");
+	}
+
         for (unsigned int i=0; i != n_u_dofs; i++)
           {
-            Fu(i) += ( - tau_C*RC*u_gradphi[i][qp](0)
-                       - tau_M*RM_s(0)*this->_rho*U*u_gradphi[i][qp]  )*JxW[qp];
+            Fu(i) += ( - tau_C*(RC - f_C)*u_gradphi[i][qp](0)
+                       - tau_M*(RM_s(0) - f_MS_0)*this->_rho*U*u_gradphi[i][qp]  )*JxW[qp];
 
-            Fv(i) += ( - tau_C*RC*u_gradphi[i][qp](1)
-                       - tau_M*RM_s(1)*this->_rho*U*u_gradphi[i][qp] )*JxW[qp];
+            Fv(i) += ( - tau_C*(RC - f_C)*u_gradphi[i][qp](1)
+                       - tau_M*(RM_s(1) - f_MS_1)*this->_rho*U*u_gradphi[i][qp] )*JxW[qp];
 
             if( this->_dim == 3 )
               {
@@ -170,7 +185,7 @@ namespace GRINS
       {
         libMesh::RealGradient g = this->_stab_helper.compute_g( fe, context, qp );
         libMesh::RealTensor G = this->_stab_helper.compute_G( fe, context, qp );
-      
+
         libMesh::RealGradient U( context.interior_value( this->_flow_vars.u_var(), qp ),
                                  context.interior_value( this->_flow_vars.v_var(), qp ) );
         if( this->_dim == 3 )
@@ -185,9 +200,18 @@ namespace GRINS
 
         libMesh::RealGradient RM_s = this->_stab_helper.compute_res_momentum_steady( context, qp, this->_rho, _mu_qp );
 
+	// Compute forcing function contributions to the strong residuals
+	libMesh::RealGradient f_MS(0.0, 0.0);
+
+	if(this->forcing_function)
+	{
+	  f_MS(0) = this->_forcing_function_evaluator.compute_masa_forcing(qp_loc[qp](0), qp_loc[qp](1), "u");
+	  f_MS(1) = this->_forcing_function_evaluator.compute_masa_forcing(qp_loc[qp](0), qp_loc[qp](1), "v");
+	}
+
         for (unsigned int i=0; i != n_p_dofs; i++)
           {
-            Fp(i) += tau_M*RM_s*p_dphi[i][qp]*JxW[qp];
+            Fp(i) += tau_M*(RM_s - f_MS)*p_dphi[i][qp]*JxW[qp];
           }
 
         if( compute_jacobian )
@@ -254,7 +278,7 @@ namespace GRINS
           {
             U(2) = context.fixed_interior_value( this->_flow_vars.w_var(), qp );
           }
-      
+
         libMesh::Real tau_M = this->_stab_helper.compute_tau_momentum( context, qp, g, G, this->_rho, U, _mu_qp, false );
 
         libMesh::RealGradient RM_t = this->_stab_helper.compute_res_momentum_transient( context, qp, this->_rho );

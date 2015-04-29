@@ -212,9 +212,17 @@ namespace GRINS
 
         libMesh::Real RM_spalart = this->_stab_helper.compute_res_spalart_transient( context, qp, this->_rho );
 
+	// Compute forcing function contributions to the strong residuals
+	libMesh::Real f_spalart = 0.0;
+
+	if(this->forcing_function)
+	{
+	  f_spalart = this->_forcing_function_evaluator.compute_masa_forcing(qp_loc[qp](0), qp_loc[qp](1), "nu");
+	}
+
         for (unsigned int i=0; i != n_nu_dofs; i++)
           {
-            Fnu(i) += -JxW[qp]*tau_spalart*RM_spalart*this->_rho*(U*nu_gradphi[i][qp]);
+            Fnu(i) += -JxW[qp]*tau_spalart*(RM_spalart - f_spalart)*this->_rho*(U*nu_gradphi[i][qp]);
           }
 
         if( compute_jacobian )

@@ -66,6 +66,7 @@
 #include "grins/constant_source_term.h"
 #include "grins/parsed_source_term.h"
 #include "grins/masa_source_term.h"
+#include "grins/forcing_function_evaluation.h"
 
 #include "grins/spalart_allmaras.h"
 #include "grins/spalart_allmaras_spgsm_stab.h"
@@ -545,6 +546,11 @@ namespace GRINS
       {
         physics_list[physics_to_add] =
           PhysicsPtr(new MasaSourceTerm(physics_to_add,input));
+      }
+    else if( physics_to_add == forcing_function_evaluation )
+      {
+        physics_list[physics_to_add] =
+          PhysicsPtr(new ForcingFunctionEvaluation(physics_to_add,input));
       }
     else
       {

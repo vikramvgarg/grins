@@ -28,6 +28,7 @@
 //GRINS
 #include "grins/inc_navier_stokes_base.h"
 #include "grins/inc_navier_stokes_stab_helper.h"
+#include "grins/forcing_function_evaluation.h"
 
 //! GRINS namespace
 namespace GRINS
@@ -50,6 +51,10 @@ namespace GRINS
   protected:
 
     IncompressibleNavierStokesStabilizationHelper _stab_helper;
+
+    libMesh::bool forcing_function;
+
+    ForcingFunctionEvaluation _forcing_function_evaluator;
 
   private:
 
