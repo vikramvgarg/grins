@@ -173,8 +173,8 @@ namespace GRINS {
   void DistanceFunction::initialize ()
   {
     // Call the compute function
-    std::cout<<"Not computing the distance function."<<std::endl;
-    //this->compute();
+    //std::cout<<"Not computing the distance function."<<std::endl;
+    this->compute();
     return;
   }
 

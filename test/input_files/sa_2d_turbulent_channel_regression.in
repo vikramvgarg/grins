@@ -7,7 +7,7 @@
       y_min = '0.0'
       y_max = '1.0'
       n_elems_x = '20'
-      n_elems_y = '150'
+      n_elems_y = '250'
       element_type = 'QUAD4'
 
     [../Redistribution]
@@ -34,7 +34,7 @@ use_numerical_jacobians_only = 'true'
 mesh_adaptive = 'true'
 absolute_global_tolerance = '1.0e-2'
 estimator_type = 'adjoint_residual'
-max_refinement_steps = '1'
+max_refinement_steps = 1
 
 # Visualization options
 [vis-options]
@@ -65,7 +65,7 @@ echo_physics = 'true'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
+enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras SpalartAllmarasSPGSMStabilization'
 #enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
 
 # Options for Incompressible Navier-Stokes physics
@@ -121,8 +121,8 @@ ic_values = '0.1*y*(1.0-y)'
 
 # Options for adaptivity
 [QoI]
-enabled_qois = 'vorticity'
-[./Vorticity]
-enabled_subdomains = '0'
+enabled_qois = 'parsed_interior'
+[./ParsedInterior]
+qoi_functional = 'nu'
 
 []
