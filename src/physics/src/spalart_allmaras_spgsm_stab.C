@@ -89,8 +89,8 @@ namespace GRINS
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
 
     // Quadrature point locations
-    //const std::vector<libMesh::Point>& nu_qpoint =
-    //context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
+    const std::vector<libMesh::Point>& nu_qpoint =
+    context.get_element_fe(this->_turbulence_vars.nu_var())->get_xyz();
 
     //libMesh::DenseSubMatrix<libMesh::Number> &Knunu = context.get_elem_jacobian(this->_turbulence_vars.nu_var(), this->_turbulence_vars.nu_var()); // R_{nu},{nu}
 
@@ -128,6 +128,10 @@ namespace GRINS
         libMesh::NumberVectorValue U(u,v);
         if (this->_dim == 3)
           U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+
+	libMesh::Real y = nu_qpoint[qp](1);
+	(*distance_qp)(qp) = std::min(fabs(y),fabs(1-y));
+	//std::cout<<"Distance: "<<(*distance_qp)(qp)<<std::endl;
 
         // Stabilization terms
 

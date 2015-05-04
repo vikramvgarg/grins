@@ -105,7 +105,7 @@ namespace GRINS
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
     //this->distance_function->initialize();
-
+    
     return;
   }
 
@@ -170,6 +170,8 @@ namespace GRINS
     const std::vector<std::vector<libMesh::RealGradient> >& nu_gradphi =
       context.get_element_fe(this->_turbulence_vars.nu_var())->get_dphi();
 
+    const std::vector<libMesh::Point>& qp_loc = context.get_element_fe(this->_flow_vars.u_var())->get_xyz();
+
     // The number of local degrees of freedom in each variable.
     const unsigned int n_nu_dofs = context.get_dof_indices(this->_turbulence_vars.nu_var()).size();
 
@@ -222,6 +224,10 @@ namespace GRINS
         libMesh::NumberVectorValue U(u,v);
         if (this->_dim == 3)
           U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
+
+	libMesh::Real y = qp_loc[qp](1);
+	(*distance_qp)(qp) = std::min(fabs(y),fabs(1-y));
+	//std::cout<<"Distance: "<<(*distance_qp)(qp)<<std::endl;
 
         //The source term
         libMesh::Real S_tilde = this->_sa_params.source_fn(nu, mu_qp, (*distance_qp)(qp), vorticity_value_qp, _infinite_distance);
