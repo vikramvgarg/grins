@@ -6,7 +6,7 @@
       x_max = '5.0'
       y_min = '0.0'
       y_max = '1.0'
-      n_elems_x = '300'
+      n_elems_x = '20'
       n_elems_y = '150'
       element_type = 'QUAD4'
 
@@ -125,6 +125,11 @@ ic_values = '0.1*y*(1.0-y)'
 # Options for adaptivity
 [QoI]
 enabled_qois = 'parsed_interior'
+
+# Sensitivity analysis
+adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+forward_sensitivity_parameters = 'Materials/Viscosity/mu'
+
 [./ParsedInterior]
 qoi_functional = 'nu'
 

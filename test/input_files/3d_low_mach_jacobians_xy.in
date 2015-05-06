@@ -53,7 +53,7 @@ output_vars = 'rho'
 
 Temperature = 'T'
 u_velocity = 'u'
-v_velocity = 'v'                                                                                                                                                                                                                              
+v_velocity = 'v'
 w_velocity = 'w'
 pressure = 'p'
 
@@ -65,6 +65,8 @@ pressure = 'p'
 enabled_qois = 'average_nusselt_number'
 
 adjoint_sensitivity_parameters = 'Physics/LowMachNavierStokes/p0 Physics/LowMachNavierStokes/T0 Physics/LowMachNavierStokes/R Materials/Viscosity/mu Materials/Conductivity/k Materials/SpecificHeat/cp QoI/NusseltNumber/thermal_conductivity'
+
+forward_sensitivity_parameters = 'Physics/LowMachNavierStokes/p0 Physics/LowMachNavierStokes/T0 Physics/LowMachNavierStokes/R Materials/Viscosity/mu Materials/Conductivity/k Materials/SpecificHeat/cp QoI/NusseltNumber/thermal_conductivity'
 
 [./NusseltNumber]
 
@@ -108,11 +110,11 @@ cp = '1.0' #[J/kg-K]
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = false 
+transient = false
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 100 
+max_nonlinear_iterations = 100
 max_linear_iterations = 2500
 
 verify_analytic_jacobians = 5.0e-6
@@ -125,9 +127,9 @@ use_numerical_jacobians_only = 'false'
 [vis-options]
 output_vis = 'true'
 
-vis_output_file_prefix = '3d_low_mach_jacobians_xy' 
+vis_output_file_prefix = '3d_low_mach_jacobians_xy'
 
-output_residual = 'false' 
+output_residual = 'false'
 
 output_format = 'ExodusII'
 

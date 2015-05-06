@@ -105,7 +105,7 @@ namespace GRINS
     // the distance variable will just be zero. For the channel flow, we are just
     // going to analytically compute the wall distance
     //this->distance_function->initialize();
-    
+
     return;
   }
 
@@ -363,6 +363,16 @@ namespace GRINS
 #endif
 
     return;
+  }
+
+  template<class Mu>
+  void SpalartAllmaras<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    _mu.register_parameter(param_name, param_pointer);
   }
 
 } // namespace GRINS

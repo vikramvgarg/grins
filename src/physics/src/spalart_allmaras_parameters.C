@@ -21,7 +21,7 @@
 // Boston, MA  02110-1301  USA
 //
 //-----------------------------------------------------------------------el-
-      
+
 // This class
 #include "grins/spalart_allmaras_parameters.h"
 
@@ -48,7 +48,22 @@ namespace GRINS
       _c_t3(input("Physics/"+spalart_allmaras+"/Parameters/c_t3",1.2)),
       _c_t4(input("Physics/"+spalart_allmaras+"/Parameters/c_t4",0.5)),
       _c_n1(input("Physics/"+spalart_allmaras+"/Parameters/c_n1",16.0))
-  {}
+  {
+    this->set_parameter(this->_kappa ,input, , this->_kappa );
+    this->set_parameter(this->_cv1 ,input, , this->_cv1 );
+    this->set_parameter(this->_cv2 ,input, , this->_cv2 );
+    this->set_parameter(this->_cv3 ,input, , this->_cv3 );
+    this->set_parameter(this->_cb1 ,input, , this->_cb1 );
+    this->set_parameter(this->_sigma ,input, , this->_sigma );
+    this->set_parameter(this->_cb2 ,input, , this->_cb2 );
+    this->set_parameter(this->_cw1 ,input, , this->_cw1 );
+    this->set_parameter(this->_r_lin ,input, , this->_r_lin );
+    this->set_parameter(this->_c_w2 ,input, , this->_c_w2 );
+    this->set_parameter(this->_c_w3 ,input, , this->_c_w3 );
+    this->set_parameter(this->_c_t3 ,input, , this->_c_t3 );
+    this->set_parameter(this->_c_t4 ,input, , this->_c_t4 );
+    this->set_parameter(this->_c_n1 ,input, , this->_c_n1 );
+  }
 
 
   libMesh::Real SpalartAllmarasParameters::source_fn(libMesh::Number nu, libMesh::Real mu,
