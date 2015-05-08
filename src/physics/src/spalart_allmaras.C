@@ -372,7 +372,7 @@ namespace GRINS
     const
   {
     ParameterUser::register_parameter(param_name, param_pointer);
-    _mu.register_parameter(param_name, param_pointer);
+    this->_mu.register_parameter(param_name, param_pointer);
   }
 
 } // namespace GRINS

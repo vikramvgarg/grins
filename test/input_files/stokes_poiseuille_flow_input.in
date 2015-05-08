@@ -51,7 +51,7 @@ print_qoi = 'true' # print numerical values of QoIs
 
 [./Viscosity]
 
-mu = '1.0'
+mu = '1.00001'
 
 []
 
@@ -92,8 +92,13 @@ pressure = 'p'
 
 # Options for adaptivity
 [QoI]
-enabled_qois = 'vorticity'
-[./Vorticity]
-enabled_subdomains = '0'
+enabled_qois = 'parsed_interior'
+
+# Sensitivity analysis
+adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+forward_sensitivity_parameters = 'Materials/Viscosity/mu'
+
+[./ParsedInterior]
+qoi_functional = 'p'
 
 []

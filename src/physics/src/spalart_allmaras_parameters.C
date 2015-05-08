@@ -34,7 +34,8 @@
 namespace GRINS
 {
   SpalartAllmarasParameters::SpalartAllmarasParameters(const GetPot& input )
-    : _kappa(input("Physics/"+spalart_allmaras+"/Parameters/kappa",0.41)),
+    : ParameterUser("SpalartAllmarasParameters"),
+      _kappa(input("Physics/"+spalart_allmaras+"/Parameters/kappa",0.41)),
       _cv1(input("Physics/"+spalart_allmaras+"/Parameters/cv1",7.1)),
       _cv2(input("Physics/"+spalart_allmaras+"/Parameters/cv2",0.7)),
       _cv3(input("Physics/"+spalart_allmaras+"/Parameters/cv3",0.9)),
@@ -49,20 +50,19 @@ namespace GRINS
       _c_t4(input("Physics/"+spalart_allmaras+"/Parameters/c_t4",0.5)),
       _c_n1(input("Physics/"+spalart_allmaras+"/Parameters/c_n1",16.0))
   {
-    this->set_parameter(this->_kappa ,input, , this->_kappa );
-    this->set_parameter(this->_cv1 ,input, , this->_cv1 );
-    this->set_parameter(this->_cv2 ,input, , this->_cv2 );
-    this->set_parameter(this->_cv3 ,input, , this->_cv3 );
-    this->set_parameter(this->_cb1 ,input, , this->_cb1 );
-    this->set_parameter(this->_sigma ,input, , this->_sigma );
-    this->set_parameter(this->_cb2 ,input, , this->_cb2 );
-    this->set_parameter(this->_cw1 ,input, , this->_cw1 );
-    this->set_parameter(this->_r_lin ,input, , this->_r_lin );
-    this->set_parameter(this->_c_w2 ,input, , this->_c_w2 );
-    this->set_parameter(this->_c_w3 ,input, , this->_c_w3 );
-    this->set_parameter(this->_c_t3 ,input, , this->_c_t3 );
-    this->set_parameter(this->_c_t4 ,input, , this->_c_t4 );
-    this->set_parameter(this->_c_n1 ,input, , this->_c_n1 );
+    this->set_parameter(this->_kappa ,input, "Physics/"+spalart_allmaras+"/Parameters/kappa" , this->_kappa );
+    this->set_parameter(this->_cv1 ,input, "Physics/"+spalart_allmaras+"/Parameters/cv1", this->_cv1 );
+    this->set_parameter(this->_cv2 ,input, "Physics/"+spalart_allmaras+"/Parameters/cv2", this->_cv2 );
+    this->set_parameter(this->_cv3 ,input, "Physics/"+spalart_allmaras+"/Parameters/cv3", this->_cv3 );
+    this->set_parameter(this->_cb1 ,input, "Physics/"+spalart_allmaras+"/Parameters/cb1", this->_cb1 );
+    this->set_parameter(this->_sigma ,input, "Physics/"+spalart_allmaras+"/Parameters/sigma", this->_sigma );
+    this->set_parameter(this->_cb2 ,input, "Physics/"+spalart_allmaras+"/Parameters/cb2" , this->_cb2 );
+    this->set_parameter(this->_r_lin ,input, "Physics/"+spalart_allmaras+"/Parameters/r_lin", this->_r_lin );
+    this->set_parameter(this->_c_w2 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_w2", this->_c_w2 );
+    this->set_parameter(this->_c_w3 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_w3", this->_c_w3 );
+    this->set_parameter(this->_c_t3 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_t3", this->_c_t3 );
+    this->set_parameter(this->_c_t4 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_t4", this->_c_t4 );
+    this->set_parameter(this->_c_n1 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_n1", this->_c_n1 );
   }
 
 

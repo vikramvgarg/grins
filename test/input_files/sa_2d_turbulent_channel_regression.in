@@ -7,7 +7,7 @@
       y_min = '0.0'
       y_max = '1.0'
       n_elems_x = '20'
-      n_elems_y = '150'
+      n_elems_y = '300'
       element_type = 'QUAD4'
 
     [../Redistribution]
@@ -43,7 +43,7 @@ max_refinement_steps = 1
 [vis-options]
 output_vis = 'true'
 output_adjoint = 'true'
-vis_output_file_prefix = 'turbulent_channel_stabilized_100_Re_5'
+vis_output_file_prefix = 'turbulent_channel_stabilized_sens_20_Re_5'
 output_format = 'ExodusII'
 
 [Materials]
@@ -64,6 +64,8 @@ solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
+echo_qoi = 'true' # which QoIs activated
+print_qoi = 'true' # print numerical values of QoIs
 
 # Options related to all Physics
 [Physics]

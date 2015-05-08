@@ -25,6 +25,9 @@
 #ifndef GRINS_SPALART_ALLMARAS_PARAMETERS_H
 #define GRINS_SPALART_ALLMARAS_PARAMETERS_H
 
+// GRINS
+#include "grins/parameter_user.h"
+
 // libMesh
 #include "libmesh/libmesh.h"
 class GetPot;
@@ -34,7 +37,7 @@ namespace GRINS
   //! Encapsulate Spalart-Allmaras model parameters
   /*! This is mostly a container class, but there are a few helper functions
       here that are used in different places in SpalartAllmaras classes. */
-  class SpalartAllmarasParameters
+  class SpalartAllmarasParameters : public ParameterUser
   {
   public:
 
