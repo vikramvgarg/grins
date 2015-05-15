@@ -10,11 +10,11 @@
 
 # Options for tiem solvers
 [unsteady-solver]
-transient = false 
+transient = false
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 10 
+max_nonlinear_iterations = 10
 max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
@@ -23,17 +23,17 @@ verify_analytic_jacobians = 1.e-6
 
 # Visualization options
 [vis-options]
-output_vis = 'true' 
-vis_output_file_prefix = couette_poiseuille 
+output_vis = 'true'
+vis_output_file_prefix = couette_poiseuille
 output_solution_sensitivities = true
 output_format = 'ExodusII'
 
 # Options for print info to the screen
 [screen-options]
-print_equation_system_info = 'true' 
+print_equation_system_info = 'true'
 print_mesh_info = 'true'
 print_log_info = 'true'
-solver_verbose = 'true' 
+solver_verbose = 'true'
 solver_quiet = 'false'
 
 echo_physics = 'true'
@@ -91,7 +91,7 @@ pressure = 'p'
 enabled_qois = 'parsed_interior'
 
 # The exact value of dQ/dmu = -4.0
-adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+#adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
 forward_sensitivity_parameters = 'Materials/Viscosity/mu'
 
 [./ParsedInterior]

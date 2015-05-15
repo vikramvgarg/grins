@@ -153,6 +153,21 @@ namespace GRINS
         // Now swap back and reupdate
         system->solution->swap(system->get_sensitivity_solution(p));
         equation_system->update();
+
+	// Now do the same for the sensitivity RHS
+	std::string filename_R =
+          this->_vis_output_file_prefix+"_dRdp"+pstr.str();
+
+	// Swap solution with precomputed sensitivity solution
+        system->solution->swap(system->get_sensitivity_rhs(p));
+        equation_system->update();
+
+        this->dump_visualization( equation_system, filename_Q, 0.0 );
+
+        // Now swap back and reupdate
+        system->solution->swap(system->get_sensitivity_rhs(p));
+        equation_system->update();
+
       }
   }
 
