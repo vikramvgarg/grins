@@ -14,10 +14,10 @@
       T_FE_family = 'LAGRANGE'
       T_order = 'FIRST'
 
-      bc_ids = '0'
-      bc_types = 'constant_dirichlet'
-      bc_variables = 'T'
-      bc_values = '0.0'
+      bc_ids = '0 1 2 3'
+      bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
+      bc_variables = 'T T T T' 
+      bc_values = '0.0 1.0 1.0 1.0'
 
       rho = '1.0'
       Cp = '1.0'
@@ -73,4 +73,17 @@
    print_log_info = 'true'
    solver_verbose = 'true'
    solver_quiet = 'false'
+[]
+
+# Options for sensitivity
+[QoI]
+enabled_qois = 'parsed_interior'
+
+# These should match
+adjoint_sensitivity_parameters = 'Materials/Conductivity/k'
+forward_sensitivity_parameters = 'Materials/Conductivity/k'
+
+[./ParsedInterior]
+qoi_functional = 'T'
+
 []
