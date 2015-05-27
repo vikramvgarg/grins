@@ -69,6 +69,10 @@ rho = 1.0
 bc_ids = '0 2'
 bc_types = 'no_slip parabolic_profile'
 
+parabolic_profile_coeffs_2 = '0.0 0.0 0.0 0.0 0.0 1.0'
+parabolic_profile_var_2 = 'u'
+parabolic_profile_fix_2 = 'v'
+
 ic_ids = '0'
 ic_types = 'parsed'
 ic_variables = 'u'
@@ -76,7 +80,7 @@ ic_values = '0.0'
 
 pin_pressure = true
 pin_value = 1.0
-pin_location = '2.5 0.5'
+pin_location = '0.0 5.0'
 
 [../VariableNames]
 
