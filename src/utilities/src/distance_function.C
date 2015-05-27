@@ -173,8 +173,8 @@ namespace GRINS {
   void DistanceFunction::initialize ()
   {
     // Call the compute function
-    std::cout<<"Not computing the distance function numerically."<<std::endl;
-    //this->compute();
+    //std::cout<<"Not computing the distance function numerically."<<std::endl;
+    this->compute();
     return;
   }
 
@@ -578,8 +578,8 @@ namespace GRINS {
     const unsigned int sys_num = system.number();
 
     //Debugging code
-    //system.print_info();
-    //_equation_systems.print_info();
+    system.print_info();
+    _equation_systems.print_info();
     //End debugging
 
     // The boundary mesh needs to all be on this processor for us to
@@ -593,9 +593,9 @@ namespace GRINS {
       const libMesh::MeshBase::const_node_iterator node_end = mesh.local_nodes_end();
 
       //Debugging code
-      //const libMesh::Elem *elem = *mesh.elements_begin();
-      //if (elem->default_order() == libMesh::FIRST)
-      // std::cout<<"Mesh is using FIRST order elements."<<std::endl;
+      const libMesh::Elem *elem = *mesh.elements_begin();
+      if (elem->default_order() == libMesh::FIRST)
+      std::cout<<"Mesh is using FIRST order elements."<<std::endl;
       //End debugging
 
 

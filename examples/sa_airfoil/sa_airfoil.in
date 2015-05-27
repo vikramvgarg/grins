@@ -25,7 +25,7 @@ use_numerical_jacobians_only = 'true'
 # Visualization options
 [vis-options]
 output_vis = 'true'
-output_solution_sensitivities = true
+#output_solution_sensitivities = true
 vis_output_file_prefix = 'turbulent_airfoil'
 output_format = 'ExodusII'
 
@@ -112,7 +112,7 @@ enabled_qois = 'parsed_interior'
 
 # Sensitivity analysis
 adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
-#forward_sensitivity_parameters = 'Materials/Viscosity/mu'
+forward_sensitivity_parameters = 'Materials/Viscosity/mu'
 
 [./ParsedInterior]
 qoi_functional = 'u'

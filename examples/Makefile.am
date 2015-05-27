@@ -49,7 +49,7 @@ EXTRA_DIST += $(backwardfacingstep_DATA)
 saairfoildir = $(prefix)/examples/sa_airfoil
 saairfoil_SCRIPTS = $(top_builddir)/examples/sa_airfoil/run.sh
 saairfoil_DATA  = $(top_srcdir)/examples/sa_airfoil/sa_airfoil.in
-saairfoil_DATA += $(top_srcdir)/examples/sa_airfoil/naca_0012_medium_boundary_id.exo
+saairfoil_DATA += $(top_srcdir)/examples/sa_airfoil/naca_0012_medium_boundary_id.e
 
 EXTRA_DIST += $(saairfoil_DATA)
 

@@ -129,8 +129,8 @@ namespace GRINS
         if (this->_dim == 3)
           U(2) = context.interior_value(this->_flow_vars.w_var(), qp);
 
-	libMesh::Real y = nu_qpoint[qp](1);
-	(*distance_qp)(qp) = std::min(fabs(y),fabs(1-y));
+	//libMesh::Real y = nu_qpoint[qp](1);
+	//(*distance_qp)(qp) = std::min(fabs(y),fabs(1-y));
 	//std::cout<<"Distance: "<<(*distance_qp)(qp)<<std::endl;
 
         // Stabilization terms
