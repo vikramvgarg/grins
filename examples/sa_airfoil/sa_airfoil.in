@@ -1,7 +1,13 @@
 # Mesh related options
 [Mesh]
    [./Read]
-      filename = 'naca_0012_medium_boundary_id.e'
+      filename = 'naca_0012_medium_boundary_id.xda'
+[]
+
+[restart-options]
+   # Use the coarser mesh to give us a good initial guess for the solution
+   restart_file = '/workspace/vikram/grins_libmesh_master_opt/examples/sa_airfoil/turbulent_airfoil_Re_6000000.xda'
+
 []
 
 # Options for time solvers
@@ -13,28 +19,30 @@ transient = false
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
-max_nonlinear_iterations = 25
+max_nonlinear_iterations = 50
 max_linear_iterations = 10000
 
-relative_step_tolerance = 1e-10
+relative_step_tolerance = 1e-6
 
 #verify_analytic_jacobians = 1.e-6
 use_numerical_jacobians_only = 'true'
+
+do_adjoint_solve = 'true'
 []
 
 # Visualization options
 [vis-options]
 output_vis = 'true'
+output_adjoint = 'true'
 #output_solution_sensitivities = true
-vis_output_file_prefix = 'turbulent_airfoil'
-output_format = 'ExodusII'
+vis_output_file_prefix = 'turbulent_airfoil_Re_6000000_adjoint_sens'
+output_format = 'ExodusII xda'
 
 [Materials]
 
 [./Viscosity]
 
-#mu = '2.95456e-5' #[kg/m-s]
-mu = '2.434e-5'
+mu = '0.000000167' # mu = 1/Re, really nu the kinematic viscosity
 
 []
 
@@ -54,7 +62,7 @@ print_qoi = 'true' # print numerical values of QoIs
 [Physics]
 
 enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization SpalartAllmaras SpalartAllmarasSPGSMStabilization'
-#enabled_physics = 'IncompressibleNavierStokes SpalartAllmaras'
+#enabled_physics = 'IncompressibleNavierStokes IncompressibleNavierStokesSPGSMStabilization'
 
 # Options for Incompressible Navier-Stokes physics
 [./IncompressibleNavierStokes]
@@ -64,6 +72,7 @@ V_order = FIRST
 P_order = FIRST
 
 viscosity_model = 'spalartallmaras'
+#viscosity_model = 'constant'
 rho = 1.0
 
 bc_ids = '0 2'
@@ -73,10 +82,10 @@ parabolic_profile_coeffs_2 = '0.0 0.0 0.0 0.0 0.0 1.0'
 parabolic_profile_var_2 = 'u'
 parabolic_profile_fix_2 = 'v'
 
-ic_ids = '0'
-ic_types = 'parsed'
-ic_variables = 'u'
-ic_values = '0.0'
+#ic_ids = '0'
+#ic_types = 'parsed'
+#ic_variables = 'u'
+#ic_values = '0.0'
 
 pin_pressure = true
 pin_value = 1.0
@@ -97,24 +106,24 @@ TU_order = FIRST
 bc_ids = '0 2'
 bc_types = 'constant_dirichlet constant_dirichlet'
 bc_variables = 'nu nu'
-bc_values = '1.0 0.0'
+bc_values = '0.0 0.000000333'
 no_of_walls = 1
 wall_ids = '0'
 
-ic_ids = '0'
-ic_types = 'parsed'
-ic_variables = 'nu'
-ic_values = '0.0'
+#ic_ids = '0'
+#ic_types = 'parsed'
+#ic_variables = 'nu'
+#ic_values = '2.0'
 
 # Options for adaptivity
 [QoI]
 enabled_qois = 'parsed_interior'
 
 # Sensitivity analysis
-adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
-forward_sensitivity_parameters = 'Materials/Viscosity/mu'
+#adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+#forward_sensitivity_parameters = 'Materials/Viscosity/mu'
 
 [./ParsedInterior]
-qoi_functional = 'u'
+qoi_functional = 'u * (x > 1.2) * (x < 2.2) * (y > -1.0) * (y < 1.0) '
 
 []
