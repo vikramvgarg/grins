@@ -44,8 +44,17 @@ namespace GRINS
       _spalart_allmaras_helper(input),
       _sa_params(input)
   {
-    return;
+    this->set_parameter(this->_C ,input, "Stabilization/tau_constant_vel" , this->_C );
+    this->set_parameter(this->_tau_factor ,input, "Stabilization/tau_factor_vel", this->_tau_factor );
   }
+
+  void SpalartAllmarasStabilizationHelper::register_parameter
+  ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
+  const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+  }
+
 
   SpalartAllmarasStabilizationHelper::~SpalartAllmarasStabilizationHelper()
   {

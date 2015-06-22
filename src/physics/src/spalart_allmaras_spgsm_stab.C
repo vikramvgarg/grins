@@ -64,6 +64,14 @@ namespace GRINS
   }
 
   template<class Mu>
+  void SpalartAllmarasSPGSMStabilization<Mu>::register_parameter
+  ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
+  const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+  }
+
+  template<class Mu>
   void SpalartAllmarasSPGSMStabilization<Mu>::element_time_derivative( bool compute_jacobian,
                                                                        AssemblyContext& context,
                                                                        CachedValues& /*cache*/ )
