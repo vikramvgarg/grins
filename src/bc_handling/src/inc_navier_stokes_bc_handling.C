@@ -90,11 +90,11 @@ namespace GRINS
     return;
   }
 
-  void IncompressibleNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id, 
-							    const std::string& bc_id_string, 
-							    const int bc_type, 
-					                    const std::string& bc_vars, 
-							    const std::string& bc_value, 
+  void IncompressibleNavierStokesBCHandling::init_bc_types( const BoundaryID bc_id,
+							    const std::string& bc_id_string,
+							    const int bc_type,
+					                    const std::string& bc_vars,
+							    const std::string& bc_value,
 							    const GetPot& input )
   {
     switch(bc_type)
@@ -107,9 +107,9 @@ namespace GRINS
       case(PRESCRIBED_VELOCITY):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
-	
+
 	  /* Force the user to specify 3 velocity components regardless of dimension.
-	     This should make it easier to keep things correct if we want to have 
+	     This should make it easier to keep things correct if we want to have
 	     2D flow not be in the x-y plane. */
 	  int n_vel_comps = input.vector_variable_size("Physics/"+_physics_name+"/bound_vel_"+bc_id_string);
 	  if( n_vel_comps != 3 )
@@ -121,17 +121,17 @@ namespace GRINS
 			<< std::endl;
 	      libmesh_error();
 	    }
-	
-	  this->set_dirichlet_bc_value( bc_id, 
+
+	  this->set_dirichlet_bc_value( bc_id,
 					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 0 ),
 					0 );
 
-	  this->set_dirichlet_bc_value( bc_id, 
+	  this->set_dirichlet_bc_value( bc_id,
 					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 1 ),
 					1 );
 
 #if LIBMESH_DIM > 2
-	  this->set_dirichlet_bc_value( bc_id, 
+	  this->set_dirichlet_bc_value( bc_id,
 					input("Physics/"+_physics_name+"/bound_vel_"+bc_id_string, 0.0, 2 ),
 					2 );
 #endif
@@ -140,13 +140,13 @@ namespace GRINS
       case(PARABOLIC_PROFILE):
 	{
 	  this->set_dirichlet_bc_type( bc_id, bc_type );
-	
+
 	  // Make sure all 6 components are there
 	  if( input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string) != 6 )
 	    {
 	      std::cerr << "Error: Must specify 6 components when inputting"
 			<< std::endl
-			<< "       coefficients for a parabolic profile. Found " 
+			<< "       coefficients for a parabolic profile. Found "
 			<< input.vector_variable_size("Physics/"+_physics_name+"/parabolic_profile_"+bc_id_string)
 			<< " components."
 			<< std::endl;
@@ -161,7 +161,7 @@ namespace GRINS
 	  libMesh::Real f = input( "Physics/"+_physics_name+"/parabolic_profile_coeffs_"+bc_id_string, 0.0, 5 );
 
 	  std::string var = input( "Physics/"+_physics_name+"/parabolic_profile_var_"+bc_id_string, "DIE!" );
-	
+
 	  if( var == "DIE!" )
 	    {
 	      std::cerr << "Error: Mush specify a variable name to which apply parabolic profile through parabolic_profile_var input option." << std::endl;
@@ -175,7 +175,7 @@ namespace GRINS
 	  std::tr1::shared_ptr<libMesh::FunctionBase<libMesh::Number> > func( new ParabolicProfile(a,b,c,d,e,f) );
 	  cont.set_func( func );
 	  this->attach_dirichlet_bound_func( cont );
-	
+
 	  // Set specified components of Dirichlet data to zero
 	  std::string fix_var = input( "Physics/"+_physics_name+"/parabolic_profile_fix_"+bc_id_string, "DIE!" );
 
@@ -215,7 +215,7 @@ namespace GRINS
                                          bc_vars, bc_value, input );
 	}
       } // End switch(bc_type)
-  
+
     return;
   }
 
@@ -238,29 +238,43 @@ namespace GRINS
 	{
 	  std::set<BoundaryID> dbc_ids;
 	  dbc_ids.insert(bc_id);
-	
+
 	  std::vector<VariableIndex> dbc_vars;
 	  dbc_vars.push_back(u_var);
 	  dbc_vars.push_back(v_var);
 	  if(dim == 3)
 	    dbc_vars.push_back(w_var);
-	
+
           libMesh::ZeroFunction<libMesh::Number> zero;
-	
-	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids, 
-						 dbc_vars, 
+
+	  libMesh::DirichletBoundary no_slip_dbc(dbc_ids,
+						 dbc_vars,
 						 &zero );
-	
+
 	  dof_map.add_dirichlet_boundary( no_slip_dbc );
+
+	  // Hack Alert
+	  // We will now apply dirichlet boundary conditions for the adjoint solution
+	  // corresponding to the drag QoI
+	  // See July 7, 2015 entry in research book
+	  // Weight function: \vec{w} = (1, 0) on airfoil, (0, 0) other parts of the boundary
+	  libMesh::ConstFunction<libMesh::Number> one(1);
+
+	  std::vector<VariableIndex> dbc_u_var;
+	  dbc_u_var.push_back(u_var);
+
+	  libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
+	  dof_map.add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
+
 	}
 	break;
       case(PRESCRIBED_VELOCITY):
 	{
 	  std::set<BoundaryID> dbc_ids;
 	  dbc_ids.insert(bc_id);
-	
+
 	  std::vector<VariableIndex> dbc_vars;
-	
+
 	  // This is inefficient, but it shouldn't matter because
 	  // everything gets cached on the libMesh side so it should
 	  // only affect performance at startup.
@@ -268,24 +282,24 @@ namespace GRINS
 	    dbc_vars.push_back(u_var);
             libMesh::ConstFunction<libMesh::Number>
               vel_func( this->get_dirichlet_bc_value(bc_id,0) );
-	  
-	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-					       dbc_vars, 
+
+	    libMesh::DirichletBoundary vel_dbc(dbc_ids,
+					       dbc_vars,
 					       &vel_func );
-	  
+
 	    dof_map.add_dirichlet_boundary( vel_dbc );
 	    dbc_vars.clear();
 	  }
-	
+
 	  {
 	    dbc_vars.push_back(v_var);
             libMesh::ConstFunction<libMesh::Number>
               vel_func( this->get_dirichlet_bc_value(bc_id,1) );
-	  
-	    libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-					       dbc_vars, 
+
+	    libMesh::DirichletBoundary vel_dbc(dbc_ids,
+					       dbc_vars,
 					       &vel_func );
-	  
+
 	    dof_map.add_dirichlet_boundary( vel_dbc );
 	    dbc_vars.clear();
 	  }
@@ -294,13 +308,13 @@ namespace GRINS
 	      dbc_vars.push_back(w_var);
               libMesh::ConstFunction<libMesh::Number>
                 vel_func( this->get_dirichlet_bc_value(bc_id,2) );
-	    
-	      libMesh::DirichletBoundary vel_dbc(dbc_ids, 
-						 dbc_vars, 
+
+	      libMesh::DirichletBoundary vel_dbc(dbc_ids,
+						 dbc_vars,
 						 &vel_func );
-	    
+
 	      dof_map.add_dirichlet_boundary( vel_dbc );
-	    }  
+	    }
 	}
 	break;
       case(PARABOLIC_PROFILE):
@@ -315,16 +329,16 @@ namespace GRINS
 	{
 	  std::set<BoundaryID> dbc_ids;
 	  dbc_ids.insert(bc_id);
-	
+
 	  std::vector<VariableIndex> dbc_vars;
 	  dbc_vars.push_back(u_var);
-	
+
           libMesh::ZeroFunction<libMesh::Number> zero;
-	
-	  libMesh::DirichletBoundary no_slip_dbc( dbc_ids, 
-						  dbc_vars, 
+
+	  libMesh::DirichletBoundary no_slip_dbc( dbc_ids,
+						  dbc_vars,
 						  &zero );
-	
+
 	  dof_map.add_dirichlet_boundary( no_slip_dbc );
 	}
       break;
@@ -334,7 +348,7 @@ namespace GRINS
 	  std::cerr << "Invalid BCType " << bc_type << std::endl;
 	  libmesh_error();
 	}
-      
+
       }// end switch
 
     return;

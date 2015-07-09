@@ -65,14 +65,6 @@ namespace GRINS
     this->set_parameter(this->_c_n1 ,input, "Physics/"+spalart_allmaras+"/Parameters/c_n1", this->_c_n1 );
   }
 
-
-  void SpalartAllmarasParameters::register_parameter
-  ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
-   const
-  {
-    ParameterUser::register_parameter(param_name, param_pointer);
-  }
-
   libMesh::Real SpalartAllmarasParameters::source_fn(libMesh::Number nu, libMesh::Real mu,
                                                      libMesh::Real wall_distance, libMesh::Real vorticity_value, bool infinite_distance) const
   {

@@ -32,6 +32,7 @@
 #include "grins/turbulence_variables.h"
 #include "grins/spalart_allmaras_helper.h"
 #include "grins/spalart_allmaras_parameters.h"
+#include "grins/parameter_user.h"
 
 //Utils
 #include "grins/distance_function.h"

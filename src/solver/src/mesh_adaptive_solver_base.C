@@ -45,6 +45,7 @@ namespace GRINS
       _refine_fraction( input("MeshAdaptivity/refine_percentage", 0.2) ),
       _coarsen_fraction( input("MeshAdaptivity/coarsen_percentage", 0.2) ),
       _coarsen_threshold( input("MeshAdaptivity/coarsen_threshold", 0) ),
+      _max_h_level( (input("MeshAdaptivity/max_h_level", 10))),
       _plot_cell_errors( input("MeshAdaptivity/plot_cell_errors", false) ),
       _error_plot_prefix( input("MeshAdaptivity/error_plot_prefix", "cell_error") ),
       _node_level_mismatch_limit( input("MeshAdaptivity/node_level_mismatch_limit", 0) ),
@@ -73,6 +74,7 @@ namespace GRINS
     _mesh_refinement->refine_fraction() = _refine_fraction;
     _mesh_refinement->coarsen_fraction() = _coarsen_fraction;  
     _mesh_refinement->coarsen_threshold() = _coarsen_threshold;
+    _mesh_refinement->max_h_level() = _max_h_level;	
     _mesh_refinement->node_level_mismatch_limit() = _node_level_mismatch_limit;
     _mesh_refinement->edge_level_mismatch_limit() = _edge_level_mismatch_limit;
     _mesh_refinement->face_level_mismatch_limit() = _face_level_mismatch_limit;

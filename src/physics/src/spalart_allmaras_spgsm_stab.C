@@ -68,7 +68,8 @@ namespace GRINS
   ( const std::string &param_name, libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer)
   const
   {
-    ParameterUser::register_parameter(param_name, param_pointer);
+    // Register base class parameters
+    SpalartAllmarasStabilizationBase<Mu>::register_parameter(param_name, param_pointer);
   }
 
   template<class Mu>

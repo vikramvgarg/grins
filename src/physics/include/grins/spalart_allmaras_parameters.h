@@ -99,13 +99,6 @@ namespace GRINS
     libMesh::Real get_c_n1() const
     { return _c_n1;}
 
-    // Registers all parameters in this physics and in its property
-    // classes
-    virtual void register_parameter
-    ( const std::string & param_name,
-    libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
-    const;
-
   protected:
 
     //! Constants specific to the calculation of the source function

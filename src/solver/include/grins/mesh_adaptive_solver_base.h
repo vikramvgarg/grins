@@ -72,6 +72,7 @@ namespace GRINS
     libMesh::Real _refine_fraction;
     libMesh::Real _coarsen_fraction;
     libMesh::Real _coarsen_threshold;
+    unsigned int _max_h_level;
     bool _plot_cell_errors;
     std::string _error_plot_prefix;
 
