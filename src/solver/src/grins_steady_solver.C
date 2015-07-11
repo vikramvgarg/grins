@@ -36,6 +36,17 @@
 #include "libmesh/getpot.h"
 #include "libmesh/steady_solver.h"
 
+// This class
+#include "grins/inc_navier_stokes_bc_handling.h"
+
+// GRINS
+#include "grins/parabolic_profile.h"
+
+// libMesh
+#include "libmesh/zero_function.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/fem_system.h"
 
 namespace GRINS
 {
@@ -63,7 +74,7 @@ namespace GRINS
   {
     libmesh_assert( context.system );
 
-    if( context.output_vis ) 
+    if( context.output_vis )
       {
 	context.postprocessing->update_quantities( *(context.equation_system) );
 	context.vis->output( context.equation_system );
@@ -92,8 +103,24 @@ namespace GRINS
             std::cout << '}' << std::endl;
           }
 
+    // Hack Alert
     if( context.do_adjoint_solve )
-      this->steady_adjoint_solve(context);
+      {
+	std::set<BoundaryID> dbc_ids;
+	dbc_ids.insert(0);
+
+	libMesh::ConstFunction<libMesh::Number> one(1);
+
+	std::vector<VariableIndex> dbc_u_var;
+	dbc_u_var.push_back(0);
+
+	libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
+	context.system->get_dof_map().add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
+	context.system->reinit();
+	//context.vis->output_adjoint( context.equation_system, context.system );
+
+	this->steady_adjoint_solve(context);
+      }
 
     if( context.output_adjoint )
       context.vis->output_adjoint( context.equation_system, context.system );

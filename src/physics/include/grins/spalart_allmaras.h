@@ -62,6 +62,9 @@ namespace GRINS
 
     ~SpalartAllmaras();
 
+    // Hack Alert
+    //virtual void init_data ( libMesh::FEMSystem* system );
+
     virtual void init_variables( libMesh::FEMSystem* system );
 
     //! Sets velocity variables to be time-evolving

@@ -258,13 +258,13 @@ namespace GRINS
 	  // corresponding to the drag QoI
 	  // See July 7, 2015 entry in research book
 	  // Weight function: \vec{w} = (1, 0) on airfoil, (0, 0) other parts of the boundary
-	  libMesh::ConstFunction<libMesh::Number> one(1);
+	  //libMesh::ConstFunction<libMesh::Number> one(1);
 
-	  std::vector<VariableIndex> dbc_u_var;
-	  dbc_u_var.push_back(u_var);
+	  //std::vector<VariableIndex> dbc_u_var;
+	  //dbc_u_var.push_back(u_var);
 
-	  libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
-	  dof_map.add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
+	  //libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
+	  //dof_map.add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
 
 	}
 	break;
