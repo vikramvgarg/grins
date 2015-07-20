@@ -60,7 +60,8 @@ namespace GRINS
   template<class Mu>
   QoIBase* Drag<Mu>::clone() const
   {
-    return new Drag<Mu>( *this );
+    Drag<Mu>& my_ref = const_cast<Drag<Mu>&>(*this);
+    return new Drag ( my_ref );
   }
 
   template<class Mu>
@@ -190,6 +191,16 @@ namespace GRINS
     //}
 
     return;
+  }
+
+  template<class Mu>
+  void Drag<Mu>::register_parameter
+    ( const std::string & param_name,
+      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const
+  {
+    ParameterUser::register_parameter(param_name, param_pointer);
+    this->_mu.register_parameter(param_name, param_pointer);
   }
 
 } //namespace GRINS

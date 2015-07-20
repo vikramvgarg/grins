@@ -91,7 +91,7 @@ namespace GRINS
     return;
   }
 
-  void CompositeQoI::init( const GetPot& input, const MultiphysicsSystem& system )
+  void CompositeQoI::init( const GetPot& input, MultiphysicsSystem& system )
   {
     for( std::vector<QoIBase*>::iterator qoi = _qois.begin();
          qoi != _qois.end(); ++qoi )

@@ -76,6 +76,12 @@ namespace GRINS
     /*! Drag is a boundary flux, its contribution to the adjoint RHS
       is via a Dirichlet boundary condition. */
 
+    // Registers all parameters in this QoI
+    virtual void register_parameter
+      ( const std::string & param_name,
+        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+    const;
+
   protected:
 
     //! u-velocity component variable index
