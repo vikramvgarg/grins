@@ -60,11 +60,11 @@ namespace GRINS
   template<class Mu>
   QoIBase* Drag<Mu>::clone() const
   {
-    return new Drag( *this );
+    return new Drag<Mu>( *this );
   }
 
   template<class Mu>
-  void Drag<Mu>::init( const GetPot& input, const MultiphysicsSystem& system )
+  void Drag<Mu>::init( const GetPot& input, MultiphysicsSystem& system )
   {
     // Extract subdomain on which to compute to qoi
     //int num_ids = input.vector_variable_size( "QoI/Vorticity/enabled_subdomains" );
@@ -90,7 +90,7 @@ namespace GRINS
     this->_v_var = system.variable_number(v_var_name);
 
     // Initialize the viscosity object
-    this->_mu.init(system);
+    this->_mu.init(&system);
 
     return;
   }
