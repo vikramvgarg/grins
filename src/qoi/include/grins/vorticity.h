@@ -60,13 +60,13 @@ namespace GRINS
     //! Initialize local variables
     /*! Any local variables that need information from libMesh get initialized
         here. For example, variable indices. */
-    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
+    virtual void init( const GetPot& input, MultiphysicsSystem& system );
 
     virtual void init_context( AssemblyContext& context );
 
     //! Compute the qoi value.
     /*! Currently, only implemented for 2D. Assumes that the vorticity will be
-        computed over area of input subdomain id. Vorticity computed as 
+        computed over area of input subdomain id. Vorticity computed as
         \f$ \int_{\Omega} \nabla \times \mathbf{u} \; d\mathbf{x}\f$*/
     virtual void element_qoi( AssemblyContext& context,
                               const unsigned int qoi_index );

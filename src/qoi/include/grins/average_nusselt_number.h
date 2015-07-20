@@ -52,7 +52,7 @@ namespace GRINS
     virtual void side_qoi_derivative( AssemblyContext& context,
                                       const unsigned int qoi_index );
 
-    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
+    virtual void init( const GetPot& input, MultiphysicsSystem& system );
 
     virtual void init_context( AssemblyContext& context );
 

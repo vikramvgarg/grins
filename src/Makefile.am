@@ -6,7 +6,7 @@ CLEANFILES =
 
 lib_LTLIBRARIES = libgrins.la
 
-bin_PROGRAMS    = grins grins_version 
+bin_PROGRAMS    = grins grins_version
 
 if CANTERA_ENABLED
    bin_PROGRAMS += cantera_kinetic_rates
@@ -167,6 +167,7 @@ libgrins_la_SOURCES += qoi/src/average_nusselt_number.C
 libgrins_la_SOURCES += qoi/src/qoi_base.C
 libgrins_la_SOURCES += qoi/src/qoi_factory.C
 libgrins_la_SOURCES += qoi/src/vorticity.C
+libgrins_la_SOURCES += qoi/src/drag.C
 libgrins_la_SOURCES += qoi/src/composite_qoi.C
 libgrins_la_SOURCES += qoi/src/parsed_interior_qoi.C
 
@@ -384,6 +385,8 @@ include_HEADERS += qoi/include/grins/qoi_base.h
 include_HEADERS += qoi/include/grins/qoi_factory.h
 include_HEADERS += qoi/include/grins/qoi_names.h
 include_HEADERS += qoi/include/grins/vorticity.h
+include_HEADERS += qoi/include/grins/drag.h
+include_HEADERS += qoi/include/grins/drag_macro.h
 include_HEADERS += qoi/include/grins/composite_qoi.h
 include_HEADERS += qoi/include/grins/parsed_interior_qoi.h
 
@@ -466,7 +469,7 @@ endif
 #--------------------------------------
 #Local Directories to include for build
 #--------------------------------------
-AM_CPPFLAGS = 
+AM_CPPFLAGS =
 AM_CPPFLAGS += -I$(top_srcdir)/src/bc_handling/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/boundary_conditions/include
 AM_CPPFLAGS += -I$(top_srcdir)/src/common/include

@@ -56,7 +56,7 @@ namespace GRINS
     return new ParsedInteriorQoI( *this );
   }
 
-  void ParsedInteriorQoI::init( const GetPot& input, const MultiphysicsSystem& system )
+  void ParsedInteriorQoI::init( const GetPot& input, MultiphysicsSystem& system )
   {
     std::string qoi_functional_string =
       input("QoI/ParsedInterior/qoi_functional", std::string("0"));
@@ -106,55 +106,55 @@ namespace GRINS
   void ParsedInteriorQoI::element_qoi_derivative( AssemblyContext& context,
                                                   const unsigned int qoi_index )
   {
-    libMesh::FEBase* element_fe;
-    context.get_element_fe<libMesh::Real>(0, element_fe);
-    const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
+    // libMesh::FEBase* element_fe;
+    // context.get_element_fe<libMesh::Real>(0, element_fe);
+    // const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
 
-    const std::vector<libMesh::Point>& x_qp = element_fe->get_xyz();
+    // const std::vector<libMesh::Point>& x_qp = element_fe->get_xyz();
 
-    // Local DOF count and quadrature point count
-    const unsigned int n_u_dofs = context.get_dof_indices().size();
+    // // Local DOF count and quadrature point count
+    // const unsigned int n_u_dofs = context.get_dof_indices().size();
 
-    unsigned int n_qpoints = context.get_element_qrule().n_points();
+    // unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-    // Local solution vector - non-const version for finite
-    // differenting purposes
-    libMesh::DenseVector<libMesh::Number>& elem_solution =
-      const_cast<libMesh::DenseVector<libMesh::Number>&>
-        (context.get_elem_solution());
+    // // Local solution vector - non-const version for finite
+    // // differenting purposes
+    // libMesh::DenseVector<libMesh::Number>& elem_solution =
+    //   const_cast<libMesh::DenseVector<libMesh::Number>&>
+    //     (context.get_elem_solution());
 
-    /*! \todo Need to generalize this to the multiple QoI case */
-    libMesh::DenseVector<libMesh::Number> &Qu =
-      context.get_qoi_derivatives()[qoi_index];
+    // /*! \todo Need to generalize this to the multiple QoI case */
+    // libMesh::DenseVector<libMesh::Number> &Qu =
+    //   context.get_qoi_derivatives()[qoi_index];
 
-    for( unsigned int qp = 0; qp != n_qpoints; qp++ )
-      {
-        // Central finite differencing to approximate derivatives.
-        // FIXME - we should hook the FParserAD stuff into
-        // ParsedFEMFunction
+    // for( unsigned int qp = 0; qp != n_qpoints; qp++ )
+    //   {
+    //     // Central finite differencing to approximate derivatives.
+    //     // FIXME - we should hook the FParserAD stuff into
+    //     // ParsedFEMFunction
 
-        for( unsigned int i = 0; i != n_u_dofs; ++i )
-          {
-            libMesh::Number &current_solution = elem_solution(i);
-            const libMesh::Number original_solution = current_solution;
+    //     for( unsigned int i = 0; i != n_u_dofs; ++i )
+    //       {
+    //         libMesh::Number &current_solution = elem_solution(i);
+    //         const libMesh::Number original_solution = current_solution;
 
-            current_solution = original_solution + libMesh::TOLERANCE;
+    //         current_solution = original_solution + libMesh::TOLERANCE;
 
-            const libMesh::Number plus_val =
-              (*qoi_functional)(context, x_qp[qp], context.get_time());
+    //         const libMesh::Number plus_val =
+    //           (*qoi_functional)(context, x_qp[qp], context.get_time());
 
-            current_solution = original_solution - libMesh::TOLERANCE;
+    //         current_solution = original_solution - libMesh::TOLERANCE;
 
-            const libMesh::Number minus_val =
-              (*qoi_functional)(context, x_qp[qp], context.get_time());
+    //         const libMesh::Number minus_val =
+    //           (*qoi_functional)(context, x_qp[qp], context.get_time());
 
-            Qu(i) += (plus_val - minus_val) *
-                     (0.5 / libMesh::TOLERANCE) * JxW[qp];
+    //         Qu(i) += (plus_val - minus_val) *
+    //                  (0.5 / libMesh::TOLERANCE) * JxW[qp];
 
-            // Don't forget to restore the correct solution...
-            current_solution = original_solution;
-          }
-      }
+    //         // Don't forget to restore the correct solution...
+    //         current_solution = original_solution;
+    //       }
+    //   }
   }
 
 } //namespace GRINS

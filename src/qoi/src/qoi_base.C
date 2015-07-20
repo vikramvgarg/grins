@@ -50,7 +50,7 @@ namespace GRINS
   }
 
   void QoIBase::init( const GetPot& /*input*/,
-                      const MultiphysicsSystem& /*system*/ )
+                      MultiphysicsSystem& /*system*/ )
   {
     return;
   }
@@ -117,5 +117,5 @@ namespace GRINS
 
     return;
   }
-  
+
 } // namespace GRINS

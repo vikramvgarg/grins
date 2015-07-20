@@ -32,6 +32,12 @@
 #include "grins/average_nusselt_number.h"
 #include "grins/vorticity.h"
 #include "grins/parsed_interior_qoi.h"
+#include "grins/drag.h"
+#include "grins/drag_macro.h"
+
+#include "grins/constant_viscosity.h"
+#include "grins/parsed_viscosity.h"
+#include "grins/spalart_allmaras_viscosity.h"
 
 namespace GRINS
 {
@@ -77,29 +83,42 @@ namespace GRINS
     return qois;
   }
 
-  void QoIFactory::add_qoi( const GetPot& /*input*/, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
+  void QoIFactory::add_qoi( const GetPot& input, const std::string& qoi_name, std::tr1::shared_ptr<CompositeQoI>& qois )
   {
     QoIBase* qoi = NULL;
 
     if( qoi_name == avg_nusselt )
       {
-        qoi = new AverageNusseltNumber( avg_nusselt );
+        qoi = new AverageNusseltNumber(avg_nusselt);
       }
 
     else if( qoi_name == parsed_interior )
       {
-        qoi =  new ParsedInteriorQoI( parsed_interior );
+        qoi =  new ParsedInteriorQoI(parsed_interior);
       }
 
     else if( qoi_name == vorticity )
       {
-        qoi =  new Vorticity( vorticity );
+        qoi =  new Vorticity(vorticity);
       }
 
-    //else if ( qoi_name == drag )
-    //{
-    //qoi = new Drag ( drag );
-    //}
+    else if ( qoi_name == drag )
+      {
+	std::string viscosity =
+	  input( "Physics/"+incompressible_navier_stokes+"/viscosity_model", "constant" );
+
+	if( viscosity == "constant" )
+	  qoi = new Drag<ConstantViscosity> (drag,input);
+	else if ( viscosity == "parsed" )
+	  qoi = new Drag<ParsedViscosity> (drag,input);
+	else if ( viscosity == "spalartallmaras" )
+	  qoi = new Drag<SpalartAllmarasViscosity<ConstantViscosity> > (drag,input);
+	else
+	  {
+	    libMesh::err << "Error: Invalid Viscosity choice for QoI: " << qoi_name << std::endl;
+	    libmesh_error();
+	  }
+      }
 
     else
       {

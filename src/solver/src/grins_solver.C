@@ -38,6 +38,19 @@
 #include "libmesh/fem_system.h"
 #include "libmesh/diff_solver.h"
 
+// This class
+#include "grins/inc_navier_stokes_bc_handling.h"
+
+// GRINS
+#include "grins/parabolic_profile.h"
+
+// libMesh
+#include "libmesh/zero_function.h"
+#include "libmesh/dirichlet_boundaries.h"
+#include "libmesh/dof_map.h"
+#include "libmesh/fem_system.h"
+
+
 namespace GRINS
 {
 
@@ -64,13 +77,26 @@ namespace GRINS
     return;
   }
 
-  void Solver::initialize( const GetPot& /*input*/, 
+  void Solver::initialize( const GetPot& /*input*/,
 			   std::tr1::shared_ptr<libMesh::EquationSystems> equation_system,
 			   MultiphysicsSystem* system )
   {
- 
+
     // Defined in subclasses depending on the solver used.
     this->init_time_solver(system);
+
+    // Hack Alert
+    std::set<BoundaryID> dbc_ids;
+    dbc_ids.insert(0);
+
+    libMesh::ConstFunction<libMesh::Number> one(1);
+
+    std::vector<VariableIndex> dbc_u_var;
+    dbc_u_var.push_back(0);
+
+    libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
+    system->get_dof_map().add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
+    // Hack ends
 
     // Initialize the system
     equation_system->init();

@@ -53,7 +53,7 @@ namespace GRINS
     return new AverageNusseltNumber( *this );
   }
 
-  void AverageNusseltNumber::init( const GetPot& input, const MultiphysicsSystem& system )
+  void AverageNusseltNumber::init( const GetPot& input, MultiphysicsSystem& system )
   {
     this->set_parameter
       ( _k, input, "QoI/NusseltNumber/thermal_conductivity", -1.0 );
@@ -118,21 +118,21 @@ namespace GRINS
 	    context.get_side_fe<libMesh::Real>(this->_T_var, side_fe);
 
 	    const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
-	    
+
 	    const std::vector<libMesh::Point>& normals = side_fe->get_normals();
 
 	    unsigned int n_qpoints = context.get_side_qrule().n_points();
-	    
+
 	    libMesh::Number& qoi = context.get_qois()[qoi_index];
-	    
-	    // Loop over quadrature points  
-	    
+
+	    // Loop over quadrature points
+
 	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
 	      {
 		// Get the solution value at the quadrature point
-		libMesh::Gradient grad_T = 0.0; 
+		libMesh::Gradient grad_T = 0.0;
 		context.side_gradient(this->_T_var, qp, grad_T);
-		
+
 		// Update the elemental increment dR for each qp
 		qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
 
@@ -158,11 +158,11 @@ namespace GRINS
 	    context.get_side_fe<libMesh::Real>(this->_T_var, T_side_fe);
 
 	    const std::vector<libMesh::Real> &JxW = T_side_fe->get_JxW();
-	    
+
 	    const std::vector<libMesh::Point>& normals = T_side_fe->get_normals();
 
 	    unsigned int n_qpoints = context.get_side_qrule().n_points();
-	    
+
             const unsigned int n_T_dofs = context.get_dof_indices(_T_var).size();
 
             const std::vector<std::vector<libMesh::Gradient> >& T_gradphi = T_side_fe->get_dphi();
@@ -170,13 +170,13 @@ namespace GRINS
 	    libMesh::DenseSubVector<libMesh::Number>& dQ_dT =
               context.get_qoi_derivatives(qoi_index, _T_var);
 
-	    // Loop over quadrature points  
+	    // Loop over quadrature points
 	    for (unsigned int qp = 0; qp != n_qpoints; qp++)
 	      {
 		// Get the solution value at the quadrature point
-		libMesh::Gradient grad_T = 0.0; 
+		libMesh::Gradient grad_T = 0.0;
 		context.side_gradient(this->_T_var, qp, grad_T);
-		
+
 		// Update the elemental increment dR for each qp
 		//qoi += (this->_scaling)*(this->_k)*(grad_T*normals[qp])*JxW[qp];
 

@@ -19,14 +19,17 @@ max_linear_iterations = 2500
 
 initial_linear_tolerance = 1.0e-12
 
-verify_analytic_jacobians = 1.e-6
+#verify_analytic_jacobians = 1.e-6
+use_numerical_jacobians_only = 'true'
+
+do_adjoint_solve = 'true'
 
 #Meshing options
-[MeshAdaptivity]
-mesh_adaptive = 'true'
-absolute_global_tolerance = '1.0e-2'
-estimator_type = 'adjoint_residual'
-max_refinement_steps = '1'
+#[MeshAdaptivity]
+#mesh_adaptive = 'true'
+#absolute_global_tolerance = '1.0e-2'
+#estimator_type = 'adjoint_residual'
+#max_refinement_steps = '1'
 
 # Visualization options
 [vis-options]
@@ -58,10 +61,10 @@ mu = '1.00001'
 # Options related to all Physics
 [Physics]
 
-enabled_physics = 'Stokes'
+enabled_physics = 'IncompressibleNavierStokes'
 
 # Options for Stokes physics
-[./Stokes]
+[./IncompressibleNavierStokes]
 
 rho = '1.0'
 
@@ -95,10 +98,10 @@ pressure = 'p'
 enabled_qois = 'parsed_interior'
 
 # Sensitivity analysis
-adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
-forward_sensitivity_parameters = 'Materials/Viscosity/mu'
+#adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+#forward_sensitivity_parameters = 'Materials/Viscosity/mu'
 
 [./ParsedInterior]
-qoi_functional = 'p'
+qoi_functional = 'u * 0.0'
 
 []

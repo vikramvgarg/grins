@@ -54,7 +54,7 @@ namespace GRINS
     return new Vorticity( *this );
   }
 
-  void Vorticity::init( const GetPot& input, const MultiphysicsSystem& system )
+  void Vorticity::init( const GetPot& input, MultiphysicsSystem& system )
   {
     // Extract subdomain on which to compute to qoi
     int num_ids = input.vector_variable_size( "QoI/Vorticity/enabled_subdomains" );
@@ -145,7 +145,7 @@ namespace GRINS
 
 	// Local DOF count and quadrature point count
 	const unsigned int n_T_dofs = context.get_dof_indices(0).size();
-	unsigned int n_qpoints = context.get_element_qrule().n_points();  
+	unsigned int n_qpoints = context.get_element_qrule().n_points();
 
 	// Warning: we assume here that vorticity is the only QoI!
 	// This should be consistent with the assertion in grins_mesh_adaptive_solver.C

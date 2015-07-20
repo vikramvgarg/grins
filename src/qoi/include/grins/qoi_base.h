@@ -78,7 +78,7 @@ namespace GRINS
      * Method to allow QoI to cache any system information needed for QoI calculation,
      * for example, solution variable indices.
      */
-    virtual void init( const GetPot& input, const MultiphysicsSystem& system );
+    virtual void init( const GetPot& input, MultiphysicsSystem& system );
 
     virtual void init_context( AssemblyContext& context );
 

@@ -16,7 +16,7 @@
 
       bc_ids = '0 1 2 3'
       bc_types = 'constant_dirichlet constant_dirichlet constant_dirichlet constant_dirichlet'
-      bc_variables = 'T T T T' 
+      bc_variables = 'T T T T'
       bc_values = '0.0 1.0 1.0 1.0'
 
       rho = '1.0'
@@ -42,7 +42,7 @@
       x_max = '1.0'
       y_min = '0.0'
       y_max = '1.0'
-      element_type = 'QUAD4'
+      element_type = 'QUAD9'
 []
 
 # Options for tiem solvers
@@ -56,11 +56,17 @@
    max_linear_iterations = 2500
    relative_residual_tolerance = '1.0e-14'
    relative_step_tolerance = '1.0e-12'
+
+   #verify_analytic_jacobians = 1.e-6
+   use_numerical_jacobians_only = 'true'
+
+   do_adjoint_solve = 'true'
 []
 
 # Visualization options
 [vis-options]
    output_vis = true
+   output_adjoint = 'true'
    vis_output_file_prefix = 'laplace'
    output_format = 'ExodusII xdr'
 []
@@ -80,10 +86,10 @@
 enabled_qois = 'parsed_interior'
 
 # These should match
-adjoint_sensitivity_parameters = 'Materials/Conductivity/k'
-forward_sensitivity_parameters = 'Materials/Conductivity/k'
+#adjoint_sensitivity_parameters = 'Materials/Conductivity/k'
+#forward_sensitivity_parameters = 'Materials/Conductivity/k'
 
 [./ParsedInterior]
-qoi_functional = 'T'
+qoi_functional = 'T*0.0'
 
 []
