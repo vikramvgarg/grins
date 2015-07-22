@@ -50,7 +50,7 @@ namespace GRINS
                                    const GetPot& input);
 
     ~IncompressibleNavierStokesBase();
-    
+
     //virtual void read_input_options( const GetPot& input);
 
     //! Initialization of Navier-Stokes variables
@@ -63,7 +63,7 @@ namespace GRINS
     virtual void set_time_evolving_vars( libMesh::FEMSystem* system );
 
     // Context initialization
-    virtual void init_context( AssemblyContext& context );    
+    virtual void init_context( AssemblyContext& context );
 
     // Registers all parameters in this physics and in its property
     // classes
@@ -72,6 +72,9 @@ namespace GRINS
         libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
     const;
 
+    // A getter function for the Viscosity object
+    libMesh::Real get_viscosity_value(AssemblyContext& context, unsigned int qp) const;
+
   protected:
 
     //! Physical dimension of problem
@@ -79,14 +82,14 @@ namespace GRINS
     unsigned int _dim;
 
     PrimitiveFlowFEVariables _flow_vars;
-    
+
     //! Material parameters, read from input
     /** \todo Create objects to allow for function specification */
     libMesh::Number _rho;
 
     //! Viscosity object
     Viscosity _mu;
- 
+
   private:
     IncompressibleNavierStokesBase();
 

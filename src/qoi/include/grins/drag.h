@@ -74,7 +74,9 @@ namespace GRINS
 
     //! Compute the qoi derivative with respect to the solution.
     /*! Drag is a boundary flux, its contribution to the adjoint RHS
-      is via a Dirichlet boundary condition. */
+      is via a Dirichlet boundary condition. So this function is empty */
+    virtual void element_qoi_derivative( AssemblyContext& context,
+                              const unsigned int qoi_index );
 
     // Registers all parameters in this QoI
     /* virtual void register_parameter */

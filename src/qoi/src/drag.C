@@ -89,8 +89,11 @@ namespace GRINS
     // Grab velocity variable indices
     std::string u_var_name = input("Physics/VariableNames/u_velocity", u_var_name_default);
     std::string v_var_name = input("Physics/VariableNames/v_velocity", v_var_name_default);
+    std::string p_var_name = input("Physics/VariableNames/pressure", p_var_name_default);
+
     this->_u_var = system.variable_number(u_var_name);
     this->_v_var = system.variable_number(v_var_name);
+    this->_p_var = system.variable_number(p_var_name);
 
     // Initialize the viscosity object
     //this->_mu.init(&(equation_system->get_system(0)));
@@ -177,8 +180,12 @@ namespace GRINS
 		    libMesh::Real p = 0.;
 		    context.interior_value (this->_p_var, qp, p);
 
-		    // Compute the viscosity at this qp
-		    libMesh::Real _mu_qp = context.get_system().get_physics(incompressible_navier_stokes)._mu(context, qp);
+		    // Get a reference to the MultiphysicsSystem using the context
+		    const MultiphysicsSystem& mphysics_sys = dynamic_cast<const MultiphysicsSystem&>(context.get_system());
+		    // Get a reference the INSBase physics which the MultiphysicsSystem owns
+		    const IncompressibleNavierStokesBase<Mu>& ins_physics = dynamic_cast<const IncompressibleNavierStokesBase<Mu>& >(*mphysics_sys.get_physics(incompressible_navier_stokes));
+		// Use the get_viscosity_value function to get the viscosity at this qp
+		libMesh::Real _mu_qp = ins_physics.get_viscosity_value(context, qp);
 
 		    for( unsigned int i = 0; i != n_u_dofs; i++ )
 		      {
@@ -192,6 +199,14 @@ namespace GRINS
       } // End if elem on boundary
     //}
 
+    return;
+  }
+
+  template<class Mu>
+  void Drag<Mu>::element_qoi_derivative( AssemblyContext& context,
+                                                  const unsigned int qoi_index )
+  {
+    // Drag QoI RHS defined completely by adjoint dirichlet bc so no need to do anything
     return;
   }
 
