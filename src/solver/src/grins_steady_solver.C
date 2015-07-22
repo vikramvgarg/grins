@@ -35,6 +35,7 @@
 #include "libmesh/dof_map.h"
 #include "libmesh/getpot.h"
 #include "libmesh/steady_solver.h"
+#include "libmesh/newton_solver.h"
 
 // This class
 #include "grins/inc_navier_stokes_bc_handling.h"
@@ -65,6 +66,12 @@ namespace GRINS
   void SteadySolver::init_time_solver(MultiphysicsSystem* system)
   {
     libMesh::SteadySolver* time_solver = new libMesh::SteadySolver( *(system) );
+
+    // BEGIN hacking (to set solver options)
+    libMesh::NewtonSolver* newton_solver = new libMesh::NewtonSolver( *(system) );
+    newton_solver->require_residual_reduction = false;
+    time_solver->diff_solver() = libMesh::UniquePtr<libMesh::DiffSolver>(newton_solver);
+    // END hacking (to set solver options)
 
     system->time_solver = libMesh::AutoPtr<libMesh::TimeSolver>(time_solver);
     return;

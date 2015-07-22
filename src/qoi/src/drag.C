@@ -35,18 +35,20 @@
 #include "grins/spalart_allmaras_viscosity.h"
 #include "grins/drag_macro.h"
 
+#include "grins/inc_navier_stokes_base.h"
 // libMesh
 #include "libmesh/getpot.h"
 #include "libmesh/fem_system.h"
 #include "libmesh/quadrature.h"
 #include "libmesh/fe_base.h"
+#include "libmesh/equation_systems.h"
 
 namespace GRINS
 {
   template<class Mu>
   Drag<Mu>::Drag( const std::string& qoi_name , const GetPot& input)
-    : QoIBase(qoi_name),
-      _mu(input)
+    : QoIBase(qoi_name)
+      //_mu(input)
   {
     return;
   }
@@ -91,7 +93,7 @@ namespace GRINS
     this->_v_var = system.variable_number(v_var_name);
 
     // Initialize the viscosity object
-    this->_mu.init(&system);
+    //this->_mu.init(&(equation_system->get_system(0)));
 
     return;
   }
@@ -176,7 +178,7 @@ namespace GRINS
 		    context.interior_value (this->_p_var, qp, p);
 
 		    // Compute the viscosity at this qp
-		    libMesh::Real _mu_qp = this->_mu(context, qp);
+		    libMesh::Real _mu_qp = context.get_system().get_physics(incompressible_navier_stokes)._mu(context, qp);
 
 		    for( unsigned int i = 0; i != n_u_dofs; i++ )
 		      {
@@ -193,15 +195,15 @@ namespace GRINS
     return;
   }
 
-  template<class Mu>
-  void Drag<Mu>::register_parameter
-    ( const std::string & param_name,
-      libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
-    const
-  {
-    ParameterUser::register_parameter(param_name, param_pointer);
-    this->_mu.register_parameter(param_name, param_pointer);
-  }
+  // template<class Mu>
+  // void Drag<Mu>::register_parameter
+  //   ( const std::string & param_name,
+  //     libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
+  //   const
+  // {
+  //   ParameterUser::register_parameter(param_name, param_pointer);
+  //   this->_mu.register_parameter(param_name, param_pointer);
+  // }
 
 } //namespace GRINS
 

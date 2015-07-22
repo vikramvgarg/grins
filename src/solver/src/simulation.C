@@ -185,7 +185,7 @@ namespace GRINS
     if( qois->n_qois() > 0 )
       {
         // This *must* be done after equation_system->init in order to get variable indices
-        qois->init(input, *_multiphysics_system );
+        qois->init(input, *_multiphysics_system);
 
         /* Note that we are effectively transfering ownership of the qoi pointer because
            it will be cloned in _multiphysics_system and all the calculations are done there. */
@@ -437,7 +437,7 @@ namespace GRINS
     // Most of this was pulled from FIN-S
     if (restart_file != "none")
       {
-        std::cout << " ====== Restarting from " << restart_file << std::endl;      
+        std::cout << " ====== Restarting from " << restart_file << std::endl;
 
         // Must have correct file type to restart
         if (restart_file.rfind(".xdr") < restart_file.size())
@@ -445,7 +445,7 @@ namespace GRINS
                                  //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
                                  libMesh::EquationSystems::READ_DATA |
                                  libMesh::EquationSystems::READ_ADDITIONAL_DATA);
-      
+
         else if  (restart_file.rfind(".xda") < restart_file.size())
           _equation_system->read(restart_file,GRINSEnums::READ,
                                  //libMesh::EquationSystems::READ_HEADER |  // Allow for thermochemistry upgrades
@@ -457,10 +457,10 @@ namespace GRINS
             std::cerr << "Error: Restart filename must have .xdr or .xda extension!" << std::endl;
             libmesh_error();
           }
-      
+
         const std::string system_name = input("screen-options/system_name", "GRINS" );
 
-        MultiphysicsSystem& system = 
+        MultiphysicsSystem& system =
           _equation_system->get_system<MultiphysicsSystem>(system_name);
 
         // Update the old data

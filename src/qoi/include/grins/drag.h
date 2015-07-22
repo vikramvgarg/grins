@@ -77,10 +77,10 @@ namespace GRINS
       is via a Dirichlet boundary condition. */
 
     // Registers all parameters in this QoI
-    virtual void register_parameter
-      ( const std::string & param_name,
-        libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer )
-    const;
+    /* virtual void register_parameter */
+    /*   ( const std::string & param_name, */
+    /*     libMesh::ParameterMultiPointer<libMesh::Number> & param_pointer ) */
+    /* const; */
 
   protected:
 
@@ -94,7 +94,7 @@ namespace GRINS
     VariableIndex _p_var;
 
     //! Viscosity object
-    Viscosity _mu;
+    //Viscosity _mu;
 
     //! List of sumdomain ids for which we want to compute this QoI
     //std::set<libMesh::subdomain_id_type> _subdomain_ids;

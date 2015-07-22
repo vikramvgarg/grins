@@ -6,7 +6,7 @@
 
 [restart-options]
    # Use the coarser mesh to give us a good initial guess for the solution
-   restart_file = '/workspace/vikram/grins_libmesh_master_opt/examples/sa_airfoil/turbulent_airfoil_Re_6000000.xda'
+   restart_file = '/workspace/vikram/grins_libmesh_master_opt/examples/sa_airfoil/AoA_0/turbulent_airfoil_Re_6000000.xda'
 
 []
 
@@ -76,11 +76,9 @@ viscosity_model = 'spalartallmaras'
 rho = 1.0
 
 bc_ids = '0 2'
-bc_types = 'no_slip parabolic_profile'
+bc_types = 'no_slip prescribed_vel'
 
-parabolic_profile_coeffs_2 = '0.0 0.0 0.0 0.0 0.0 1.0'
-parabolic_profile_var_2 = 'u'
-parabolic_profile_fix_2 = 'v'
+bound_vel_2 = '1.0 0.0 0.0'
 
 #ic_ids = '0'
 #ic_types = 'parsed'
