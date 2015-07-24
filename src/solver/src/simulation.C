@@ -346,8 +346,10 @@ namespace GRINS
 
     if ( this->_print_qoi )
       {
+	const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+	my_qoi->output_qoi( std::cout );
         _multiphysics_system->assemble_qoi();
-        const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+        //const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
         my_qoi->output_qoi( std::cout );
       }
 

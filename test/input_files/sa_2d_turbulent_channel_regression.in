@@ -14,19 +14,25 @@
       function = '{x}{0.5*(1+(tanh((y-0.5)*3.0)/tanh(1.5)))}{z}'
 []
 
+#[restart-options]
+   # Use the coarser mesh to give us a good initial guess for the solution
+    #restart_file = '/workspace/vikram/grins/test/turbulent_channel_stabilized_drag.xda'
+
+#[]
+
 # Options for time solvers
 [unsteady-solver]
-transient = true
-theta = '0.5'
-n_timesteps = '1'
-deltat = '0.5'
+transient = false
+#theta = '0.5'
+#n_timesteps = '1'
+#deltat = '0.5'
 
 #Linear and nonlinear solver options
 [linear-nonlinear-solver]
 max_nonlinear_iterations = 25
 max_linear_iterations = 15000
 
-relative_step_tolerance = 1e-8
+relative_step_tolerance = 1e-5
 
 #verify_analytic_jacobians = 1.e-6
 use_numerical_jacobians_only = 'true'
@@ -43,15 +49,16 @@ mesh_adaptive = 'false'
 [vis-options]
 output_vis = 'true'
 #output_adjoint = 'true'
-vis_output_file_prefix = 'turbulent_channel_stabilized_sens_100_120_Re_5'
-output_format = 'ExodusII'
+vis_output_file_prefix = 'turbulent_channel_stabilized_drag'
+output_format = 'ExodusII xda'
 
 [Materials]
 
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-mu = '2.434e-5'
+#mu = '2.434e-5'
+mu = '1.0'
 
 []
 
@@ -126,13 +133,13 @@ ic_values = '0.1*y*(1.0-y)'
 
 # Options for adaptivity
 [QoI]
-enabled_qois = 'parsed_interior'
+enabled_qois = 'drag'
 
 # Sensitivity analysis
-adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
+#adjoint_sensitivity_parameters = 'Materials/Viscosity/mu'
 #forward_sensitivity_parameters = 'Materials/Viscosity/mu'
 
-[./ParsedInterior]
-qoi_functional = 'nu'
+#[./ParsedInterior]
+#qoi_functional = 'nu'
 
 []
