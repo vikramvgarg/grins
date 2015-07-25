@@ -32,10 +32,12 @@ transient = false
 max_nonlinear_iterations = 25
 max_linear_iterations = 15000
 
-relative_step_tolerance = 1e-5
+relative_step_tolerance = 1e-6
 
 #verify_analytic_jacobians = 1.e-6
 use_numerical_jacobians_only = 'true'
+
+do_adjoint_solve = 'true'
 []
 
 #Meshing options
@@ -48,7 +50,7 @@ mesh_adaptive = 'false'
 # Visualization options
 [vis-options]
 output_vis = 'true'
-#output_adjoint = 'true'
+output_adjoint = 'true'
 vis_output_file_prefix = 'turbulent_channel_stabilized_drag'
 output_format = 'ExodusII xda'
 

@@ -122,84 +122,88 @@ namespace GRINS
   void Drag<Mu>::element_qoi( AssemblyContext& context,
                                const unsigned int qoi_index )
   {
-    //std::cout<<"Hello"<<std::endl;
+    // // A reference to the system
+    // const libMesh::System & sys = context.get_system();
 
-    //if( _subdomain_ids.find( (&context.get_elem())->subdomain_id() ) != _subdomain_ids.end() )
-    //{
-    // A reference to the system
-    const libMesh::System & sys = context.get_system();
+    // // Create a boundary info object for checking boundary ids later
+    // const libMesh::BoundaryInfo& boundary_info = *sys.get_mesh().boundary_info;
 
-    // Create a boundary info object for checking boundary ids later
-    const libMesh::BoundaryInfo& boundary_info = *sys.get_mesh().boundary_info;
+    // // Get a reference to the current element
+    // libMesh::Elem &elem = context.get_elem();
 
-    // Get a reference to the current element
-    libMesh::Elem &elem = context.get_elem();
+    // // Check if this element is on the boundary
+    // if(elem.on_boundary())
+    //   {
+    // 	// The number of nodes on the element
+    // 	unsigned int elem_n_nodes = elem.n_nodes();
 
-    // Check if this element is on the boundary
-    if(elem.on_boundary())
-      {
-    	// The number of sides on the element
-    	unsigned int n_sides = elem.n_sides();
+    // 	// The number of sides on the element
+    // 	unsigned int n_sides = elem.n_sides();
 
-    	// Loop over the sides that are on the boundary
-    	for(unsigned char s=0; s != n_sides; ++s)
-    	  {
-    	    //Is one of the sides on the boundary we care about
-    	    if(boundary_info.has_boundary_id(&elem,s,0))
-    	      {
-    		// We now know that we are on boundary element with a boundary
-    		// that corresponds to the one for which we want the drag
-    		// and can proceed with obtaining the contribution from this element
-    		libMesh::FEBase* element_fe;
-    		context.get_element_fe<libMesh::Real>(this->_u_var, element_fe);
-    		const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
+    // 	// Loop over the sides that are on the boundary
+    // 	for(unsigned char s=0; s != n_sides; ++s)
+    // 	  {
+    // 	    //Is one of the sides on the boundary we care about
+    // 	    if(boundary_info.has_boundary_id(&elem,s,0))
+    // 	      {
+    // 		// Loop over all nodes and check if it is on the current side
+    // 		for(unsigned int i = 0; i != elem_n_nodes; ++i)
+    // 		  {
+    // 		    // Check if node is on current side
+    // 		    if(elem.is_node_on_side(i,s))
+    // 		      {
+    // 			// We now know that we are on boundary element with a boundary
+    // 			// that corresponds to the one for which we want the drag
+    // 			// and can proceed with obtaining the contribution from this element
+    // 			libMesh::FEBase* element_fe;
+    // 			context.get_element_fe<libMesh::Real>(this->_u_var, element_fe);
+    // 			const std::vector<libMesh::Real> &JxW = element_fe->get_JxW();
 
-    		// We also need basis functions and derivatives for this QoI
-    		const std::vector<std::vector<libMesh::Real>>& u_phi =
-    		  context.get_element_fe(_u_var)->get_phi();
-    		const std::vector<std::vector<libMesh::RealGradient> >& du_phi =
-    		  context.get_element_fe(_u_var)->get_dphi();
+    // 			// We also need basis functions and derivatives for this QoI
+    // 			const std::vector<std::vector<libMesh::Real>>& u_phi =
+    // 			  context.get_element_fe(_u_var)->get_phi();
+    // 			const std::vector<std::vector<libMesh::RealGradient> >& du_phi =
+    // 			  context.get_element_fe(_u_var)->get_dphi();
 
-    		// Local DOF count and quadrature point count
-    		const unsigned int n_u_dofs = context.get_dof_indices(this->_u_var).size();
-    		unsigned int n_qpoints = context.get_element_qrule().n_points();
+    // 			// Local quadrature point count
+    // 			unsigned int n_qpoints = context.get_element_qrule().n_points();
 
-    		/*! \todo Need to generalize this to the multiple QoI case */
-    		libMesh::Number& qoi = context.get_qois()[qoi_index];
+    // 			/*! \todo Need to generalize this to the multiple QoI case */
+    // 			libMesh::Number& qoi = context.get_qois()[qoi_index];
 
-    		for( unsigned int qp = 0; qp != n_qpoints; qp++ )
-    		  {
-    		    libMesh::Real u = 0.;
-    		    libMesh::Real v = 0.;
-    		    context.interior_value ( this->_u_var, qp, u);
-    		    context.interior_value ( this->_v_var, qp, v);
+    // 			for( unsigned int qp = 0; qp != n_qpoints; qp++ )
+    // 			  {
+    // 			    libMesh::Real u = 0.;
+    // 			    libMesh::Real v = 0.;
+    // 			    context.interior_value ( this->_u_var, qp, u);
+    // 			    context.interior_value ( this->_v_var, qp, v);
 
-    		    libMesh::Gradient grad_u = 0.;
-    		    libMesh::Gradient grad_v = 0.;
-    		    context.interior_gradient( this->_u_var, qp, grad_u );
-    		    context.interior_gradient( this->_v_var, qp, grad_v );
+    // 			    libMesh::Gradient grad_u = 0.;
+    // 			    libMesh::Gradient grad_v = 0.;
+    // 			    context.interior_gradient( this->_u_var, qp, grad_u );
+    // 			    context.interior_gradient( this->_v_var, qp, grad_v );
 
-    		    libMesh::Real p = 0.;
-    		    context.interior_value (this->_p_var, qp, p);
+    // 			    libMesh::Real p = 0.;
+    // 			    context.interior_value (this->_p_var, qp, p);
 
-    		    // Get a reference to the MultiphysicsSystem using the context
-    		    const MultiphysicsSystem& mphysics_sys = dynamic_cast<const MultiphysicsSystem&>(context.get_system());
-    		    // Get a reference the INSBase physics which the MultiphysicsSystem owns
-    		    const IncompressibleNavierStokesBase<Mu>& ins_physics = dynamic_cast<const IncompressibleNavierStokesBase<Mu>& >(*mphysics_sys.get_physics(incompressible_navier_stokes));
-    		// Use the get_viscosity_value function to get the viscosity at this qp
-    		libMesh::Real _mu_qp = 0.0; //ins_physics.get_viscosity_value(context, qp);
+    // 			    // Get a reference to the MultiphysicsSystem using the context
+    // 			    const MultiphysicsSystem& mphysics_sys = dynamic_cast<const MultiphysicsSystem&>(context.get_system());
+    // 			    // Get a reference the INSBase physics which the MultiphysicsSystem owns
 
-    		    for( unsigned int i = 0; i != n_u_dofs; i++ )
-    		      {
-    			// Need to access nu from INS
-    			qoi += ( _mu_qp*( 2*grad_u(0)*du_phi[i][qp](0) ) + _mu_qp*( (grad_u(1) + grad_v(0))*du_phi[i][qp](1) ) + ( u*grad_u(0)*u_phi[i][qp] + v*grad_u(1)*u_phi[i][qp] ) - ( p*du_phi[i][qp](0) ) ) * JxW[qp] * 0.0 ;
-    		      } // End dof (basis function) loop
+    // 			    const IncompressibleNavierStokesBase<Mu>& ins_physics = dynamic_cast<const IncompressibleNavierStokesBase<Mu>& >(*mphysics_sys.get_physics(incompressible_navier_stokes));
 
-    		  } // End qp loop
-    	      } // End if has boundary id
-    	  } // End loop over sides
-      } // End if elem on boundary
-    //}
+    // 			    // Use the get_viscosity_value function to get the viscosity at this qp
+    // 			    libMesh::Real _mu_qp = ins_physics.get_viscosity_value(context, qp);
+
+    // 			    // Need to access nu from INS
+    // 			    qoi += ( _mu_qp*( 2*grad_u(0)*du_phi[i][qp](0) ) + _mu_qp*( (grad_u(1) + grad_v(0))*du_phi[i][qp](1) ) + ( u*grad_u(0)*u_phi[i][qp] + v*grad_u(1)*u_phi[i][qp] ) - ( p*du_phi[i][qp](0) ) ) * JxW[qp] ;
+
+    // 			  } // End qp loop
+    // 		      } // End if node is on relevant side
+    // 		  } // End loop over nodes
+    // 	      } // End if side has right boundary id
+    // 	  } // End Loop over sides on boundary
+    //   } // End if element on boundary
 
     return;
   }
@@ -208,32 +212,43 @@ namespace GRINS
 template<class Mu>
   void Drag<Mu>::side_qoi( AssemblyContext& context,
                                const unsigned int qoi_index )
-  {
-    std::cout<<"Hello1"<<std::endl;
-    // if( context.has_side_boundary_id(0) )
-    //   {
-    // 	libMesh::FEBase* side_fe;
-    // 	context.get_side_fe<libMesh::Real>(this->_u_var, side_fe);
+{
+  // if( context.has_side_boundary_id(0) )
+  //   {
+  // 	libMesh::FEBase* side_fe;
+  // 	context.get_side_fe<libMesh::Real>(this->_u_var, side_fe);
 
-    // 	const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
+  // 	const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
 
-    // 	unsigned int n_qpoints = context.get_side_qrule().n_points();
+  // 	const std::vector<libMesh::Point>& normals = side_fe->get_normals();
 
-    // 	libMesh::Number& qoi = context.get_qois()[qoi_index];
+  // 	unsigned int n_qpoints = context.get_side_qrule().n_points();
 
-    // 	// Loop over quadrature points
+  // 	libMesh::Number& qoi = context.get_qois()[qoi_index];
 
-    // 	for (unsigned int qp = 0; qp != n_qpoints; qp++)
-    // 	  {
-    // 	    // Get the solution value at the quadrature point
-    // 	    libMesh::Gradient grad_u = 0.0;
-    // 	    context.side_gradient(this->_u_var, qp, grad_u);
+  // 	Loop over quadrature points
 
-    // 	    qoi += 0.0*grad_u(1)*JxW[qp];
-    // 	  }
-    //   }
+  // 	for (unsigned int qp = 0; qp != n_qpoints; qp++)
+  // 	  {
+  // 	    Get the solution value at the quadrature point
+  // 	    libMesh::Gradient grad_u = 0.0;
+  // 	    libMesh::Gradient grad_v = 0.0;
+  // 	    context.side_gradient(this->_u_var, qp, grad_u);
+  // 	    context.side_gradient(this->_v_var, qp, grad_v);
 
-    return;
+  // 	    libMesh::Tensor tau;
+  // 	    tau(0,0) = 2*grad_u(0);
+  // 	    tau(0,1) = grad_u(1) + grad_v(1);
+  // 	    tau(0,1) = grad_v(0) + grad_u(1);
+  // 	    tau(0,0) = 2*grad_v(1);
+
+  // 	    libMesh::NumberVectorValue I (1,0);
+
+  // 	    qoi += ((tau*normals[qp])*I)*JxW[qp];
+  // 	  }
+  //   }
+
+     return;
   }
 
 
