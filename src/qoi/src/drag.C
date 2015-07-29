@@ -226,11 +226,11 @@ template<class Mu>
 
   // 	libMesh::Number& qoi = context.get_qois()[qoi_index];
 
-  // 	Loop over quadrature points
+  // 	//Loop over quadrature points
 
   // 	for (unsigned int qp = 0; qp != n_qpoints; qp++)
   // 	  {
-  // 	    Get the solution value at the quadrature point
+  // 	    //Get the solution value at the quadrature point
   // 	    libMesh::Gradient grad_u = 0.0;
   // 	    libMesh::Gradient grad_v = 0.0;
   // 	    context.side_gradient(this->_u_var, qp, grad_u);
