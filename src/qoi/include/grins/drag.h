@@ -121,7 +121,7 @@ namespace GRINS
     inline
   bool Drag<Mu>::assemble_on_sides() const
   {
-    return false;
+    return true;
   }
 }
 #endif //GRINS_DRAG_H

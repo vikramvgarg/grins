@@ -52,15 +52,15 @@ mesh_adaptive = 'false'
 output_vis = 'true'
 output_adjoint = 'true'
 vis_output_file_prefix = 'turbulent_channel_stabilized_drag'
-output_format = 'ExodusII xda'
+output_format = 'tecplot xda'
 
 [Materials]
 
 [./Viscosity]
 
 #mu = '2.95456e-5' #[kg/m-s]
-#mu = '2.434e-5'
-mu = '1.0'
+mu = '2.434e-5'
+#mu = '1.0'
 
 []
 

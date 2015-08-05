@@ -31,7 +31,7 @@
 #include "grins/simulation_builder.h"
 #include "grins/multiphysics_sys.h"
 #include "grins/solver_context.h"
-
+#include "grins/physics.h"
 // libMesh
 #include "libmesh/dof_map.h"
 #include "libmesh/parameter_vector.h"
@@ -341,6 +341,12 @@ namespace GRINS
         std::endl;
       libmesh_error();
     }
+
+    // Hack Begins
+    // Set kappa in the adjoints_parameter_vector belonging to this multiphysics sys
+    // to some new value
+    *_adjoint_parameters.parameter_vector[0] = 0.410001;
+    // Hack Ends
 
     _solver->solve( context );
 
