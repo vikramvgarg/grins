@@ -35,6 +35,7 @@
 // libMesh
 #include "libmesh/dof_map.h"
 #include "libmesh/parameter_vector.h"
+#include "libmesh/parameter_multipointer.h"
 #include "libmesh/qoi_set.h"
 #include "libmesh/sensitivity_data.h"
 
@@ -345,7 +346,8 @@ namespace GRINS
     // Hack Begins
     // Set kappa in the adjoints_parameter_vector belonging to this multiphysics sys
     // to some new value
-    *_adjoint_parameters.parameter_vector[0] = 0.410001;
+    //std::cout<<(dynamic_cast<libMesh::ParameterMultiPointer<libMesh::Number>& >(_adjoint_parameters.parameter_vector[1])).size()<<std::endl;
+    //*_adjoint_parameters.parameter_vector[1] = 7.100001;
     // Hack Ends
 
     _solver->solve( context );

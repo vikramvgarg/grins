@@ -78,8 +78,8 @@ namespace GRINS
     libMesh::Real get_sigma() const
     { return _sigma;}
 
-    libMesh::Real get_cw1() const
-    { return _cw1;}
+    //libMesh::Real get_cw1() const
+    //{ return _cw1;}
 
     libMesh::Real get_c_w2() const
     { return _c_w2;}
@@ -105,7 +105,7 @@ namespace GRINS
     libMesh::Real _kappa, _cv1, _cv2, _cv3;
 
     //! Spalart Allmaras model constants
-    libMesh::Real _cb1, _sigma, _cb2, _cw1;
+    libMesh::Real _cb1, _sigma, _cb2;//, _cw1;
 
     //! Constants specific to the calculation of the destruction function
     libMesh::Real _r_lin, _c_w2, _c_w3;

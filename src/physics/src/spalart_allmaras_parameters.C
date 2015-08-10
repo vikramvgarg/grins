@@ -42,7 +42,7 @@ namespace GRINS
       _cb1(input("Physics/"+spalart_allmaras+"/Parameters/cb1",0.1355)),
       _sigma(input("Physics/"+spalart_allmaras+"/Parameters/sigma",2./3.)),
       _cb2(input("Physics/"+spalart_allmaras+"/Parameters/cb2",0.622)),
-      _cw1( _cb1/(_kappa*_kappa) + (1.0+_cb2)/_sigma ),
+      //_cw1( _cb1/(_kappa*_kappa) + (1.0+_cb2)/_sigma ),
       _r_lin(input("Physics/"+spalart_allmaras+"/Parameters/r_lin",10.0)),
       _c_w2(input("Physics/"+spalart_allmaras+"/Parameters/c_w2",0.3)),
       _c_w3(input("Physics/"+spalart_allmaras+"/Parameters/c_w3",2.0)),

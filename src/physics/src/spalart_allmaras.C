@@ -296,12 +296,14 @@ namespace GRINS
         libMesh::Real nud2 = nud*nud;
         libMesh::Real kappa2 = (this->_sa_params.get_kappa())*(this->_sa_params.get_kappa());
         //libMesh::Real destruction_term = ((*distance_qp)(qp)==0.0)?1.0:(this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
-	libMesh::Real destruction_term = (this->_sa_params.get_cw1()*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
+	libMesh::Real cw1 = this->_sa_params.get_cb1()/kappa2 + (1.0 + this->_sa_params.get_cb2())/this->_sa_params.get_sigma();
+
+	libMesh::Real destruction_term = (cw1*fw - (this->_sa_params.get_cb1()/kappa2)*f_t2)*nud2;
 
         // For a negative turbulent viscosity nu < 0.0 we need to use a different production function
         if(nu < 0.0)
           {
-            destruction_term = -this->_sa_params.get_cw1()*nud2;
+            destruction_term = -cw1*nud2;
           }
 
         libMesh::Real fn1 = 1.0;

@@ -53,6 +53,7 @@ namespace GRINS
   {
     ParameterUser::register_parameter(param_name, param_pointer);
     this->_mu.register_parameter(param_name, param_pointer);
+    this->_sa_params.register_parameter(param_name, param_pointer);
   }
 
   template<class Mu>

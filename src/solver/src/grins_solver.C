@@ -86,18 +86,18 @@ namespace GRINS
     this->init_time_solver(system);
 
     // Hack Alert
-    std::set<BoundaryID> dbc_ids;
-    dbc_ids.insert(0);
+    //std::set<BoundaryID> dbc_ids;
+    //dbc_ids.insert(0);
 
-    libMesh::ConstFunction<libMesh::Number> one(1);
+    //libMesh::ConstFunction<libMesh::Number> one(1);
     //libMesh::ConstFunction<libMesh::Number> zero(0);
 
-    std::vector<VariableIndex> dbc_u_var;
-    dbc_u_var.push_back(0);
+    //std::vector<VariableIndex> dbc_u_var;
+    //dbc_u_var.push_back(0);
 
-    libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
+    //libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &one);
     //libMesh::DirichletBoundary adjoint_weight_drag_dbc(dbc_ids,dbc_u_var, &zero);
-    system->get_dof_map().add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
+    //system->get_dof_map().add_adjoint_dirichlet_boundary(adjoint_weight_drag_dbc, 0);
     // Hack ends
 
     // Initialize the system
