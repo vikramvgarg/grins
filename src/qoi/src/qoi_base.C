@@ -115,6 +115,19 @@ namespace GRINS
 
     out << "==========================================================" << std::endl;
 
+    // For DAKOTA, also write out to a QoI_0.out file
+    std::ofstream QoI_out ("QoI_0.out") ;
+
+    QoI_out << std::setprecision(17) << _qoi_value << std::endl;
+
+    if(!QoI_out.good())
+      {
+	std::cout<<"Out file not good"<<std::endl;
+	libmesh_error();
+      }
+
+    QoI_out.close();
+
     return;
   }
 

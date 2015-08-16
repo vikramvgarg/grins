@@ -213,61 +213,61 @@ template<class Mu>
   void Drag<Mu>::side_qoi( AssemblyContext& context,
                                const unsigned int qoi_index )
 {
-  // if( context.has_side_boundary_id(0) )
-  //   {
-  // 	libMesh::FEBase* side_fe;
-  // 	context.get_side_fe<libMesh::Real>(this->_u_var, side_fe);
+  if( context.has_side_boundary_id(0) )
+    {
+  	libMesh::FEBase* side_fe;
+  	context.get_side_fe<libMesh::Real>(this->_u_var, side_fe);
 
-  // 	const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
+  	const std::vector<libMesh::Real> &JxW = side_fe->get_JxW();
 
-  // 	const std::vector<libMesh::Point>& normals = side_fe->get_normals();
+  	const std::vector<libMesh::Point>& normals = side_fe->get_normals();
 
-  // 	const std::vector<std::vector<libMesh::Point>>& tangents = side_fe->get_tangents();
+  	const std::vector<std::vector<libMesh::Point>>& tangents = side_fe->get_tangents();
 
-  // 	unsigned int n_qpoints = context.get_side_qrule().n_points();
+  	unsigned int n_qpoints = context.get_side_qrule().n_points();
 
-  // 	libMesh::Number& qoi = context.get_qois()[qoi_index];
+  	libMesh::Number& qoi = context.get_qois()[qoi_index];
 
-  // 	// Get a reference to the MultiphysicsSystem using the context
-  // 	const MultiphysicsSystem& mphysics_sys = dynamic_cast<const MultiphysicsSystem&>(context.get_system());
-  // 	// Get a reference the INSBase physics which the MultiphysicsSystem owns
-  // 	const IncompressibleNavierStokesBase<Mu>& ins_physics = dynamic_cast<const IncompressibleNavierStokesBase<Mu>& >(*mphysics_sys.get_physics(incompressible_navier_stokes));
+  	// Get a reference to the MultiphysicsSystem using the context
+  	const MultiphysicsSystem& mphysics_sys = dynamic_cast<const MultiphysicsSystem&>(context.get_system());
+  	// Get a reference the INSBase physics which the MultiphysicsSystem owns
+  	const IncompressibleNavierStokesBase<Mu>& ins_physics = dynamic_cast<const IncompressibleNavierStokesBase<Mu>& >(*mphysics_sys.get_physics(incompressible_navier_stokes));
 
-  // 	//Loop over quadrature points
-  // 	for (unsigned int qp = 0; qp != n_qpoints; qp++)
-  // 	  {
-  // 	    //Get the solution value at the quadrature point
-  // 	    libMesh::Gradient grad_u = 0.0;
-  // 	    libMesh::Gradient grad_v = 0.0;
-  // 	    context.side_gradient(this->_u_var, qp, grad_u);
-  // 	    context.side_gradient(this->_v_var, qp, grad_v);
+  	//Loop over quadrature points
+  	for (unsigned int qp = 0; qp != n_qpoints; qp++)
+  	  {
+  	    //Get the solution value at the quadrature point
+  	    libMesh::Gradient grad_u = 0.0;
+  	    libMesh::Gradient grad_v = 0.0;
+  	    context.side_gradient(this->_u_var, qp, grad_u);
+  	    context.side_gradient(this->_v_var, qp, grad_v);
 
-  // 	    libMesh::Real p = 0.;
-  // 	    context.side_value (this->_p_var, qp, p);
+  	    libMesh::Real p = 0.;
+  	    context.side_value (this->_p_var, qp, p);
 
-  // 	    // Use the get_viscosity_value function to get the viscosity at this qp
-  // 	    libMesh::Real _mu_qp = ins_physics.get_viscosity_value(context, qp);
+  	    // Use the get_viscosity_value function to get the viscosity at this qp
+  	    libMesh::Real _mu_qp = ins_physics.get_viscosity_value(context, qp);
 
-  // 	    libMesh::Tensor tau;
-  // 	    tau(0,0) = 2*grad_u(0);
-  // 	    tau(0,1) = grad_u(1) + grad_v(0);
-  // 	    tau(1,0) = grad_v(0) + grad_u(1);
-  // 	    tau(1,1) = 2*grad_v(1);
-  // 	    tau = 0.5*tau;
+  	    libMesh::Tensor tau;
+  	    tau(0,0) = 2*grad_u(0);
+  	    tau(0,1) = grad_u(1) + grad_v(0);
+  	    tau(1,0) = grad_v(0) + grad_u(1);
+  	    tau(1,1) = 2*grad_v(1);
+  	    tau = 0.5*tau;
 
-  // 	    libMesh::Tensor eye;
-  // 	    eye(0,0) = 1.0;
-  // 	    eye(0,1) = 0.0;
-  // 	    eye(1,0) = 0.0;
-  // 	    eye(1,1) = 1.0;
+  	    libMesh::Tensor eye;
+  	    eye(0,0) = 1.0;
+  	    eye(0,1) = 0.0;
+  	    eye(1,0) = 0.0;
+  	    eye(1,1) = 1.0;
 
-  // 	    // An Free stream direction vector
-  // 	    //libMesh::NumberVectorValue freestream (0.984807753,0.173648178);
-  // 	    libMesh::NumberVectorValue freestream (1.0, 0.0);
+  	    // An Free stream direction vector
+  	    //libMesh::NumberVectorValue freestream (0.984807753,0.173648178);
+  	    libMesh::NumberVectorValue freestream (1.0, 0.0);
 
-  // 	    qoi += (normals[qp]*((2*_mu_qp*tau - p*eye)*freestream))*JxW[qp];
-  // 	  }
-  //   }
+  	    qoi += (normals[qp]*((2*_mu_qp*tau - p*eye)*freestream))*JxW[qp];
+  	  }
+    }
 
      return;
   }

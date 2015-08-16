@@ -48,7 +48,7 @@ namespace GRINS
       _rho(input("Physics/"+incompressible_navier_stokes+"/rho", 1.0)),
       _mu(input)
   {
-    return;
+    this->set_parameter(this->_rho, input, "Physics/"+incompressible_navier_stokes+"/rho", this->_rho);
   }
 
   template<class Mu>

@@ -93,6 +93,17 @@ namespace GRINS
         system->solution->swap(system->get_sensitivity_rhs(p));
         equation_system->update();
 
+	libMesh::Real dR_dp_norm_l2 = 0.0;
+	dR_dp_norm_l2 = system->solution->l2_norm();
+
+	//for(unsigned int i = 0; i <=3; i++)
+	//{
+	//  dR_dp_norm_H1 += pow(system.calculate_norm(*system.solution, i, H1), 2.);
+	//  dR_dp_norm_L2 += pow(system.calculate_norm(*system.solution, i, L2), 2.);
+	//}
+
+	std::cout<<"||dR_dp||_l2 = "<< dR_dp_norm_l2 << std::endl;
+
         this->dump_visualization( equation_system, filename, 0.0 );
 
         // Now swap back and reupdate

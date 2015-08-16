@@ -70,6 +70,10 @@ namespace GRINS
     // BEGIN hacking (to set solver options)
     libMesh::NewtonSolver* newton_solver = new libMesh::NewtonSolver( *(system) );
     newton_solver->require_residual_reduction = false;
+    // Finite Residual Hack
+    //std::cout<<"Finite Residual Hack"<<std::endl;
+    //newton_solver->require_finite_residual = false;
+    // End Residual Hack
     time_solver->diff_solver() = libMesh::UniquePtr<libMesh::DiffSolver>(newton_solver);
     // END hacking (to set solver options)
 

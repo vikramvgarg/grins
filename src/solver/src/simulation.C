@@ -22,6 +22,7 @@
 //
 //-----------------------------------------------------------------------el-
 
+#include <cerrno>
 
 // This class
 #include "grins/simulation.h"
@@ -344,10 +345,10 @@ namespace GRINS
     }
 
     // Hack Begins
-    // Set kappa in the adjoints_parameter_vector belonging to this multiphysics sys
+    // Set rho in the adjoints_parameter_vector belonging to this multiphysics sys
     // to some new value
-    //std::cout<<(dynamic_cast<libMesh::ParameterMultiPointer<libMesh::Number>& >(_adjoint_parameters.parameter_vector[1])).size()<<std::endl;
-    //*_adjoint_parameters.parameter_vector[1] = 7.100001;
+    //std::cout<<(dynamic_cast<libMesh::ParameterMultiPointer<libMesh::Number>& >(_adjoint_parameters.parameter_vector[0])).size()<<std::endl;
+    //*_adjoint_parameters.parameter_vector[0] = 1.00000;
     // Hack Ends
 
     _solver->solve( context );
@@ -355,9 +356,7 @@ namespace GRINS
     if ( this->_print_qoi )
       {
 	const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
-	my_qoi->output_qoi( std::cout );
-        _multiphysics_system->assemble_qoi();
-        //const CompositeQoI* my_qoi = libMesh::libmesh_cast_ptr<const CompositeQoI*>(this->_multiphysics_system->get_qoi());
+	_multiphysics_system->assemble_qoi();
         my_qoi->output_qoi( std::cout );
       }
 
@@ -377,15 +376,44 @@ namespace GRINS
 
         std::cout << "Adjoint sensitivities:" << std::endl;
 
+
         for (unsigned int q=0;
              q != this->_multiphysics_system->qoi.size(); ++q)
           {
+
             for (unsigned int p=0; p != params.size(); ++p)
               {
-                std::cout << "dq" << q << "/dp" << p << " = " <<
+		std::cout << "dq" << q << "/dp" << p << " = " <<
                         sensitivities[q][p] << std::endl;
+
+		libMesh::Real sensitivity_value = sensitivities[q][p];
+
+		// String for Dakota derivative output files
+		std::string dakota_derivative_output_file = "";
+		dakota_derivative_output_file.append("QoI_");
+
+		dakota_derivative_output_file.append(std::to_string(q));
+		dakota_derivative_output_file.append("_");
+
+		dakota_derivative_output_file.append(std::to_string(p));
+		dakota_derivative_output_file.append(".out");
+
+		// I/O objects to write out to Dakota
+		std::ofstream QoI_out (dakota_derivative_output_file) ;
+
+		if(!QoI_out.good())
+		{
+		  std::cout<<"Out file not good"<<std::endl;
+		  libmesh_error();
+		}
+
+		QoI_out << std::setprecision(17) << sensitivity_value << std::endl;
+
+		QoI_out.close();
+		dakota_derivative_output_file.clear();
               }
           }
+
       }
 
     if ( _forward_parameters.parameter_vector.size() )
